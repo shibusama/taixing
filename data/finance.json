@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updated": "2026-07-27T00:18:54+08:00",
+    "updated": "2026-07-27T00:53:28+08:00",
     "module": "finance"
   },
   "fed_highlights": [
@@ -329,7 +329,7 @@
     "tag": "冲刺IPO",
     "name": "Anthropic — Claude大模型开发商",
     "en": "Anthropic IPO Pipeline",
-    "desc": "6月1日秘密递表，选定摩根士丹利、高盛、摩根大通为主承销商。7月已开始密集举办IPO投资者会议，最快10月挂牌。核心增长引擎为Claude Code编程工具。",
+    "desc": "6月1日秘密递表，选定摩根士丹利、高盛、摩根大通为主承销商。7月已开始密集举办IPO投资者会议，最快10月挂牌。核心增长引擎为Claude Code编程工具。7月24日发布Claude Opus 5，强化长时运行代理与编程能力。",
     "grid": [
       {
         "k": "S-1递表",
