@@ -1,0 +1,32 @@
+{
+  "meta": { "updated": "2026-07-26" },
+  "comparison_table": [
+    { "rocket": "星舰 V3", "company": "SpaceX", "country": "美国", "fuel": "液氧甲烷", "diameter": "9m", "thrust": "~7600t", "leo": "150t+", "recovery": "塔架机械臂", "status": "13飞首部署真卫星", "key": "starship" },
+    { "rocket": "猎鹰9号", "company": "SpaceX", "country": "美国", "fuel": "液氧煤油", "diameter": "3.7m", "thrust": "~770t", "leo": "22.8t", "recovery": "着陆腿垂直", "status": "成熟运营", "key": "falcon9" },
+    { "rocket": "新格伦", "company": "Blue Origin", "country": "美国", "fuel": "液氧液氢/甲烷", "diameter": "7m", "thrust": "~1750t", "leo": "45t", "recovery": "着陆腿海上", "status": "首次复用完成", "key": "newglenn" },
+    { "rocket": "Neutron", "company": "Rocket Lab", "country": "美国", "fuel": "液氧甲烷", "diameter": "7m", "thrust": "—", "leo": "13t", "recovery": "Hungry Hippo", "status": "首飞在即", "key": "neutron" },
+    { "rocket": "长征十号乙", "company": "航天科技集团", "country": "中国", "fuel": "液氧煤油/甲烷", "diameter": "5m", "thrust": "~890t", "leo": "≥16t(复用)", "recovery": "海上网系", "status": "首飞回收成功", "key": "cz10b" },
+    { "rocket": "朱雀三号", "company": "蓝箭航天", "country": "中国", "fuel": "液氧甲烷", "diameter": "4.5m", "thrust": "900t", "leo": "21.3t", "recovery": "着陆腿垂直", "status": "再战回收", "key": "zq3" },
+    { "rocket": "双曲线三号", "company": "星际荣耀", "country": "中国", "fuel": "液氧甲烷", "diameter": "4.2m", "thrust": "490t", "leo": "—", "recovery": "海上回收", "status": "年底首飞", "key": "sqx3" },
+    { "rocket": "长征十二号甲", "company": "中国商火", "country": "中国", "fuel": "液氧甲烷", "diameter": "—", "thrust": "—", "leo": "≥6t(复用)", "recovery": "着陆腿垂直", "status": "首飞回收未果", "key": "cz12a" },
+    { "rocket": "智神星二号", "company": "星河动力", "country": "中国", "fuel": "液氧煤油", "diameter": "—", "thrust": "—", "leo": "—", "recovery": "着陆腿垂直", "status": "验证中", "key": "zss2" }
+  ],
+  "timeline_h2": [
+    { "date": "2026.07.24", "title": "SpaceX 星舰第13次试飞", "desc": "33台猛禽3全点火，首次部署20颗星链V3卫星，飞船完整软溅落印度洋。", "color": "", "badge": "", "done": true },
+    { "date": "2026.07.22", "title": "东方空间 引力一号遥四 · 一箭九星", "desc": "首次东海远海发射，9星入轨，迈入商业化规模化运营。", "color": "amber", "badge": "民营", "done": true },
+    { "date": "2026.07.10", "title": "长征十号乙首飞 · 全球首次海上网系回收", "desc": "海南商业航天发射场，一子级被\"领航者\"号井字网捕获，复用运力≥16吨。", "color": "green", "badge": "国家队", "done": true },
+    { "date": "2026.06.09", "title": "蓝箭 朱雀二号遥六 · 千帆组网首发", "desc": "首次以主力身份执行国家卫星互联网任务，27天内两次发射。", "color": "amber", "badge": "民营", "done": true },
+    { "date": "2026.08中下旬", "title": "星河动力 智神星一号首飞", "desc": "国内民营首款7吨级可复用液体火箭，首飞仅入轨不回收。", "color": "amber", "badge": "民营" },
+    { "date": "2026.07底-8初", "title": "蓝箭 朱雀三号遥二 再战回收", "desc": "遥一硬着陆因底部隔热缺陷，遥二已加强隔热，6.29完成9台发动机静态点火。", "color": "amber", "badge": "民营" },
+    { "date": "2026下半年", "title": "SpaceX 星舰第14次试飞", "desc": "马斯克宣布下飞尝试用发射塔机械臂空中捕获星舰飞船。", "color": "", "badge": "" },
+    { "date": "2026Q4", "title": "朱雀三号 首次复用飞行", "desc": "若遥二回收成功，Q4尝试首次复用飞行。", "color": "amber", "badge": "民营" },
+    { "date": "2026底", "title": "长征十号乙 一子级复用飞行", "desc": "首飞回收的一子级运回厂房检测维修后再次发射。", "color": "green", "badge": "国家队" },
+    { "date": "2026底", "title": "星际荣耀 双曲线三号 首飞+海上回收", "desc": "已完成国内首次大规模火箭海上回收全流程合练，9台焦点二号液氧甲烷发动机。", "color": "amber", "badge": "民营" }
+  ],
+  "timeline_2027": [
+    { "date": "2027", "title": "星际荣耀 成都双流基地投产", "desc": "总投资超33亿元，年产20发。", "color": "", "badge": "民营" },
+    { "date": "2027", "title": "蓝箭朱雀三号 批产运营", "desc": "年产30发、年发保底20发。", "color": "", "badge": "民营" },
+    { "date": "2027", "title": "蓝箭朱雀三号甲 研制", "desc": "换装100吨级天鹊B系列发动机，回收运力提升至18吨。", "color": "", "badge": "民营" },
+    { "date": "2027起", "title": "中国两大低轨星座密集组网", "desc": "国网GW星座、千帆星座进入密集发射组网周期。", "color": "", "badge": "国家队" }
+  ]
+}

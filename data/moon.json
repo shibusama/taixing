@@ -1,0 +1,18 @@
+{
+  "meta": { "updated": "2026-07-26", "source": "中国载人航天工程办公室、NASA、人民日报" },
+  "highlights": [
+    { "num": "2030", "lbl": "中国载人登月目标年", "color": "gold" },
+    { "num": "2028", "lbl": "美国Artemis IV登月目标", "color": "purple" },
+    { "num": "2026H2", "lbl": "嫦娥七号南极探水冰", "color": "cyan" },
+    { "num": "2026.04", "lbl": "Artemis II成功绕月", "color": "amber" }
+  ],
+  "comparison": [
+    { "dim": "载人登月目标", "china": "2030年前", "us": "2028年（Artemis IV）", "highlight": "china" },
+    { "dim": "2026南极任务", "china": "嫦娥七号（8月，国家队）", "us": "蓝月MK1/格里芬一号（商业）", "highlight": "china" },
+    { "dim": "火箭", "china": "长征十号（液氧甲烷，复用）", "us": "SLS Block 1（一次性）", "highlight": "" },
+    { "dim": "着陆器", "china": "揽月着陆器（自研）", "us": "星舰HLS / 蓝月Mark 2（商业）", "highlight": "" },
+    { "dim": "组织模式", "china": "国家队主导", "us": "NASA资助+商业自主研发", "highlight": "" },
+    { "dim": "长期愿景", "china": "国际月球科研站(ILRS)", "us": "月球基地→火星", "highlight": "" },
+    { "dim": "节奏特点", "china": "稳步推进、调整小", "us": "多轮延期、调整大", "highlight": "" }
+  ]
+}

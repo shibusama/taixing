@@ -1,0 +1,65 @@
+{
+  "meta": { "updated": "2026-07-26", "source": "国铁集团、水利部、国家发改委、国家电网" },
+  "highlights": [
+    { "num": "3198亿", "lbl": "川藏铁路雅林段总投资", "color": "amber" },
+    { "num": "3.36亿吨", "lbl": "三峡新通道建成后年通过量", "color": "cyan" },
+    { "num": "2026.9", "lbl": "平陆运河通航试运行", "color": "green" },
+    { "num": "91%→95%", "lbl": "交通网主骨架建成率目标", "color": "purple" }
+  ],
+  "timeline": [
+    { "tab": "tab-transport", "emoji": "🚆", "name": "川藏铁路雅林段", "target": "proj-sichuan-tibet", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-cyan", "date": "截至7月", "badge": "进度", "badgeClass": "bg-prog", "title": "隧道78.3%，三座控制隧道全贯通" },
+      { "marker": "mk-gold", "date": "2027.9", "badge": "计划", "badgeClass": "bg-plan", "title": "雅康段通车" },
+      { "marker": "mk-gold", "date": "2030", "badge": "计划", "badgeClass": "bg-plan", "title": "全线贯通，2031通车" }
+    ]},
+    { "tab": "tab-transport", "emoji": "🚂", "name": "中吉乌铁路", "target": "proj-china-kyrgyz-uzbek", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-green", "date": "2024.12", "badge": "开工", "badgeClass": "bg-start", "title": "吉国段启动" },
+      { "marker": "mk-green", "date": "2026.2", "badge": "开工", "badgeClass": "bg-start", "title": "全线实体攻坚，18座隧道掘进" },
+      { "marker": "mk-gold", "date": "2030", "badge": "计划", "badgeClass": "bg-plan", "title": "通车，可能提前至2028-29" }
+    ]},
+    { "tab": "tab-transport", "emoji": "🚢", "name": "湛海高铁", "target": "proj-zhanhai", "status": "即将开工", "statusClass": "st-ready", "items": [
+      { "marker": "mk-gold", "date": "2025.12", "badge": "批复", "badgeClass": "bg-approve", "title": "发改委批可研，402亿，工期4年" }
+    ]},
+    { "tab": "tab-transport", "emoji": "🌊", "name": "渤海海峡通道", "target": "proj-bohai", "status": "规划中", "statusClass": "st-plan", "items": [
+      { "marker": "mk-gold", "date": "论证中", "badge": "论证", "badgeClass": "bg-plan", "title": "123km海底隧道，已入国家规划" }
+    ]},
+    { "tab": "tab-water", "emoji": "⛵", "name": "三峡水运新通道", "target": "proj-three-gorges", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-green", "date": "2026.6.8", "badge": "开工", "badgeClass": "bg-start", "title": "\"十五五\"首个标志性工程破土" },
+      { "marker": "mk-cyan", "date": "2026.10", "badge": "进度", "badgeClass": "bg-prog", "title": "850万m³先行开挖区完成" },
+      { "marker": "mk-gold", "date": "2035前后", "badge": "计划", "badgeClass": "bg-plan", "title": "建成通航，年通过3.36亿吨" }
+    ]},
+    { "tab": "tab-water", "emoji": "🚢", "name": "平陆运河", "target": "proj-pinglu", "status": "即将通航", "statusClass": "st-ready", "items": [
+      { "marker": "mk-cyan", "date": "截至7月", "badge": "进度", "badgeClass": "bg-prog", "title": "投资完成97%，全面有水调试" },
+      { "marker": "mk-green", "date": "2026.9", "badge": "通航", "badgeClass": "bg-start", "title": "交通运输部确认9月通航试运行，5000吨级直达北部湾" }
+    ]},
+    { "tab": "tab-water", "emoji": "💧", "name": "引江补汉", "target": "proj-yinjiang", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-cyan", "date": "截至6月", "badge": "进度", "badgeClass": "bg-prog", "title": "主隧洞>29km，支洞>42km，9台TBM" },
+      { "marker": "mk-gold", "date": "持续推进", "badge": "计划", "badgeClass": "bg-plan", "title": "出口段已提前4个月贯通" }
+    ]},
+    { "tab": "tab-water", "emoji": "💧", "name": "南水北调西线", "target": "proj-snd-west", "status": "规划中", "statusClass": "st-plan", "items": [
+      { "marker": "mk-gold", "date": "十五五", "badge": "计划", "badgeClass": "bg-plan", "title": "力争开工，年调水170亿m³" }
+    ]},
+    { "tab": "tab-energy", "emoji": "⚡", "name": "陇电入浙", "target": "proj-longdian", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-cyan", "date": "截至6月", "badge": "进度", "badgeClass": "bg-prog", "title": "浙江段贯通，越州站投运，联调完成" },
+      { "marker": "mk-green", "date": "2026底", "badge": "带电", "badgeClass": "bg-start", "title": "具备带电调试条件" },
+      { "marker": "mk-gold", "date": "2027", "badge": "投运", "badgeClass": "bg-plan", "title": "正式投运，年送电360亿kWh" }
+    ]},
+    { "tab": "tab-energy", "emoji": "⚡", "name": "浙江特高压环网", "target": "proj-zhejiang-ring", "status": "在建", "statusClass": "st-building", "items": [
+      { "marker": "mk-green", "date": "2026.4", "badge": "开工", "badgeClass": "bg-start", "title": "七地同步开工，293亿" },
+      { "marker": "mk-cyan", "date": "2026.6", "badge": "进度", "badgeClass": "bg-prog", "title": "宁绍站开工，首座千kV变电站" },
+      { "marker": "mk-gold", "date": "2029", "badge": "投运", "badgeClass": "bg-plan", "title": "计划2029年投运" }
+    ]},
+    { "tab": "tab-science", "emoji": "🔬", "name": "FAST 天眼", "target": "proj-fast", "status": "运行", "statusClass": "st-ready", "items": [
+      { "marker": "mk-green", "date": "2016", "badge": "落成", "badgeClass": "bg-start", "title": "FAST 落成，全球最大单口径射电望远镜" },
+      { "marker": "mk-cyan", "date": "截至现在", "badge": "发现", "badgeClass": "bg-prog", "title": "已发现900+颗脉冲星" }
+    ]},
+    { "tab": "tab-science", "emoji": "🔬", "name": "散裂中子源", "target": "proj-csns", "status": "运行", "statusClass": "st-ready", "items": [
+      { "marker": "mk-green", "date": "2018", "badge": "验收", "badgeClass": "bg-start", "title": "中国首座数据类大科学装置通过国家验收" },
+      { "marker": "mk-gold", "date": "未来", "badge": "升级", "badgeClass": "bg-plan", "title": "CSNS-II 已启动，束流壁陡倍增" }
+    ]},
+    { "tab": "tab-science", "emoji": "🔬", "name": "HEPS", "target": "proj-heps", "status": "建设中", "statusClass": "st-building", "items": [
+      { "marker": "mk-cyan", "date": "截至7月", "badge": "进度", "badgeClass": "bg-prog", "title": "主体封顶，加速器安装" },
+      { "marker": "mk-gold", "date": "2027", "badge": "投运", "badgeClass": "bg-plan", "title": "计划2027年前后投运" }
+    ]}
+  ]
+}

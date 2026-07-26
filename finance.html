@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>钛星 · 科技资本</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stars"></div>
+<div class="progress-bar"></div>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a href="index.html" class="logo"><span class="rk">🔭</span>钛星</a>
+    <nav class="nav">
+      <a href="index.html">首页</a>
+      <a href="rocket.html">可回收火箭</a>
+      <a href="moon.html">中美登月</a>
+      <a href="semiconductor.html">半导体</a>
+      <a href="china-tech.html">中国科技</a>
+      <a href="mega-projects.html">大工程</a>
+      <a href="fusion.html">可控核聚变</a>
+      <a href="finance.html" class="on">科技资本</a>
+    </nav>
+    <button class="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile-nav-overlay"></div>
+<nav class="mobile-nav">
+  <a href="index.html">首页</a>
+  <a href="rocket.html">可回收火箭</a>
+  <a href="moon.html">中美登月</a>
+  <a href="semiconductor.html">半导体</a>
+  <a href="china-tech.html">中国科技</a>
+  <a href="mega-projects.html">大工程</a>
+  <a href="fusion.html">可控核聚变</a>
+  <a href="finance.html" class="on">科技资本</a>
+</nav>
+
+<article class="article">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>科技资本</span></div>
+    <div class="article-head">
+      <div class="kicker">TECH CAPITAL · 2026</div>
+      <h1>科技资本：美联储、汇率与AI巨头的资本竞速</h1>
+      <div class="meta"><span>数据来源：美联储、汇通网、彭博、财联社</span><span id="update-time">更新时间：--</span></div>
+    </div>
+
+    <div class="article-body">
+      <p>2026年下半年，全球资本市场聚焦三条主线：美联储在"沃什时代"维持高利率鹰派立场，美元日元利差持续走阔；SpaceX IPO后股价大幅回调；OpenAI与Anthropic的万亿估值IPO竞速进入白热化。</p>
+
+    <div class="tab-nav" id="fin-tabs">
+      <button class="active" data-tab="tab-fed">美联储利率</button>
+      <button data-tab="tab-fx">汇率市场</button>
+      <button data-tab="tab-spacex">SpaceX</button>
+      <button data-tab="tab-ai">AI巨头</button>
+    </div>
+
+    <!-- ===== Tab 1: 美联储利率 ===== -->
+    <div class="tab-panel active" id="tab-fed">
+      <div class="article-body">
+
+        <div id="fed-highlights" class="highlight-row"></div>
+
+        <h2>🏦 美联储"沃什时代"：鹰派转身</h2>
+        <p>2026年6月17日，新任美联储主席沃什完成首场议息会议。全体委员一致投票维持联邦基金利率3.50%—3.75%不变，这是连续第四次按兵不动。但同步发布的点阵图释放极强鹰派信号——<strong>九名官员支持年内加息</strong>，市场降息预期彻底破灭。</p>
+        <p>7月9日公布的会议纪要进一步揭示内部分裂：少数官员明确主张"有理由提高利率目标区间"，另一部分则认为应等待更多数据。德意志银行称委员会已分裂为两大阵营：一派主张全年维持高利率，另一派认为需至少加息一次。7月14日公布的6月CPI同比3.5%，较前值4.2%明显回落，能源价格下跌是主因。核心CPI环比持平，通胀降温迹象为7月维持利率提供了空间。</p>
+
+        <h3>2026年FOMC会议日程</h3>
+        <div id="fed-schedule"></div>
+
+        <h3>关键官员表态</h3>
+        <div id="fed-officials"></div>
+
+      </div>
+    </div>
+
+    <!-- ===== Tab 2: 汇率市场 ===== -->
+    <div class="tab-panel" id="tab-fx">
+      <div class="article-body">
+
+        <div id="fx-highlights" class="highlight-row"></div>
+
+        <h2>💱 美元/日元：利差驱动的高位拉锯</h2>
+        <p>美元兑日元在2026年7月持续高位运行，围绕163—170区间震荡。美联储维持3.50%—3.75%高利率，日本央行政策利率仅1%，<strong>超过250个基点的利差</strong>持续支撑美元强势。日元逼近40年低位，日本央行会议纪要释放加速加息信号，但高额利差限制了日元反弹空间。</p>
+
+        <h3>关键汇率数据</h3>
+        <div id="fx-rates"></div>
+
+        <h3>主要央行利率对比</h3>
+        <div id="fx-cb-rates"></div>
+
+        <p style="color:var(--txt-2);font-size:13px;margin-top:16px">日本央行7月31日将公布利率决议，市场关注是否进一步加息以支撑日元。日元持续贬值已引发官方汇率干预预期。</p>
+
+      </div>
+    </div>
+
+    <!-- ===== Tab 3: SpaceX ===== -->
+    <div class="tab-panel" id="tab-spacex">
+      <div class="article-body">
+
+        <div id="spacex-highlights" class="highlight-row"></div>
+
+        <h2>🚀 SpaceX：史上最大IPO后的估值重塑</h2>
+        <p>2026年6月，SpaceX（NASDAQ: SPCX）以$135/股完成史上最大规模IPO，融资超850亿美元，首日估值1.77万亿美元。上市初期股价一度飙升至225美元，但随后持续回调，7月24日收于115.07美元，逼近IPO价格。马斯克个人财富在一周内蒸发约1300亿美元。</p>
+
+        <h3>业务版图与财务数据</h3>
+        <div id="spacex-finance"></div>
+
+        <h3>三大业务板块</h3>
+        <div id="spacex-breakdown"></div>
+
+        <h3>机构观点</h3>
+        <div id="spacex-analyst"></div>
+
+        <p style="color:var(--txt-2);font-size:13px;margin-top:16px">关键变量：Starship可重复使用火箭能否可靠运行——一次Starship发射可部署60颗V3卫星，带宽容量是猎鹰9号的23.7倍。若Starship延迟，估值逻辑将迅速弱化。</p>
+
+      </div>
+    </div>
+
+    <!-- ===== Tab 4: AI巨头 ===== -->
+    <div class="tab-panel" id="tab-ai">
+      <div class="article-body">
+
+        <div id="ai-highlights" class="highlight-row"></div>
+
+        <h2>🤖 AI双巨头IPO竞速</h2>
+        <p>2026年6月，OpenAI与Anthropic先后向SEC秘密提交S-1招股书，AI史上最大规模IPO竞速正式开启。Anthropic凭借企业级API业务的高速增长和率先季度盈利，估值反超OpenAI。两家公司的上市节奏和估值定位，将重新定义资本市场对AI企业的定价逻辑。</p>
+
+        <h3>Anthropic（Claude）</h3>
+        <div id="ai-anthropic"></div>
+
+        <h3>OpenAI（ChatGPT）</h3>
+        <div id="ai-openai"></div>
+
+        <h3>双巨头对比</h3>
+        <div id="ai-comparison"></div>
+
+      </div>
+    </div>
+
+    </div>
+  </div>
+</article>
+
+<button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
+<footer class="footer"><div class="wrap"><div class="fl">🔭 钛星 — 未来已来</div><div>追踪全球前沿科技新闻与深度分析 · 数据截至 2026 年 7 月 · 仅供参考</div></div></footer>
+
+<script src="js/app.js"></script>
+<script src="js/data-loader.js"></script>
+<script>
+/* ===== 数据加载与渲染 ===== */
+async function initFinance() {
+  const d = await taixingData.loadData('finance');
+  if (!d) return;
+
+  // 更新时间
+  const ut = document.getElementById('update-time');
+  if (ut && d.meta) ut.textContent = '更新时间：' + d.meta.updated.slice(0,10);
+
+  // 高亮卡片渲染
+  renderHighlightCards('fed-highlights', d.fed_highlights);
+  renderHighlightCards('fx-highlights', d.fx_highlights);
+  renderHighlightCards('spacex-highlights', d.spacex_highlights);
+  renderHighlightCards('ai-highlights', d.ai_highlights);
+
+  // company 卡片渲染
+  renderCompanyCard('fed-schedule', d.fed_schedule);
+  renderCompanyCard('fed-officials', d.fed_officials);
+  renderCompanyCard('fx-rates', d.fx_rates);
+  renderCompanyCard('fx-cb-rates', d.fx_cb_rates);
+  renderCompanyCard('spacex-finance', d.spacex_finance);
+  renderCompanyCard('spacex-breakdown', d.spacex_breakdown);
+  renderCompanyCard('spacex-analyst', d.spacex_analyst);
+  renderCompanyCard('ai-anthropic', d.ai_anthropic);
+  renderCompanyCard('ai-openai', d.ai_openai);
+  renderCompanyCard('ai-comparison', d.ai_comparison);
+}
+
+function renderHighlightCards(id, items) {
+  const el = document.getElementById(id);
+  if (!el || !items) return;
+  el.innerHTML = items.map(h => {
+    const cs = h.color ? ` style="color:${h.color}"` : '';
+    return `<div class="hl-card">
+      <div class="hl-label">${h.label}</div>
+      <div class="hl-num"${cs}>${h.num}</div>
+      <div class="hl-sub">${h.sub}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCompanyCard(id, card) {
+  const el = document.getElementById(id);
+  if (!el || !card) return;
+  const desc = card.desc ? `<p>${card.desc}</p>` : '';
+  const grid = (card.grid || []).map(kv =>
+    `<div class="kv"><span class="k">${kv.k}</span><span class="v">${kv.v}</span></div>`
+  ).join('');
+  el.innerHTML = `<div class="company">
+    <span class="tl-badge bg-prog">${card.tag}</span>
+    <h3>${card.name}</h3>
+    <div class="en">${card.en}</div>
+    ${desc}
+    <div class="company-grid">${grid}</div>
+  </div>`;
+}
+
+/* Tab 切换 */
+const ftabs = document.querySelectorAll('#fin-tabs button');
+const fpanels = document.querySelectorAll('.tab-panel');
+ftabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.getAttribute('data-tab');
+    ftabs.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    fpanels.forEach(p => { p.classList.toggle('active', p.id === target); });
+  });
+});
+
+initFinance();
+</script>
+</body>
+</html>

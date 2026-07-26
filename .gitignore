@@ -1,0 +1,19 @@
+# Dev scripts
+*.py
+
+# Backup files
+*.bak
+
+# Temp files
+*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# WorkBuddy
+.workbuddy/

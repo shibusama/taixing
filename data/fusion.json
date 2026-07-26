@@ -1,0 +1,44 @@
+{
+  "meta": { "updated": "2026-07-26", "source": "ITER、CFS、中核集团、核聚变中心" },
+  "highlights": [
+    { "num": "1.6亿℃", "lbl": "环流三号电子温度", "color": "red" },
+    { "num": "1066秒", "lbl": "EAST亿度稳态运行纪录", "color": "gold" },
+    { "num": "75%", "lbl": "CFS SPARC 建造完成度", "color": "cyan" },
+    { "num": "2027年", "lbl": "SPARC 首次等离子体", "color": "purple" }
+  ],
+  "timeline": {
+    "china": {
+      "label": "磁约束托卡马克",
+      "items": [
+        { "date": "2026", "title": "EAST 1亿℃ 1066秒稳态运行", "desc": "全球唯一实现千秒级亿度约束。", "color": "green" },
+        { "date": "2027", "title": "CRAFT综合研究设施全面建成", "desc": "验证磁体、低温、氚增殖全套工程技术。", "color": "" },
+        { "date": "2028–2030", "title": "CFEDR示范堆主机开工建造", "desc": "核心部件总装，关键部件样机试制测试。", "color": "amber" },
+        { "date": "2030年前后", "title": "聚变发电演示 · 产出第一度电", "desc": "中国目标：全球率先实现可控核聚变发电输出。", "color": "green" }
+      ]
+    },
+    "us": {
+      "label": "惯性约束 + 商业化",
+      "items": [
+        { "date": "2022.12", "title": "NIF首次实现聚变点火", "desc": "能量增益1.5倍，人类首次实验室点火。", "color": "green" },
+        { "date": "2025", "title": "NIF能量增益突破4倍", "desc": "单次释放8.6兆焦，再创新高。", "color": "green" },
+        { "date": "2026", "title": "CFS SPARC建造75%完成", "desc": "真空室半体就位、磁体安装、低温工厂运行，2027年首次等离子体。", "color": "cyan" },
+        { "date": "2027", "title": "CFS SPARC 首次等离子体", "desc": "目标达成Q>1净能量增益，为ARC聚变电站奠基。", "color": "amber" },
+        { "date": "2028", "title": "Helion\"北极星\"发电演示", "desc": "原型机目标发电，已签微软购电协议。", "color": "amber" },
+        { "date": "2030s", "title": "CFS ARC首座聚变电站", "desc": "400MW净电力并网，全球首座商业聚变电站。", "color": "amber" }
+      ]
+    },
+    "eu": {
+      "label": "ITER + 仿星器",
+      "items": [
+        { "date": "2023.10", "title": "JET创造69MJ聚变能量纪录", "desc": "磁约束聚变最大能量输出。", "color": "green" },
+        { "date": "2024", "title": "JET正式退役", "desc": "运行40年关停，数据遗产赋能ITER。", "color": "green" },
+        { "date": "2025", "title": "W7-X创三乘积世界纪录", "desc": "德国仿星器验证稳态运行可行性。", "color": "green" },
+        { "date": "2026.06", "title": "ITER五真空室扇段就位 + 磁体冷测启动", "desc": "超导线圈冷至-269℃、68kA电流测试启动；中国牵头完成偏滤器研制。", "color": "cyan" },
+        { "date": "2026底", "title": "偏滤器原型集成测试", "desc": "中国海盐专用设施启动全球首个堆级偏滤器原型机测试。", "color": "amber" },
+        { "date": "2034", "title": "ITER研究运行启动", "desc": "全球最大托卡马克开始实验。", "color": "" },
+        { "date": "2039", "title": "ITER首次氘氚聚变实验", "desc": "验证大规模能量输出。", "color": "amber" },
+        { "date": "2050s", "title": "EU-DEMO示范堆", "desc": "欧洲路线图终局，商业发电示范。", "color": "amber" }
+      ]
+    }
+  }
+}
