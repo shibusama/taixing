@@ -26,6 +26,13 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from pathlib import Path
 
+# curl_cffi 用于绕过 TLS 指纹检测（中芯/OpenAI 等）
+try:
+    from curl_cffi import requests as cffi_requests
+    HAS_CFFI = True
+except ImportError:
+    HAS_CFFI = False
+
 # 抑制 SSL 警告
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -59,6 +66,14 @@ def fetch_html(url, timeout=20):
     resp = requests.get(url, timeout=timeout, headers=HEADERS, verify=False)
     resp.raise_for_status()
     resp.encoding = resp.apparent_encoding or "utf-8"
+    return resp.text
+
+def fetch_html_cffi(url, timeout=20):
+    """用 curl_cffi 伪装浏览器 TLS 指纹，绕过 Apache/WAF 的 403"""
+    if not HAS_CFFI:
+        raise RuntimeError("curl_cffi 未安装，请运行: pip install curl_cffi")
+    resp = cffi_requests.get(url, impersonate="chrome", timeout=timeout, verify=False)
+    resp.raise_for_status()
     return resp.text
 
 def fetch_json(url, params=None, timeout=15):
@@ -816,10 +831,14 @@ def crawl_moonshot():
 # ============ OpenAI 新闻 ============
 
 def crawl_openai():
-    """OpenAI Blog → 解析文章标题"""
+    """OpenAI Blog → 解析文章标题（用 curl_cffi 绕过 Cloudflare）"""
     print("\n[OpenAI] 抓取 Blog...")
     try:
-        html = fetch_html("https://openai.com/blog/")
+        # OpenAI 有 Cloudflare 保护，普通 requests 会被 403
+        if HAS_CFFI:
+            html = fetch_html_cffi("https://openai.com/blog/", timeout=30)
+        else:
+            html = fetch_html("https://openai.com/blog/", timeout=20)
         soup = BeautifulSoup(html, "lxml")
         items = []
 
@@ -865,44 +884,64 @@ def crawl_openai():
 # ============ 中芯国际 (SMIC) 新闻 ============
 
 def crawl_smic():
-    """中芯国际官网新闻"""
+    """中芯国际官网新闻 — 用 curl_cffi 绕过 Apache 403"""
     print("\n[SMIC] 抓取中芯国际新闻...")
     try:
-        html = fetch_html("https://www.smics.com/site/smics/NewsList")
+        # 中芯 Apache 服务器会检测 TLS 指纹，普通 requests 会被 403
+        # 用 curl_cffi 伪装 Chrome 指纹
+        if HAS_CFFI:
+            html = fetch_html_cffi("https://www.smics.com/site/news", timeout=30)
+        else:
+            print("  [SMIC] 需要 curl_cffi，回退到普通 requests（可能403）")
+            html = fetch_html("https://www.smics.com/site/news", timeout=30)
+        
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen = set()
 
+        # 中芯新闻结构: <a href="/site/news_read/XXXX">标题</a> + 日期 + 摘要
         for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if "news_read" not in href:
+                continue
             title = a.get_text(strip=True)
             if not title or len(title) < 5:
                 continue
-            if any(w in title for w in ["首页", "登录", "English", "更多", "搜索"]):
+            if title in seen:
                 continue
+            seen.add(title)
 
+            # 找日期和摘要（在父级或兄弟节点）
             parent = a.find_parent()
             date_str = ""
+            summary = ""
             if parent:
-                date_match = re.search(r'(\d{4}[-/年]\d{1,2}[-/月]\d{1,2})', parent.get_text())
+                parent_text = parent.get_text(separator=" ", strip=True)
+                date_match = re.search(r'(\d{4}-\d{1,2}-\d{1,2})', parent_text)
                 if date_match:
-                    date_str = parse_date(date_match.group(0).replace("年", "-").replace("月", "-").replace("/", "-"))
+                    date_str = date_match.group(1)
+                # 摘要 = 标题之后的文本
+                after_title = parent_text.split(title, 1)
+                if len(after_title) > 1:
+                    summary = after_title[1].strip()[:200]
+                    # 去掉日期部分
+                    summary = re.sub(r'^\d{4}-\d{1,2}-\d{1,2}\s*', '', summary)
 
-            href = a["href"]
-            if href and not href.startswith("http"):
+            if not href.startswith("http"):
                 href = "https://www.smics.com" + href
 
-            if date_str and not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "smic",
-                    "board": "semicon",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": href,
-                })
+            items.append({
+                "source": "smic",
+                "board": "semicon",
+                "title": title,
+                "date": date_str,
+                "summary": summary,
+                "url": href,
+            })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:
-            print(f"    {item['date']} | {item['title'][:50]}")
+            print(f"    {item['date']} | {item['title'][:60]}")
         return items
     except Exception as e:
         print(f"  [SMIC] 失败: {e}")
