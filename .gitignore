@@ -1,20 +1,14 @@
-# Dev scripts
-*.py
-
 # Backup files
 *.bak
 
 # Temp files
 *.txt
 
-# API keys / secrets
+# API keys / secrets (绝对不能上传！)
 .env
 
 # AI backups
 data/_backups/
-
-# Data snapshots (抓取的原始快照，不需要上传)
-data/_snapshots/
 
 # OS files
 .DS_Store
