@@ -11,7 +11,7 @@
     python ai_update.py rocket --dry-run  # 组合使用
 
 依赖：pip install requests
-配置：项目根目录 .env 文件写入 DEEPSEEK_API_KEY=你的key
+配置：API Key 已硬编码在 get_api_key() 函数中
 """
 
 import json
@@ -83,26 +83,9 @@ BOARDS = {
 
 # ============ 工具函数 ============
 
-def load_env():
-    """从 .env 文件加载环境变量"""
-    env_path = BASE_DIR / ".env"
-    if env_path.exists():
-        for line in env_path.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                os.environ.setdefault(k.strip(), v.strip())
-
-
 def get_api_key():
     """获取 DeepSeek API Key"""
-    key = os.environ.get("DEEPSEEK_API_KEY", "")
-    if not key:
-        print("错误：未找到 DEEPSEEK_API_KEY")
-        print("请在项目根目录 .env 文件中写入：")
-        print("  DEEPSEEK_API_KEY=你的key")
-        sys.exit(1)
-    return key
+    return "sk-REMOVED"
 
 
 def load_json(filename):
@@ -438,8 +421,6 @@ def update_board(board_key, dry_run=False):
 # ============ 主入口 ============
 
 def main():
-    load_env()
-
     # 解析参数
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = set(a for a in sys.argv[1:] if a.startswith("--"))

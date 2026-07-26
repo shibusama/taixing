@@ -1,13 +1,10 @@
-# Backup files
+# Backup files (无价值，不传)
 *.bak
 
-# Temp files
+# Temp files (临时文件，不传)
 *.txt
 
-# API keys / secrets (绝对不能上传！)
-.env
-
-# AI backups
+# AI backups (ai_update.py自动备份，可再生，不传)
 data/_backups/
 
 # OS files
@@ -18,5 +15,9 @@ Thumbs.db
 .vscode/
 .idea/
 
-# WorkBuddy
+# WorkBuddy (内部数据，不传)
 .workbuddy/
+
+# Python
+__pycache__/
+*.pyc
