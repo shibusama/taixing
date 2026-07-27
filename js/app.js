@@ -53,3 +53,17 @@
     observer.observe(el);
   });
 })();
+
+// --- 动态数据日期 ---
+(function(){
+  const el = document.getElementById('data-date');
+  if (!el) return;
+  fetch('/api/last-updated')
+    .then(r => r.json())
+    .then(data => {
+      if (data.last_updated && data.last_updated !== '暂无数据') {
+        el.textContent = data.last_updated;
+      }
+    })
+    .catch(function(){ /* 接口不可用时保持占位文字 */ });
+})();

@@ -1,0 +1,236 @@
+{
+  "_schema": "1.0",
+  "_description": "钛星数据源配置文件。按7个板块分类，每个数据源定义名称、爬虫函数、类型和描述。",
+  "_usage": "新增数据源：在对应板块的 sources 数组中添加一条记录，然后在 fetch_data.py 中实现对应的爬虫函数。",
+  "_boards": ["rocket", "moon", "controlled-fusion", "semiconductor", "china-tech", "mega-projects", "finance"],
+
+  "boards": {
+    "rocket": {
+      "name": "可回收火箭",
+      "name_en": "Reusable Rockets",
+      "output_file": "rocket.json",
+      "sources": [
+        {
+          "id": "rocket_launches",
+          "name": "火箭发射日历",
+          "crawler": "crawl_rocket_launches",
+          "type": "api",
+          "description": "Launch Library 2 API，抓取全球火箭发射排期",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "spacex",
+          "name": "SpaceX",
+          "crawler": "crawl_spacex",
+          "type": "api",
+          "description": "SpaceX 官方发射信息",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "blue_origin",
+          "name": "Blue Origin",
+          "crawler": "crawl_blue_origin",
+          "type": "html",
+          "description": "Blue Origin 官网新闻",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "rocket_lab",
+          "name": "Rocket Lab",
+          "crawler": "crawl_rocket_lab",
+          "type": "html",
+          "description": "Rocket Lab 官网新闻",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "relativity",
+          "name": "Relativity Space",
+          "crawler": "crawl_relativity",
+          "type": "html",
+          "description": "Relativity Space 官网新闻（Terran R可回收火箭）",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "stoke_space",
+          "name": "Stoke Space",
+          "crawler": "crawl_stoke",
+          "type": "html",
+          "description": "Stoke Space 官网新闻（Nova全可回收火箭）",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "moon": {
+      "name": "中美登月",
+      "name_en": "Moon Race",
+      "output_file": "moon.json",
+      "sources": [
+        {
+          "id": "nasa_artemis",
+          "name": "NASA Artemis",
+          "crawler": "crawl_nasa_artemis",
+          "type": "html",
+          "description": "NASA Artemis 登月计划新闻",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "controlled-fusion": {
+      "name": "可控核聚变",
+      "name_en": "Controlled Fusion",
+      "output_file": "fusion.json",
+      "sources": [
+        {
+          "id": "iter",
+          "name": "ITER",
+          "crawler": "crawl_iter",
+          "type": "html",
+          "description": "ITER Newsline 国际热核聚变实验堆",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "cfs",
+          "name": "CFS (Commonwealth Fusion)",
+          "crawler": "crawl_cfs",
+          "type": "html",
+          "description": "CFS 官网 SPARC 项目进展",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "asipp",
+          "name": "中科院等离子体所",
+          "crawler": "crawl_asipp",
+          "type": "html",
+          "description": "ASIPP EAST/CFETR 最新进展",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "semiconductor": {
+      "name": "中国半导体",
+      "name_en": "China Semiconductor",
+      "output_file": "semiconductor.json",
+      "sources": [
+        {
+          "id": "smic",
+          "name": "中芯国际 (SMIC)",
+          "crawler": "crawl_smic",
+          "type": "cffi",
+          "description": "中芯国际官网新闻（需 curl_cffi 绕过 TLS 指纹）",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "smee",
+          "name": "上海微电子 (SMEE)",
+          "crawler": "crawl_smee",
+          "type": "html",
+          "description": "上海微电子官网新闻",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "china-tech": {
+      "name": "中国科技",
+      "name_en": "China Tech",
+      "output_file": "china-tech.json",
+      "sources": [
+        {
+          "id": "anthropic",
+          "name": "Anthropic",
+          "crawler": "crawl_anthropic",
+          "type": "html",
+          "description": "Anthropic Newsroom",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "deepseek",
+          "name": "DeepSeek",
+          "crawler": "crawl_deepseek",
+          "type": "html",
+          "description": "DeepSeek API文档 + 主站",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "moonshot",
+          "name": "月之暗面 (Moonshot)",
+          "crawler": "crawl_moonshot",
+          "type": "html",
+          "description": "月之暗面 Kimi 官网",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "openai",
+          "name": "OpenAI",
+          "crawler": "crawl_openai",
+          "type": "cffi",
+          "description": "OpenAI Blog（需 curl_cffi 绕过 TLS 指纹）",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "mega-projects": {
+      "name": "大工程",
+      "name_en": "Mega Projects",
+      "output_file": "mega-projects.json",
+      "sources": [
+        {
+          "id": "china_railway",
+          "name": "国铁集团",
+          "crawler": "crawl_china_railway",
+          "type": "html",
+          "description": "国铁集团官网新闻",
+          "enabled": true,
+          "sleep_after": 1
+        }
+      ]
+    },
+
+    "finance": {
+      "name": "科技资本",
+      "name_en": "Tech Finance",
+      "output_file": "finance.json",
+      "auto_write": true,
+      "sources": [
+        {
+          "id": "exchange_rates",
+          "name": "汇率数据",
+          "crawler": "crawl_exchange_rates",
+          "type": "api",
+          "description": "Frankfurter API (ECB)，自动写入 finance.json",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "fed_rate",
+          "name": "美联储利率",
+          "crawler": "crawl_fed_rate",
+          "type": "api",
+          "description": "FRED API 或网页抓取",
+          "enabled": true,
+          "sleep_after": 0
+        }
+      ]
+    }
+  }
+}

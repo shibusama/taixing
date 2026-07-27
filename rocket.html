@@ -59,7 +59,8 @@
     <nav class="tab-nav" id="tabNav">
       <button class="active" data-tab="tab-progress">全球进展</button>
       <button data-tab="tab-comparison">技术对比</button>
-      <button data-tab="tab-timeline">发射计划</button>
+      <button data-tab="tab-plan-h2">发射计划</button>
+      <button data-tab="tab-timeline">未来展望</button>
     </nav>
 
     <!-- ======== Tab 1: 全球进展 ======== -->
@@ -70,144 +71,253 @@
 
         <h2>一、美国阵营</h2>
 
-        <div class="company">
-          <span class="company-flag flag-us">美国</span>
-          <h3>SpaceX — 星舰 / 猎鹰9号 <span class="status st-ok">行业领跑</span></h3>
-          <div class="en">SpaceX · 全可重复使用 · 液氧甲烷(星舰)/液氧煤油(猎鹰)</div>
-          <p>SpaceX 是可回收火箭毫无争议的标杆。猎鹰9号已累计回收 <strong>600 余次</strong>，一级可重复使用数十次，彻底改变了全球发射市场。星舰则是马斯克押注的"全可回收"终极形态，累计投入超 150 亿美元。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">星舰全箭总长</div><div class="v">约 121m</div></div>
-            <div class="kv"><div class="k">超重助推器推力</div><div class="v">约 7600t</div></div>
-            <div class="kv"><div class="k">猛禽3发动机推力</div><div class="v">280t</div></div>
-            <div class="kv"><div class="k">星舰隔热瓦</div><div class="v">1.8万块</div></div>
+        <div class="company-card-grid">
+          <!-- SpaceX -->
+          <div class="company-card" data-rocket="spacex">
+            <div class="cc-head">
+              <span class="cc-icon">🚀</span>
+              <h3>SpaceX</h3>
+              <span class="status st-ok">行业领跑</span>
+            </div>
+            <p class="cc-intro">可回收火箭的绝对标杆。猎鹰9号累计回收 600+ 次，星舰 V3 推力 ~8,080t、LEO 运力 100t+，瞄准全可重复使用的终极形态。</p>
+            <div class="cc-stats">
+              <span>🛸 星舰 V3 · ~8,080t</span>
+              <span>🦵 猎鹰9 · 22.8t LEO</span>
+              <span>🥢 塔架机械臂回收</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <h3>第 13 次试飞：近乎完美</h3>
-          <p>2026 年 7 月 24 日，星舰 V3 完成第 13 次全尺寸飞行测试：</p>
-          <ul>
-            <li><strong>超重助推器</strong>：33 台猛禽3全部点火，分离后返程减速点火，受控坠入墨西哥湾。</li>
-            <li><strong>星舰飞船</strong>：6 台发动机运行正常，首次部署 20 颗星链 V3 卫星；在轨短暂重启一台猛禽发动机，验证登月所需在轨点火能力。</li>
-            <li><strong>再入突破</strong>：飞船高速重返大气层后，在印度洋溅落并缓缓倾倒、整体漂浮海面——<strong>1.8 万块隔热瓦经受住 1430℃ 高温考验，几乎完好无损</strong>。</li>
-          </ul>
-          <blockquote>马斯克："除非任务数据分析发现新问题，否则 SpaceX 将在下一次飞行中尝试用发射塔捕获星舰。"——此前已多次用机械臂成功回收超重助推器。</blockquote>
-          <h3>商业化布局</h3>
-          <ul>
-            <li>SpaceX 已停止接收 2028 年后的猎鹰火箭专属发射预订，全力押注星舰。</li>
-            <li>已完成 IPO，发行价 135 美元。</li>
-            <li>若星舰实现 20 次以上复用，每公斤发射成本可从 900-1010 美元降至 115-125 美元。</li>
-            <li>马斯克计划 4-5 年内将星舰发射频率提升至每小时一次。</li>
-          </ul>
-        </div>
 
-        <div class="company">
-          <span class="company-flag flag-us">美国</span>
-          <h3>Blue Origin — 新格伦 <span class="status st-wait">复飞中</span></h3>
-          <div class="en">Blue Origin · 部分可重复使用 · 液氧液氢/液氧甲烷</div>
-          <p>贝索斯的蓝色起源走的是"慢工出细活"路线。新格伦以首位绕地飞行的美国宇航员约翰·格伦命名，一级助推器设计目标为飞行 25 次以上。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">首飞时间</div><div class="v">2025年1月</div></div>
-            <div class="kv"><div class="k">首次回收</div><div class="v">2025年11月</div></div>
-            <div class="kv"><div class="k">首次复用</div><div class="v">2026年4月</div></div>
-            <div class="kv"><div class="k">设计复用次数</div><div class="v">≥25次</div></div>
+          <!-- Blue Origin -->
+          <div class="company-card" data-rocket="newglenn">
+            <div class="cc-head">
+              <span class="cc-icon">🔵</span>
+              <h3>Blue Origin</h3>
+              <span class="status st-wait">复飞中</span>
+            </div>
+            <p class="cc-intro">贝索斯的蓝色起源。新格伦一级设计复用 ≥25 次，2026 年已完成首次复用飞行。LC-36 热试车异常后年底前复飞。</p>
+            <div class="cc-stats">
+              <span>🚀 新格伦 · ~1,712t</span>
+              <span>📦 LEO 45t</span>
+              <span>🦵 着陆腿海上回收</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <h3>三次飞行，喜忧参半</h3>
-          <ul>
-            <li><strong>NG-1（2025年1月）</strong>：成功入轨，但一级海上回收失败。</li>
-            <li><strong>NG-2（2025年11月）</strong>：发射 NASA 火星探测器 ESCAPADE，一级首次成功降落无人船 Jacklyn。</li>
-            <li><strong>NG-3（2026年4月19日）</strong>：首次复用一级——曾飞过 NG-2 的助推器再次升空，约 9 分钟后平稳降落回收船。但载荷 BlueBird 7 卫星入轨偏差。</li>
-          </ul>
-          <p>2026 年 5 月 28 日，LC-36 发射工位热试车发生严重异常，损失闪电塔、运输起竖器和液压缸，但储罐、总装厂房等核心设施完好。CEO Dave Limp 表示将在<strong>年底前复飞</strong>。</p>
-        </div>
 
-        <div class="company">
-          <span class="company-flag flag-us">美国</span>
-          <h3>Rocket Lab — Neutron <span class="status st-test">首飞在即</span></h3>
-          <div class="en">Rocket Lab · 部分可重复使用 · 液氧甲烷(Archimedes)</div>
-          <p>Rocket Lab 的 Electron 是全球发射最频繁的小型轨道火箭，已交付超 200 颗卫星。中型可回收火箭 Neutron 自 2021 年底启动研发。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">近地轨道运力</div><div class="v">13,000kg</div></div>
-            <div class="kv"><div class="k">一级发动机</div><div class="v">9×Archimedes</div></div>
-            <div class="kv"><div class="k">主体材料</div><div class="v">碳复合材料</div></div>
-            <div class="kv"><div class="k">首飞目标</div><div class="v">2026年</div></div>
+          <!-- Rocket Lab -->
+          <div class="company-card" data-rocket="neutron">
+            <div class="cc-head">
+              <span class="cc-icon">⚡</span>
+              <h3>Rocket Lab</h3>
+              <span class="status st-test">首飞在即</span>
+            </div>
+            <p class="cc-intro">Electron 是全球发射最频繁的小型火箭。中型可回收 Neutron 采用全球首创 "Hungry Hippo" 一体式整流罩，2026 年内首飞。</p>
+            <div class="cc-stats">
+              <span>🚀 Neutron · ~596t</span>
+              <span>📦 LEO 15t</span>
+              <span>🦛 一体式整流罩</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <h3>Hungry Hippo：全球首创</h3>
-          <p>Neutron 最具颠覆性的设计是 "Hungry Hippo"整流罩——两半整流罩在发射、载荷部署、返回全程始终与一级连接，在飞行中打开释放二级和载荷后再关闭。开合仅需 1.5 秒。</p>
-          <p>2025 年 12 月整流罩已完成全部资格测试，运往弗吉尼亚发射场整合。CEO 彼得·贝克 2026 年 7 月重申年内首飞目标。另注：2026 年 6 月 Rocket Lab 以 80 亿美元收购铱星（Iridium）。</p>
+
+          <!-- Relativity Space -->
+          <div class="company-card" data-rocket="terran_r">
+            <div class="cc-head">
+              <span class="cc-icon">🖨️</span>
+              <h3>Relativity Space</h3>
+              <span class="status st-test">研制中</span>
+            </div>
+            <p class="cc-intro">全球首家 3D 打印火箭公司。Terran R 为全 3D 打印中型可回收火箭，目标是 60 天内完成从原材料到发射的全流程。</p>
+            <div class="cc-stats">
+              <span>🚀 Terran R · ~940t</span>
+              <span>📦 LEO 20t</span>
+              <span>🖨️ 90% 3D打印</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- Stoke Space -->
+          <div class="company-card" data-rocket="nova">
+            <div class="cc-head">
+              <span class="cc-icon">🔄</span>
+              <h3>Stoke Space</h3>
+              <span class="status st-test">研制中</span>
+            </div>
+            <p class="cc-intro">目标打造全球首款全可重复使用两级火箭 Nova。二级采用独特的环形气动塞式喷管+主动冷却热盾，颠覆传统设计。</p>
+            <div class="cc-stats">
+              <span>🚀 Nova · 全可回收</span>
+              <span>🔥 环形塞式喷管</span>
+              <span>📦 LEO 5t</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
         </div>
 
         <h2>二、中国阵营</h2>
-        <p>2026 年是中国可回收火箭的"决战之年"。中国没有照抄 SpaceX 单一路线，而是<strong>国家队+民营多线并进</strong>：海上网系回收、着陆腿垂直回收、塔架机械臂三条路线同步推进。</p>
+        <p>2026年是中国可回收火箭"决战之年"。<strong>国家队+民营多线并进</strong>：海上网系回收、着陆腿垂直回收、塔架机械臂三条路线同步推进，11家企业携主力型号密集验证。</p>
 
-        <div class="company">
-          <span class="company-flag flag-cn-g">国家队</span>
-          <h3>长征十号乙 — 全球首创海上网系回收 <span class="status st-ok">已验证</span></h3>
-          <div class="en">航天科技集团一院 · 液氧煤油/液氧甲烷 · 5米直径</div>
-          <p>2026 年 7 月 10 日，长征十号乙在海南商业航天发射场首飞，将卫星送入预定轨道后，一子级从上百公里太空自主返航，被"领航者"号回收船的井字形柔性网精准捕获——<strong>全球首次运载火箭海上网系回收</strong>。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">全箭长度</div><div class="v">约 63m</div></div>
-            <div class="kv"><div class="k">起飞推力</div><div class="v">约 890t</div></div>
-            <div class="kv"><div class="k">复用态LEO运力</div><div class="v">≥16t</div></div>
-            <div class="kv"><div class="k">900km SSO运力</div><div class="v">≥11t</div></div>
+        <div class="company-card-grid cn-camp">
+
+          <!-- 航天科技集团 CASC -->
+          <div class="company-card" data-rocket="casc">
+            <div class="cc-head">
+              <span class="cc-icon">🏛️</span>
+              <h3>航天科技集团（CASC）</h3>
+              <span class="status st-ok">首飞即回收成功</span>
+            </div>
+            <p class="cc-intro">长征十号乙全球首创海上网系回收，首飞即成功。旗下长征八号R、长征十二号甲同步验证不同回收路线。</p>
+            <div class="cc-stats">
+              <span>🚀 长征十号乙 · 长八R · 长十二甲</span>
+              <span>🥅 海上网系 + 着陆腿双路线</span>
+              <span>📦 ≥16t LEO（复用）</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <h3>网系回收怎么"接"火箭？</h3>
-          <ul>
-            <li>一子级<strong>取消着陆腿</strong>，仅安装轻量化"捕获挂钩"，箭体减重约 15%。</li>
-            <li>2.5 万吨级"领航者"号回收船展开 44 米见方的井字形柔性阻拦网。</li>
-            <li>回收船具备 DP2 级动力定位能力，4 米浪高下定位精度优于 0.5 米。</li>
-          </ul>
-          <blockquote>核心优势：运力折损仅约 16%（着陆腿方案为 23%-40%），容错范围 ±50 米（着陆腿仅 ±5 米）。回收的一子级计划 2026 年底前完成复用飞行。</blockquote>
-        </div>
 
-        <div class="company">
-          <span class="company-flag flag-cn-p">民营</span>
-          <h3>蓝箭航天 — 朱雀三号 <span class="status st-wait">再战回收</span></h3>
-          <div class="en">LandSpace · 可复用液氧甲烷 · 不锈钢箭体 · 9机并联</div>
-          <p>蓝箭航天被称为"中国版 SpaceX"，是国内技术路线最激进的民营火箭公司。朱雀三号是中国首款发射且入轨成功的可重复使用运载火箭。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">全箭总长</div><div class="v">76.6m</div></div>
-            <div class="kv"><div class="k">箭体直径</div><div class="v">4.5m</div></div>
-            <div class="kv"><div class="k">起飞推力</div><div class="v">900t</div></div>
-            <div class="kv"><div class="k">一次性LEO运力</div><div class="v">21.3t</div></div>
-            <div class="kv"><div class="k">回收态LEO运力</div><div class="v">8t</div></div>
-            <div class="kv"><div class="k">一级发动机</div><div class="v">9×天鹊12A</div></div>
+          <!-- 航天科工 -->
+          <div class="company-card" data-rocket="kuaizhou_r">
+            <div class="cc-head">
+              <span class="cc-icon">🏭</span>
+              <h3>航天科工</h3>
+              <span class="status st-test">2026年底验证</span>
+            </div>
+            <p class="cc-intro">快舟系列30+次发射经验，复用型主打快速响应小型发射。成熟技术体系+着陆腿垂直回收，计划年底完成回收验证。</p>
+            <div class="cc-stats">
+              <span>🚀 快舟复用型</span>
+              <span>🦵 着陆腿垂直回收</span>
+              <span>📦 ~1t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <h3>遥一：入轨成功，回收失败</h3>
-          <p>2025 年 12 月 3 日，朱雀三号遥一发射，二子级成功入轨，一子级开展国内首次入轨级火箭一级回收验证——但末段着陆点火因异常燃烧而硬着陆。归零检查指向一子级底部防热设计缺陷。</p>
-          <h3>遥二：7月底再战</h3>
-          <ul>
-            <li>针对性加强一子级底部隔热结构。</li>
-            <li>2026 年 6 月 29 日完成 9 台发动机全系统静态点火。</li>
-            <li>发射窗口指向 7 月底至 8 月初，目标完成入轨+陆基着陆腿软着陆回收。</li>
-            <li>若成功，Q4 2026 尝试首次复用飞行，年内闭环"入轨—回收—复用"。</li>
-          </ul>
-        </div>
 
-        <div class="company">
-          <span class="company-flag flag-cn-p">民营</span>
-          <h3>星际荣耀 — 双曲线三号 <span class="status st-test">年底首飞</span></h3>
-          <div class="en">iSpace · 可复用液氧甲烷 · 海上回收路线</div>
-          <p>星际荣耀是国内商业航天先行者，2026 年 2 月完成 D++ 轮融资 50.37 亿元。双曲线三号走海上回收路线。</p>
-          <div class="company-grid">
-            <div class="kv"><div class="k">箭体直径</div><div class="v">4.2m</div></div>
-            <div class="kv"><div class="k">起飞规模</div><div class="v">490t</div></div>
-            <div class="kv"><div class="k">一级发动机</div><div class="v">9×焦点二号</div></div>
-            <div class="kv"><div class="k">首飞目标</div><div class="v">2026年底</div></div>
+          <!-- 中科宇航 -->
+          <div class="company-card" data-rocket="lijian2">
+            <div class="cc-head">
+              <span class="cc-icon">🔬</span>
+              <h3>中科宇航</h3>
+              <span class="status st-ok">首飞入轨成功</span>
+            </div>
+            <p class="cc-intro">中科院力学所孵化，核心团队来自国家队。力箭一号11次发射84颗卫星，力箭二号2026年3月首飞入轨成功。</p>
+            <div class="cc-stats">
+              <span>🚀 力箭二号</span>
+              <span>⚡ 集束式回收方案</span>
+              <span>📦 ~7.5t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
           </div>
-          <ul>
-            <li>焦点二号为当前国内在研推力最大、技术水平最先进的液氧甲烷可重复使用发动机。</li>
-            <li>回收船 2026 年 5 月抵海南，与模拟箭一子级开展海上联调试验。</li>
-            <li>成都双流基地总投资超 33 亿元，达产年产 20 发，2027 年投产。</li>
-          </ul>
-        </div>
 
-        <div class="company">
-          <span class="company-flag flag-cn-p">民营</span>
-          <h3>其他民营跟跑者 <span class="status st-test">加速验证</span></h3>
-          <div class="en">长征十二号甲 · 星河动�� · 深蓝航天 · 东方空间 · 箭元科技</div>
-          <ul>
-            <li><strong>长征十二号甲</strong>：2025 年 12 月首飞，二级入轨成功但一级回收未果。复用运力≥6 吨。</li>
-            <li><strong>星河动力 智神星二号</strong>、<strong>深蓝航天 星云一号</strong>、<strong>东方空间 引力二号</strong>：均计划 2026 年内完成首飞或回收验证。</li>
-            <li><strong>箭元科技 元行者一号</strong>：海上溅落回收方案，运力损耗可低至约 10%。</li>
-          </ul>
+          <!-- 蓝箭航天 -->
+          <div class="company-card" data-rocket="zq3">
+            <div class="cc-head">
+              <span class="cc-icon">🔥</span>
+              <h3>蓝箭航天（LandSpace）</h3>
+              <span class="status st-wait">遥二再战回收</span>
+            </div>
+            <p class="cc-intro">"中国版SpaceX"，技术路线最激进。朱雀三号不锈钢箭体+9台天鹊12A并联，遥一入轨成功，遥二7月底再战回收。</p>
+            <div class="cc-stats">
+              <span>🚀 朱雀三号 · 4.5m · 900t</span>
+              <span>🦵 着陆腿垂直回收</span>
+              <span>📦 21.3t LEO（一次性）</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 天兵科技 -->
+          <div class="company-card" data-rocket="tianlong3">
+            <div class="cc-head">
+              <span class="cc-icon">⚡</span>
+              <h3>天兵科技</h3>
+              <span class="status st-test">首飞失利·归零中</span>
+            </div>
+            <p class="cc-intro">民营估值最高。天龙三号直接对标猎鹰9号，运力国内最大。2026年4月首飞失利，已启动归零，仍是最有力竞争者。</p>
+            <div class="cc-stats">
+              <span>🚀 天龙三号 · 液氧煤油</span>
+              <span>🦵 着陆腿垂直回收</span>
+              <span>📦 22t LEO（一次性）</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 星际荣耀 -->
+          <div class="company-card" data-rocket="sqx3">
+            <div class="cc-head">
+              <span class="cc-icon">🌊</span>
+              <h3>星际荣耀（iSpace）</h3>
+              <span class="status st-test">年底首飞+海上回收</span>
+            </div>
+            <p class="cc-intro">国内首家入轨民企。双曲线三号走海上回收差异化路线，"星际归航"号专用回收船已就位，焦点二号为国内推力最大的液氧甲烷发动机。</p>
+            <div class="cc-stats">
+              <span>🚀 双曲线三号 · 4.2m</span>
+              <span>🌊 海上平台回收</span>
+              <span>📦 490t起飞推力</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 星河动力 -->
+          <div class="company-card" data-rocket="galactic_energy">
+            <div class="cc-head">
+              <span class="cc-icon">🛰️</span>
+              <h3>星河动力</h3>
+              <span class="status st-test">年内首飞可回收</span>
+            </div>
+            <p class="cc-intro">中国发射次数最多的民营火箭公司。谷神星一号23次发射，智神星系列液氧煤油可回收火箭年内首飞，3D打印占比高。</p>
+            <div class="cc-stats">
+              <span>🚀 智神星一号 · 二号</span>
+              <span>🦵 着陆腿垂直回收</span>
+              <span>📦 5t / 20t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 深蓝航天 -->
+          <div class="company-card" data-rocket="xingyun1">
+            <div class="cc-head">
+              <span class="cc-icon">☁️</span>
+              <h3>深蓝航天</h3>
+              <span class="status st-test">首飞倒计时</span>
+            </div>
+            <p class="cc-intro">国内第二个完成公里级VTVL回收的企业（全球第三个）。雷霆R发动机3D打印部件超85%，50%-110%深度变推。</p>
+            <div class="cc-stats">
+              <span>🚀 星云一号</span>
+              <span>🦵 着陆腿垂直回收</span>
+              <span>📦 ~3t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 箭元科技 -->
+          <div class="company-card" data-rocket="yuanxingzhe1">
+            <div class="cc-head">
+              <span class="cc-icon">🎯</span>
+              <h3>箭元科技</h3>
+              <span class="status st-test">试样阶段</span>
+            </div>
+            <p class="cc-intro">国内唯一"不锈钢箭体+海上网系回收"路线。减重超1吨，落点容差10米级。2025年完成2.5km海上回收试验。</p>
+            <div class="cc-stats">
+              <span>🚀 元行者一号 · 不锈钢</span>
+              <span>🥅 网系捕获（无着陆腿）</span>
+              <span>📦 ~8t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
+          <!-- 东方空间 -->
+          <div class="company-card" data-rocket="dongfang_space">
+            <div class="cc-head">
+              <span class="cc-icon">🌌</span>
+              <h3>东方空间</h3>
+              <span class="status st-test">年底首飞液体火箭</span>
+            </div>
+            <p class="cc-intro">固体火箭引力一号2次入轨发射，全球首创全固体捆绑式。引力二号液体可回收火箭年底首飞，兼顾重型单次+拼单发射。</p>
+            <div class="cc-stats">
+              <span>🚀 引力一号 · 引力二号</span>
+              <span>🌊 固体起步→液体可回收</span>
+              <span>📦 6.5t / 10t LEO</span>
+            </div>
+            <div class="cc-action">点击查看详情 →</div>
+          </div>
+
         </div>
 
         <h2>三、格局总结</h2>
@@ -298,14 +408,41 @@
       </div>
     </section>
 
-    <!-- ======== Tab 3: 发射计划 ======== -->
-    <section class="tab-panel" id="tab-timeline">
+    <!-- ======== Tab 3: 2026下半年发射计划 ======== -->
+    <section class="tab-panel" id="tab-plan-h2">
       <div class="article-body" style="padding-top:20px">
         <p>2026 年下半年是可回收火箭的"密集验证窗口"。中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准发射塔空中捕获，Rocket Lab Neutron 等待首飞。</p>
         <blockquote>航天发射计划具有高度不确定性，以下时间均为公开报道的<strong>目标窗口</strong>。</blockquote>
 
-        <h2>2026 年下半年</h2>
-        <div class="tl" id="rocket-timeline-h2"></div>
+        <h2>✓ 已完成</h2>
+        <div class="rocket-compare-tl">
+          <div class="rocket-tl-col">
+            <h3 class="tl-col-title">🇨🇳 中国</h3>
+            <div class="tl" id="rocket-timeline-cn-done"></div>
+          </div>
+          <div class="rocket-tl-col">
+            <h3 class="tl-col-title">🇺🇸 美国</h3>
+            <div class="tl" id="rocket-timeline-us-done"></div>
+          </div>
+        </div>
+
+        <h2>即将发射</h2>
+        <div class="rocket-compare-tl">
+          <div class="rocket-tl-col">
+            <h3 class="tl-col-title">🇨🇳 中国</h3>
+            <div class="tl" id="rocket-timeline-cn-upcoming"></div>
+          </div>
+          <div class="rocket-tl-col">
+            <h3 class="tl-col-title">🇺🇸 美国</h3>
+            <div class="tl" id="rocket-timeline-us-upcoming"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== Tab 4: 未来展望 ======== -->
+    <section class="tab-panel" id="tab-timeline">
+      <div class="article-body" style="padding-top:20px">
 
         <h2>2027 年展望</h2>
         <div class="tl" id="rocket-timeline-2027"></div>
@@ -315,7 +452,7 @@
           <li><strong>谁能先完成"复用"而非仅"回收"</strong>：长征十号乙和朱雀三号都瞄准2026年底复飞。</li>
           <li><strong>星舰能否实现飞船塔架捕获</strong>：全可重复使用的最后一块拼图。</li>
           <li><strong>Neutron 首飞表现</strong>：Hungry Hippo 整流罩方案若验证成功，将开创可回收火箭新范式。</li>
-          <li><strong>复用经济性拐点</strong>：从"回收成功"到"日常化复用"才是改变市场的真正分水岭。</li>
+          <li><strong>复用经济性拐点</strong>：从"回收��功"到"日常化复用"才是改变市场的真正分水岭。</li>
         </ul>
       </div>
     </section>
@@ -335,7 +472,7 @@
 
 <button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
 
-<footer class="footer"><div class="wrap"><div class="fl">🔭 钛星 — 未来已来</div><div>追踪全球前沿科技新闻与深度分析 · 数据截至 2026 年 7 月 · 仅供参考</div></div></footer>
+<footer class="footer"><div class="wrap"><div class="fl">🔭 钛星 — 未来已来</div><div>追踪全球前沿科技新闻与深度分析 · 数据截至 <span id="data-date">加载中...</span> · 仅供参考</div></div></footer>
 <script src="js/app.js"></script>
 <script>
 (async function(){
@@ -360,7 +497,17 @@
         return `<div class="tl-item ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
       }).join('');
     }
-    document.getElementById('rocket-timeline-h2').innerHTML = renderTL(d.timeline_h2);
+    function isUS(item) {
+      const usKeys = ['SpaceX', 'Blue Origin', 'Rocket Lab', 'NASA', 'Relativity', 'Stoke', 'ULA'];
+      return usKeys.some(k => item.title.includes(k));
+    }
+    const h2Items = d.timeline_h2;
+    // 已完成
+    document.getElementById('rocket-timeline-cn-done').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && it.done));
+    document.getElementById('rocket-timeline-us-done').innerHTML = renderTL(h2Items.filter(it => isUS(it) && it.done));
+    // 即将发射
+    document.getElementById('rocket-timeline-cn-upcoming').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && !it.done));
+    document.getElementById('rocket-timeline-us-upcoming').innerHTML = renderTL(h2Items.filter(it => isUS(it) && !it.done));
     document.getElementById('rocket-timeline-2027').innerHTML = renderTL(d.timeline_2027);
   } catch(e) { console.error('Rocket data load failed:', e); }
 
@@ -390,7 +537,32 @@
     zq3:{name:'朱雀三号 (ZQ-3)',tag:'tag-test',tagText:'遥二再战回收',rows:[['企业','蓝箭航天（中国，民营）'],['推进剂','液氧甲烷（TQ-12B × 9 + TQ-15B × 1）'],['箭体直径','4.5m（全箭长 76.6m）'],['起飞推力','900t'],['LEO 运力','21.3t（一次性）/ 18.3t（航区回收）/ 12.5t（返场）'],['回收路线','着陆腿垂直回收'],['箭体材料','不锈钢'],['复用设计','一子级 ≥20 次'],['当前状态','遥一（2025.12）入轨成功、回收失败；遥二 2026年7月底再战']],desc:'中国商业航天首款不锈钢可回收火箭，也是国内民营公司轨道级回收验证的标杆。2025年12月遥一首飞入轨成功，一级回收在着陆段点火异常、残骸落于回收场坪边缘。2026年7月底遥二再次挑战，若成功则Q4尝试首次复用飞行。蓝箭已申报科创板IPO，拟募资75亿元。'},
     sqx3:{name:'双曲线三号 (SQX-3)',tag:'tag-dev',tagText:'2026年底首飞',rows:[['企业','星际荣耀（中国，民营）'],['推进剂','液氧甲烷（焦点二号发动机）'],['箭体直径','4.2m（全箭长 ~69m）'],['起飞推力','490t（9 台并机）'],['回收路线','海上平台回收'],['首飞计划','2026年底入轨 + 尝试回收']],desc:'星际荣耀首款大型可回收液体火箭，采用9台焦点二号液氧甲烷发动机并联。与蓝箭朱雀三号共同构成中国商业航天的"民营双箭"局面——朱雀三号走陆地着陆腿路线，双曲线三号走海上回收路线，形成差异化竞争。'},
     cz12a:{name:'长征十二号甲 (CZ-12A)',tag:'tag-test',tagText:'首飞回收未果 · 继续攻关',rows:[['企业','中国商业火箭有限公司（中国商火）'],['推进剂','液氧甲烷'],['回收路线','着陆腿垂直回收'],['LEO 运力','≥6t（复用模式）'],['当前状态','首飞入轨成功，回收试验未果']],desc:'中国商火的中型可回收火箭，面向中低轨星座和中小型载荷市场。已完成首飞入轨验证，回收技术仍在攻关中。定位介于长征十号乙（大型）与小型火箭之间，填补运力档位空白。'},
-    zss2:{name:'智神星二号',tag:'tag-dev',tagText:'地面验证中',rows:[['企业','星河动力（中国，民营）'],['推进剂','液氧煤油（CQ-90百吨级发动机）'],['箭体直径','4.5m'],['起飞推力','910t'],['LEO 运力','20t（基本型）'],['回收路线','着陆腿垂直回收'],['首飞计划','力争2026年底前']],desc:'星河动力大型可回收火箭，采用百吨级深度变推液氧煤油发动机，配备3D打印一体化集成技术。与朱雀三号、双曲线三号形成中国民营航天的大型可回收火箭"三���马车"。推进剂仍用液氧煤油（而非甲烷），在积碳和翻新上挑战更大。'}
+    zss2:{name:'智神星二号',tag:'tag-dev',tagText:'地面验证中',rows:[['企业','星河动力（中国，民营）'],['推进剂','液氧煤油（CQ-90百吨级发动机）'],['箭体直径','4.5m'],['起飞推力','910t'],['LEO 运力','20t（基本型）'],['回收路线','着陆腿垂直回收'],['首飞计划','力争2026年底前']],desc:'星河动力大型可回收火箭，采用百吨级深度变推液氧煤油发动机，配备3D打印一体化集成技术。与朱雀三号、双曲线三号形成中国民营航天的大型可回收火箭"三驾马车"。推进剂仍用液氧煤油（而非甲烷），在积碳和翻新上挑战更大。'},
+    terran_r:{name:'Terran R',tag:'tag-dev',tagText:'研制中',rows:[['企业','Relativity Space（美国）'],['推进剂','液氧甲烷（Aeon R × 9）'],['箭体直径','5.5m（全箭长 ~82m）'],['起飞推力','~940t'],['LEO 运力','20t（回收模式）/ 33.5t（一次性）'],['回收路线','着陆腿海上平台垂直回收'],['制造方式','90% 以上结构为 3D 打印'],['首飞目标','2027年']],desc:'全球首家以 3D 打印为核心制造方式的火箭公司。Terran R 从原材料到发射仅需 60 天，零部件从数万个压缩到不到 1,000 个。2023 年放弃 Terran 1 转向直接研发可回收的 Terran R，目标是大幅降低制造成本和迭代周期。'},
+    nova:{name:'Nova',tag:'tag-dev',tagText:'研制中',rows:[['企业','Stoke Space（美国）'],['推进剂','液氧液氢（二级采用环形塞式喷管）'],['回收路线','一级垂直着陆 + 二级有动力再入'],['LEO 运力','~5t（全可重复使用）'],['核心技术','环形气动塞式喷管 + 主动冷却金属热盾']],desc:'Stoke Space 是唯一一家同时研发全可重复使用一级和二级的初创公司。二级采用颠覆性的环形气动塞式喷管设计——发动机环绕箭体一圈，再入时喷管本身就是热盾，无需隔热瓦。2025 年已完成二级跳跃测试，正推进一级液氧甲烷发动机试车。'},
+    spacex:{_combo:true,name:'SpaceX · 星舰 + 猎鹰9号',tag:'tag-live',tagText:'行业领跑',sections:[
+      {title:'星舰 V3 (Starship V3)',tag:'tag-test',tagText:'试飞验证中',rows:[['推进剂','液氧甲烷'],['箭体直径','9m（全箭总长约 121m）'],['起飞推力','~8,080t（33 台猛禽 V3）'],['LEO 运力','100t+（完全可重复用）'],['回收路线','塔架机械臂捕获（"筷子夹"）'],['箭体材料','不锈钢（304L）'],['当前状态','IFT-13 已试飞，推进器塔架捕获成功 2 次']],desc:'星舰是人类有史以来最大运载火箭，目标是将发射成本降至每公斤数十美元级别。一子级超重助推器返回时由发射塔巨型机械臂在空中直接夹住，彻底省去着陆腿和回收船。2026年7月24日 IFT-13 近乎完美：33台猛禽全燃、部署20颗星链V3、在轨重启发动机、1.8万块隔热瓦完好无损。'},
+      {title:'猎鹰9号 Block 5 (Falcon 9)',tag:'tag-live',tagText:'成熟运营',rows:[['推进剂','液氧煤油（RP-1）'],['箭体直径','3.65m（全箭长 70m）'],['起飞推力','~760t（9 台 Merlin 1D）'],['LEO 运力','22.8t（一次性）/ ~15.6t（回收）'],['回收路线','着陆腿垂直着陆（海上平台/陆地）'],['复用记录','单枚箭体最高复用 >25 次，累计回收 600+ 次'],['发射价格','约 $67M/次']],desc:'全球最成熟的可回收火箭，累计发射 400+ 次，回收成功率超 99%。已停止接收 2028 年后专属预订，全力押注星舰。若星舰实现 20 次以上复用，每公斤发射成本可从 $900-1,010 降至 $115-125。'}
+    ]},
+    tianlong3:{name:'天龙三号 (Tianlong-3)',tag:'tag-test',tagText:'首飞失利·归零中',rows:[['企业','天兵科技（中国，民营，估值225亿）'],['推进剂','液氧煤油（9台天火-12）'],['箭体直径','3.8m'],['起飞推力','~840t'],['LEO 运力','22t（一次性）/ ~8t（复用）'],['回收路线','着陆腿垂直回收'],['复用设计','≥10次'],['当前状态','2026年4月首飞失利（升空后解体），已启动归零']],desc:'天兵科技是中国民营可回收火箭估值最高企业（约225亿元）。天龙三号直接对标SpaceX猎鹰9号，液氧煤油路线+9台天火-12可变推力发动机。首飞虽失利，但大运力技术指标仍领先国内民营阵营。'},
+    lijian2:{name:'力箭二号 (Lijian-2)',tag:'tag-live',tagText:'首飞入轨成功',rows:[['企业','中科宇航（中国，中科院孵化）'],['推进剂','液氧煤油（YF-102发动机）'],['箭体直径','3.35m'],['起飞推力','~420t'],['LEO 运力','~7.5t'],['回收路线','集束式回收方案'],['发射记录','力箭一号11次发射84颗卫星'],['当前状态','2026.3.30首飞入轨成功（不回收构型）']],desc:'中科院力学研究所孵化，核心团队来自国家队。力箭一号已实现常态化发射，力箭二号首飞成功验证了整体性能。集束式回收方案与SpaceX路线类似，设计复用≥10次。'},
+    xingyun1:{name:'星云一号 (Xingyun-1)',tag:'tag-dev',tagText:'首飞倒计时',rows:[['企业','深蓝航天（中国，民营）'],['推进剂','液氧甲烷（雷霆R发动机）'],['箭体直径','~3.35m'],['起飞推力','~180t（9台并机）'],['LEO 运力','~3t'],['回收路线','着陆腿垂直回收'],['核心技术','雷霆R 3D打印部件>85%，50%-110%变推'],['当前状态','国内第二个完成公里级VTVL回收试验']],desc:'深蓝航天是国内VTVL回收先行者，全球第三个完成公里级垂直起降回收。雷霆R发动机关键部件3D打印占比超85%，实现自主可控。计划2026年在山东海阳东方航天港首飞，验证入轨+回收。'},
+    yuanxingzhe1:{name:'元行者一号 (Yuanxingzhe-1)',tag:'tag-dev',tagText:'试样阶段',rows:[['企业','箭元科技（中国，民营）'],['推进剂','液氧甲烷'],['箭体直径','~4m（不锈钢箭体）'],['起飞推力','~400t'],['LEO 运力','~8t'],['回收路线','海上网系捕获（无着陆腿）'],['里程碑','2025.5完成2.5km海上回收试验'],['当前状态','2026.3转入试样阶段']],desc:'国内唯一"不锈钢箭体+海上网系回收"技术路线，与国家队网系回收方案一脉相承。取消着陆腿减重超1吨，落点容差从厘米级放宽至10米级，大幅降低回收难度。计划2026年底首飞。'},
+    yinli2:{name:'引力二号 (Yinli-2)',tag:'tag-dev',tagText:'年底首飞',rows:[['企业','东方空间（中国，民营）'],['推进剂','液氧甲烷'],['箭体直径','~4m'],['起飞推力','~450t'],['LEO 运力','~10t'],['回收路线','海上回收方案'],['前序产品','引力一号已2次入轨发射（固体）'],['首飞计划','2026年末']],desc:'东方空间从固体火箭起步，引力一号为全球首创全固体捆绑式中型火箭。引力二号转型为液体可回收路线，差异化定位兼顾重型单次发射与中小卫星拼单，降低客户成本。'},
+    kuaizhou_r:{name:'快舟复用型 (Kuaizhou-Reusable)',tag:'tag-test',tagText:'2026年底验证',rows:[['企业','航天科工航天三江（中国）'],['推进剂','固液混合'],['箭体直径','~2.2m'],['起飞推力','~60t'],['LEO 运力','~1t'],['回收路线','着陆腿垂直回收'],['发射记录','快舟系列累计30+次发射'],['回收计划','2026年底前完成首次完整可回收试验']],desc:'依托快舟系列成熟技术体系的小型可回收火箭，适配快速响应发射场景。航天科工凭借深厚技术积淀，回收验证成功概率极高。'},
+    casc:{_combo:true,name:'航天科技集团 · 三款可回收火箭',tag:'tag-live',tagText:'国家队领跑',sections:[
+      {title:'长征十号乙 (CZ-10B)',tag:'tag-live',tagText:'全球首创·首飞回收成功',rows:[['推进剂','液氧煤油+液氧甲烷'],['箭体直径','5m（全箭~67m）'],['起飞推力','~890t'],['LEO 运力','≥16t（复用）'],['回收路线','海上网系捕获（全球首创）'],['运力折损','约16%（同类最低）']],desc:'全球首款海上网系回收火箭。2026年7月10日首飞即成功入轨+回收，"领航者"号44米柔性网精准捕获一子级。取消着陆腿省去~2t死重，容错范围±50米。'},
+      {title:'长征十二号甲 (CZ-12A)',tag:'tag-test',tagText:'回收攻关中',rows:[['推进剂','液氧甲烷'],['回收路线','着陆腿垂直回收'],['LEO 运力','≥6t（复用）'],['当前状态','首飞入轨成功，回收未果']],desc:'中国商火中型可回收火箭，填补中低轨运力档位空白。已完成首飞入轨，回收技术持续攻关。'},
+      {title:'长征八号R (CZ-8R)',tag:'tag-test',tagText:'Q3回收验证',rows:[['推进剂','液氧煤油/液氧液氢'],['箭体直径','3.35m'],['LEO 运力','~5t（复用）'],['回收路线','着陆腿垂直回收'],['回收计划','2026年Q3首次完整可回收试验']],desc:'基于成熟长征八号平台的可回收版本，国家队的又一回收技术验证型号。复用后可大幅降低中低轨发射成本。'}
+    ]},
+    galactic_energy:{_combo:true,name:'星河动力 · 智神星系列',tag:'tag-test',tagText:'发射次数最多的民营公司',sections:[
+      {title:'智神星一号 (ZSS-1)',tag:'tag-dev',tagText:'计划年内首飞',rows:[['推进剂','液氧煤油（7台CQ-50）'],['箭体直径','~3.35m'],['LEO 运力','~5t'],['回收路线','着陆腿垂直回收'],['复用设计','≥25次'],['核心技术','针栓式喷注器+同轴双吸涡轮泵']],desc:'星河动力首款可回收液体火箭，依托23次谷神星发射积累的工程经验。3D打印占比高，CQ-50发动机为百吨级深度变推液氧煤油发动机。'},
+      {title:'智神星二号 (ZSS-2)',tag:'tag-dev',tagText:'地面验证中',rows:[['推进剂','液氧煤油（CQ-90百吨级）'],['箭体直径','4.5m'],['起飞推力','910t'],['LEO 运力','20t（基本型）'],['回收路线','着陆腿垂直回收']],desc:'星河动力大型可回收火箭，百吨级深度变推液氧煤油发动机+3D打印集成。与朱雀三号、双曲线三号并称民营"三驾马车"。'}
+    ]},
+    dongfang_space:{_combo:true,name:'东方空间 · 引力系列',tag:'tag-test',tagText:'固液并举',sections:[
+      {title:'引力一号 (Yinli-1)',tag:'tag-live',tagText:'已发射2次',rows:[['类型','全固体捆绑式中型火箭'],['推进剂','固体（一级）+液体（上面级）'],['LEO 运力','~6.5t'],['回收方式','一次性（固体不可回收）'],['发射记录','已完成2次入轨发射']],desc:'全球首创全固体捆绑式中型运载火箭，为引力二号积累工程经验。差异化定位兼顾重型单次与中小拼单发射。'},
+      {title:'引力二号 (Yinli-2)',tag:'tag-dev',tagText:'年底首飞',rows:[['推进剂','液氧甲烷'],['箭体直径','~4m'],['起飞推力','~450t'],['LEO 运力','~10t'],['回收路线','海上回收方案'],['首飞计划','2026年末']],desc:'东方空间转型液体可回收的关键型号，简化箭体结构降低制造成本，产业链自研火箭结构件。'}
+    ]},
   };
 
   var overlay=document.getElementById('rocketModal');
@@ -400,9 +572,21 @@
 
   function open(key){
     var d=data[key];if(!d)return;
-    titleEl.innerHTML=d.name+' <span class="tag '+d.tag+'">'+d.tagText+'</span>';
-    var rows=d.rows.map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>';}).join('');
-    bodyEl.innerHTML='<table>'+rows+'</table>'+(d.desc?'<p>'+d.desc+'</p>':'');
+    
+    // SpaceX 双箭合并模式
+    if(d._combo){
+      titleEl.innerHTML=d.name+' <span class="tag '+d.tag+'">'+d.tagText+'</span>';
+      var sectionsHtml=d.sections.map(function(s){
+        var rows=s.rows.map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>';}).join('');
+        return '<h3 style="color:var(--cyan);margin:0 0 4px;font-size:15px">'+s.title+' <span class="tag '+s.tag+'">'+s.tagText+'</span></h3>'
+          +'<table>'+rows+'</table>'+(s.desc?'<p>'+s.desc+'</p>':'<hr style="border-color:var(--line);margin:16px 0">');
+      }).join('');
+      bodyEl.innerHTML=sectionsHtml;
+    } else {
+      titleEl.innerHTML=d.name+' <span class="tag '+d.tag+'">'+d.tagText+'</span>';
+      var rows=d.rows.map(function(r){return '<tr><th>'+r[0]+'</th><td>'+r[1]+'</td></tr>';}).join('');
+      bodyEl.innerHTML='<table>'+rows+'</table>'+(d.desc?'<p>'+d.desc+'</p>':'');
+    }
     overlay.classList.add('active');
   }
 
@@ -410,8 +594,16 @@
     overlay.classList.remove('active');
   }
 
+  // 对比表格点击
   document.querySelectorAll('.cmp td[data-rocket]').forEach(function(td){
     td.addEventListener('click',function(){
+      open(this.getAttribute('data-rocket'));
+    });
+  });
+
+  // 公司卡片点击
+  document.querySelectorAll('.company-card[data-rocket]').forEach(function(card){
+    card.addEventListener('click',function(){
       open(this.getAttribute('data-rocket'));
     });
   });

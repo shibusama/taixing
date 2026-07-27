@@ -145,8 +145,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 /* ========== 区块标题 ========== */
 .sec{padding:50px 0}
 .sec-head{
-  display:flex;align-items:flex-end;justify-content:space-between;
-  margin-bottom:28px;gap:20px;flex-wrap:wrap;
+  display:flex;flex-direction:column;align-items:flex-start;
+  margin-bottom:28px;gap:8px;
 }
 .sec-head h2{
   font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-.5px;
@@ -155,7 +155,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   display:inline-block;width:5px;height:22px;background:var(--cyan);
   border-radius:3px;vertical-align:-3px;margin-right:10px;
 }
-.sec-head .desc{color:var(--txt-2);font-size:13px;max-width:380px}
+.sec-head .desc{color:var(--txt-2);font-size:13px;max-width:none;line-height:1.6}
 .sec-head .more{
   color:var(--cyan);font-size:13px;font-weight:600;
   transition:var(--trans);white-space:nowrap;
@@ -350,6 +350,116 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .kv .v{font-size:14px;font-weight:500;color:var(--txt-1);line-height:1.5}
 .kv .v strong,.kv .v em{color:var(--cyan);font-weight:600;font-style:normal}
 
+/* ========== 公司卡片网格（可回收火箭全球进展） ========== */
+.company-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.company-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 18px 18px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.company-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 224, 255, 0.08);
+}
+.company-card .cc-flag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border-radius: 0 0 0 8px;
+  z-index: 1;
+}
+.company-card .cc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.company-card .cc-head h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--txt-0);
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+.company-card:hover .cc-head h3 {
+  color: var(--cyan);
+}
+.company-card .cc-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+.cn-camp .company-card .cc-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px 8px;
+}
+.cn-camp .cc-head .status {
+  grid-column: 1 / -1;
+  width: fit-content;
+}
+.company-card .cc-intro {
+  font-size: 13px;
+  color: var(--txt-1);
+  line-height: 1.65;
+  margin: 0;
+}
+.company-card .cc-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.company-card .cc-stats span {
+  font-size: 12px;
+  color: var(--txt-2);
+}
+.company-card .cc-action {
+  font-size: 12px;
+  color: var(--cyan);
+  font-weight: 600;
+  margin-top: auto;
+  padding-top: 8px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.25s;
+}
+.company-card:hover .cc-action {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .company-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .company-card {
+    padding: 16px 14px 14px;
+  }
+}
+@media (max-width: 500px) {
+  .company-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 数据看板卡片（demo用） */
 .card{
   background:var(--bg-card);border:1px solid var(--line);
@@ -498,6 +608,21 @@ table.cmp .hi{color:var(--amber);font-weight:700}
 .tl-item.green .tl-date{color:var(--green)}
 .tl-item h4{font-size:16px;font-weight:700;margin-bottom:5px}
 .tl-item p{font-size:13px;color:var(--txt-1)}
+
+/* ========== 火箭发射中美对比时间线 ========== */
+.rocket-compare-tl{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:32px;margin:20px 0 32px;
+}
+.tl-col-title{
+  font-size:15px;font-weight:700;color:var(--txt-0);
+  margin-bottom:14px;padding-bottom:8px;
+  border-bottom:2px solid var(--border);
+}
+.rocket-tl-col .tl{margin-left:28px}
+@media(max-width:768px){
+  .rocket-compare-tl{grid-template-columns:1fr;gap:24px}
+}
 
 /* ========== 聚变三列平行时间线 ========== */
 .fusion-tl-grid{

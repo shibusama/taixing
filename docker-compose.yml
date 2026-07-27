@@ -1,0 +1,8 @@
+services:
+  taixing:
+    build: .
+    container_name: taixing
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    # Crawler can be run with: docker exec taixing python fetch_data.py
