@@ -3,6 +3,7 @@
 
 # Temp files (临时文件，不传)
 *.txt
+!backend/requirements.txt
 
 # AI backups (ai_update.py自动备份，可再生，不传)
 data/_backups/
