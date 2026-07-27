@@ -40,8 +40,9 @@ fi
 echo "代码已拉取 ✓"
 
 echo ""
-echo "==== 4/4 构建并启动 ===="
-docker compose up -d --build
+echo "==== 4/4 拉取镜像并启动 ===="
+docker compose pull
+docker compose up -d
 echo "启动完成 ✓"
 
 echo ""
