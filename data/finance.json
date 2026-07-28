@@ -1,6 +1,6 @@
 {
   "meta": {
-    "updated": "2026-07-28T12:02:27+08:00",
+    "updated": "2026-07-28T14:01:53+08:00",
     "module": "finance"
   },
   "fed_highlights": [
@@ -114,7 +114,7 @@
     },
     {
       "label": "年涨幅（红）",
-      "num": "+10.95<span class='unit'>%</span>",
+      "num": "+10.46<span class='unit'>%</span>",
       "sub": "逼近40年高位",
       "color": "var(--red)"
     }
