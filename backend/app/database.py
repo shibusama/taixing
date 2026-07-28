@@ -259,17 +259,20 @@ def init_db():
             cur.execute(sql)
         # -- migration: add rocket_intro column to existing board_status tables --
         try:
-            cur.execute("ALTER TABLE board_status ADD COLUMN rocket_intro TEXT DEFAULT ''")
-        except sqlite3.OperationalError:
-            pass  # column already exists
+            cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name='board_status' AND column_name='rocket_intro'")
+            if not cur.fetchone():
+                cur.execute("ALTER TABLE board_status ADD COLUMN rocket_intro TEXT DEFAULT ''")
+        except Exception:
+            pass  # column already exists or error
 
 
 def needs_migration() -> bool:
     """Check if the DB has no data yet (first run after Docker build)."""
     try:
         with get_cursor() as cur:
-            cur.execute("SELECT COUNT(*) FROM rocket_companies")
-            return cur.fetchone()[0] == 0
+            cur.execute("SELECT COUNT(*) as cnt FROM rocket_companies")
+            row = cur.fetchone()
+            return row['cnt'] == 0
     except Exception:
         return True
 
