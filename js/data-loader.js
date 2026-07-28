@@ -3,15 +3,15 @@
  * 每个页面在底部调用：loadData('finance').then(render)
  */
 
-const DATA_BASE = './data/';
+const API_BASE = '/api/boards/';
 
 async function loadData(module) {
   try {
-    const res = await fetch(`${DATA_BASE}${module}.json?t=${Date.now()}`);
+    const res = await fetch(`${API_BASE}${module}/full?t=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } catch (e) {
-    console.warn(`[钛星] 加载 ${module}.json 失败:`, e.message);
+    console.warn(`[钛星] 加载 ${module} 数据失败:`, e.message);
     return null;
   }
 }

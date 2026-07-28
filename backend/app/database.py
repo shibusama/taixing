@@ -367,3 +367,96 @@ def get_cursor():
 
 def _list(data):
     return data if isinstance(data, list) else []
+
+
+# ============ 完整版块数据 ============
+
+def get_board_meta(board_id: str) -> Optional[Dict]:
+    """获取版块元信息"""
+    sb = get_supabase()
+    result = sb.table("board_meta").select("*").eq("board_id", board_id).execute()
+    return result.data[0] if result.data else None
+
+
+def get_board_full(board_id: str) -> Optional[Dict]:
+    """获取版块完整数据（匹配 JSON 文件结构）"""
+    meta = get_board_meta(board_id)
+    if not meta:
+        return None
+
+    result = {"meta": meta}
+
+    if board_id == "rocket":
+        result["comparison_table"] = get_rocket_companies()
+        timeline = get_rocket_timeline()
+        # 按 period 分组
+        result["timeline_h2"] = [t for t in timeline if t.get("period") == "h2"]
+        result["timeline_2027"] = [t for t in timeline if t.get("period") == "2027"]
+
+    elif board_id == "moon":
+        result["highlights"] = get_moon_highlights()
+        result["comparison"] = get_moon_comparison()
+
+    elif board_id == "semiconductor":
+        result["highlights"] = get_semiconductor_highlights()
+        tab_highlights = get_semiconductor_tab_highlights()
+        tab_progress = get_semiconductor_tab_progress()
+        # 按 tab_id 分组
+        tabs = {}
+        for h in tab_highlights:
+            tid = h.get("tab_id", "")
+            if tid not in tabs:
+                tabs[tid] = {"highlights": [], "progress": []}
+            tabs[tid]["highlights"].append(h)
+        for p in tab_progress:
+            tid = p.get("tab_id", "")
+            if tid not in tabs:
+                tabs[tid] = {"highlights": [], "progress": []}
+            tabs[tid]["progress"].append(p)
+        result["tabs"] = tabs
+
+    elif board_id == "china-tech":
+        result["highlights"] = get_china_tech_highlights()
+        result["llm_table"] = get_china_tech_llm()
+
+    elif board_id == "mega-projects":
+        result["highlights"] = get_mega_project_highlights()
+        projects = get_mega_projects()
+        milestones = get_mega_project_milestones()
+        # 按 tab_id 分组项目，每个项目关联里程碑
+        tabs = {}
+        for proj in projects:
+            tid = proj.get("tab_id", "")
+            if tid not in tabs:
+                tabs[tid] = []
+            proj_id = proj.get("id")
+            proj["milestones"] = [m for m in milestones if m.get("project_id") == proj_id]
+            tabs[tid].append(proj)
+        result["timeline"] = tabs
+
+    elif board_id == "fusion":
+        result["highlights"] = get_fusion_highlights()
+        result["timeline"] = get_fusion_timeline()
+
+    elif board_id == "finance":
+        result["fed_highlights"] = [h for h in get_finance_highlights() if h.get("section") == "fed_highlights"]
+        result["fx_highlights"] = [h for h in get_finance_highlights() if h.get("section") == "fx_highlights"]
+        result["spacex_highlights"] = [h for h in get_finance_highlights() if h.get("section") == "spacex_highlights"]
+        result["ai_highlights"] = [h for h in get_finance_highlights() if h.get("section") == "ai_highlights"]
+
+        sections = get_finance_sections()
+        grids = get_finance_grids()
+        # 按 section 分组，转换为 JSON 文件结构
+        for sec in sections:
+            sec_key = sec.get("section", "")
+            sec_grids = [g for g in grids if g.get("section") == sec_key]
+            # 转换为 {tag, name, en, desc, grid: [{k,v}]} 格式
+            result[sec_key] = {
+                "tag": sec.get("tag", ""),
+                "name": sec.get("name", ""),
+                "en": sec.get("en", ""),
+                "desc": sec.get("description", ""),
+                "grid": [{"k": g.get("key", ""), "v": g.get("value", "")} for g in sec_grids]
+            }
+
+    return result

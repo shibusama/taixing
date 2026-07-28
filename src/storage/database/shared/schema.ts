@@ -8,6 +8,15 @@ export const healthCheck = pgTable("health_check", {
   updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
+// ============ 板块元信息 ============
+
+export const boardMeta = pgTable("board_meta", {
+  boardId: text("board_id").primaryKey(),
+  updated: text("updated"),
+  source: text("source"),
+  module: text("module"),
+});
+
 // ============ 板块状态 ============
 
 export const boardStatus = pgTable("board_status", {

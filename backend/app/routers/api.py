@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.database import get_board, list_boards, log_crawl
+from app.database import get_board, get_board_full, list_boards, log_crawl
 
 router = APIRouter(prefix="/api")
 
@@ -46,6 +46,15 @@ def api_list_boards():
 @router.get("/boards/{board_id}")
 def api_get_board(board_id: str):
     data = get_board(board_id)
+    if data is None:
+        raise HTTPException(status_code=404, detail=f"Board '{board_id}' not found")
+    return data
+
+
+@router.get("/boards/{board_id}/full")
+def api_get_board_full(board_id: str):
+    """获取版块完整数据（匹配 JSON 文件结构）"""
+    data = get_board_full(board_id)
     if data is None:
         raise HTTPException(status_code=404, detail=f"Board '{board_id}' not found")
     return data
