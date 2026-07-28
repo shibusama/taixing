@@ -270,3 +270,73 @@ def get_board_status(board_id: str) -> Optional[Dict]:
     sb = get_supabase()
     result = sb.table("boards").select("*").eq("id", board_id).execute()
     return result.data[0] if result.data else None
+
+
+def log_crawl(board_id: str, status: str, message: str = "", items_count: int = 0):
+    """记录爬虫日志"""
+    sb = get_supabase()
+    sb.table("crawl_logs").insert({
+        "board_id": board_id,
+        "status": status,
+        "message": message,
+        "items_count": items_count
+    }).execute()
+
+
+def sync_launch_api_to_timeline():
+    """同步发射 API 到时间线（占位）"""
+    pass
+
+
+def sync_rocket_companies():
+    """同步火箭公司数据（占位）"""
+    pass
+
+
+def get_recent_articles(limit: int = 10) -> List[Dict]:
+    """获取最近文章"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").select("*").order("created_at", desc=True).limit(limit).execute()
+    return result.data
+
+
+def get_articles_stats() -> Dict:
+    """获取文章统计"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").select("id").execute()
+    return {"total": len(result.data)}
+
+
+def get_rocket_intro() -> Optional[Dict]:
+    """获取火箭简介"""
+    sb = get_supabase()
+    result = sb.table("boards").select("intro").eq("id", "rocket").execute()
+    if result.data:
+        return {"intro": result.data[0].get("intro", "")}
+    return None
+
+
+def set_rocket_intro(intro: str):
+    """设置火箭简介"""
+    sb = get_supabase()
+    sb.table("boards").update({"intro": intro}).eq("id", "rocket").execute()
+
+
+def re_sync_all_from_json():
+    """从 JSON 重新同步所有数据（占位）"""
+    pass
+
+
+def re_sync_board_from_json(board_id: str):
+    """从 JSON 重新同步板块数据（占位）"""
+    pass
+
+
+def get_cursor():
+    """获取数据库游标（兼容旧代码）"""
+    return None
+
+
+def _list(data):
+    """列表转换（兼容旧代码）"""
+    return data if isinstance(data, list) else []
