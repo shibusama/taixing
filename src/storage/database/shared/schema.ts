@@ -4,7 +4,7 @@ import { sql } from "drizzle-orm"
 // ============ 系统表 ============
 
 export const healthCheck = pgTable("health_check", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
@@ -23,7 +23,7 @@ export const boardStatus = pgTable("board_status", {
 // ============ 可回收火箭 ============
 
 export const rocketCompanies = pgTable("rocket_companies", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   rocket: text("rocket"),
   company: text("company"),
   country: text("country"),
@@ -38,7 +38,7 @@ export const rocketCompanies = pgTable("rocket_companies", {
 });
 
 export const rocketTimeline = pgTable("rocket_timeline", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   period: text("period"),
   eventDate: text("event_date"),
   title: text("title"),
@@ -52,7 +52,7 @@ export const rocketTimeline = pgTable("rocket_timeline", {
 // ============ 中美登月 ============
 
 export const moonHighlights = pgTable("moon_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   num: text("num"),
   label: text("label"),
   color: text("color"),
@@ -60,7 +60,7 @@ export const moonHighlights = pgTable("moon_highlights", {
 });
 
 export const moonComparison = pgTable("moon_comparison", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   aspect: varchar("aspect"),
   chinaValue: text("china_value"),
   usaValue: text("usa_value"),
@@ -71,7 +71,7 @@ export const moonComparison = pgTable("moon_comparison", {
 // ============ 中国半导体 ============
 
 export const semiconductorHighlights = pgTable("semiconductor_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -79,7 +79,7 @@ export const semiconductorHighlights = pgTable("semiconductor_highlights", {
 });
 
 export const semiconductorTabHighlights = pgTable("semiconductor_tab_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   tabId: text("tab_id").notNull(),
   num: text("num").notNull(),
   label: text("label").notNull(),
@@ -88,7 +88,7 @@ export const semiconductorTabHighlights = pgTable("semiconductor_tab_highlights"
 });
 
 export const semiconductorTabProgress = pgTable("semiconductor_tab_progress", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   tabId: text("tab_id").notNull(),
   year: text("year").notNull(),
   value: text("value"),
@@ -98,7 +98,7 @@ export const semiconductorTabProgress = pgTable("semiconductor_tab_progress", {
 });
 
 export const semiconductorTechnologies = pgTable("semiconductor_technologies", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   name: varchar("name").notNull(),
   category: varchar("category"),
   description: text("description"),
@@ -107,7 +107,7 @@ export const semiconductorTechnologies = pgTable("semiconductor_technologies", {
 });
 
 export const semiconductorTimeline = pgTable("semiconductor_timeline", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   eventDate: date("event_date"),
   company: varchar("company"),
   eventType: varchar("event_type"),
@@ -118,7 +118,7 @@ export const semiconductorTimeline = pgTable("semiconductor_timeline", {
 // ============ 中国科技 AI ============
 
 export const chinaTechHighlights = pgTable("china_tech_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -126,7 +126,7 @@ export const chinaTechHighlights = pgTable("china_tech_highlights", {
 });
 
 export const chinaTechLlm = pgTable("china_tech_llm", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   model: text("model").notNull(),
   company: text("company").notNull(),
   params: text("params"),
@@ -141,7 +141,7 @@ export const chinaTechLlm = pgTable("china_tech_llm", {
 });
 
 export const chinaTechTimeline = pgTable("china_tech_timeline", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   eventDate: date("event_date"),
   company: varchar("company"),
   eventType: varchar("event_type"),
@@ -152,7 +152,7 @@ export const chinaTechTimeline = pgTable("china_tech_timeline", {
 // ============ 中国大工程 ============
 
 export const megaProjects = pgTable("mega_projects", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   tabId: text("tab_id"),
   emoji: text("emoji"),
   projectName: text("project_name"),
@@ -163,7 +163,7 @@ export const megaProjects = pgTable("mega_projects", {
 });
 
 export const megaProjectHighlights = pgTable("mega_project_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -171,7 +171,7 @@ export const megaProjectHighlights = pgTable("mega_project_highlights", {
 });
 
 export const megaProjectMilestones = pgTable("mega_project_milestones", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   projectId: integer("project_id").notNull(),
   marker: text("marker"),
   eventDate: text("event_date"),
@@ -184,7 +184,7 @@ export const megaProjectMilestones = pgTable("mega_project_milestones", {
 // ============ 可控核聚变 ============
 
 export const fusionHighlights = pgTable("fusion_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -192,7 +192,7 @@ export const fusionHighlights = pgTable("fusion_highlights", {
 });
 
 export const fusionTimeline = pgTable("fusion_timeline", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   region: text("region"),
   regionLabel: text("region_label"),
   eventDate: text("event_date"),
@@ -205,7 +205,7 @@ export const fusionTimeline = pgTable("fusion_timeline", {
 // ============ 科技资本 ============
 
 export const financeGrids = pgTable("finance_grids", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   section: text("section").notNull(),
   key: text("key").notNull(),
   value: text("value").notNull(),
@@ -213,7 +213,7 @@ export const financeGrids = pgTable("finance_grids", {
 });
 
 export const financeHighlights = pgTable("finance_highlights", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   section: text("section").notNull(),
   label: text("label").notNull(),
   num: text("num").notNull(),
@@ -223,7 +223,7 @@ export const financeHighlights = pgTable("finance_highlights", {
 });
 
 export const financeSections = pgTable("finance_sections", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   section: text("section").notNull(),
   tag: text("tag"),
   name: text("name"),
@@ -235,7 +235,7 @@ export const financeSections = pgTable("finance_sections", {
 // ============ 爬虫数据 ============
 
 export const rawArticles = pgTable("raw_articles", {
-  id: integer("id").notNull(),
+  id: integer("id").primaryKey(),
   boardId: text("board_id"),
   source: text("source"),
   title: text("title"),
@@ -249,7 +249,7 @@ export const rawArticles = pgTable("raw_articles", {
 });
 
 export const crawlLogs = pgTable("crawl_logs", {
-  id: serial().notNull(),
+  id: serial().primaryKey(),
   boardId: varchar("board_id"),
   status: varchar("status"),
   sourceName: varchar("source_name"),
