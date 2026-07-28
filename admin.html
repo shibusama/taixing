@@ -230,6 +230,9 @@
             const sortOrder = document.getElementById('sort-order').value;
             const content = document.getElementById('articles-content');
             
+            // 显示加载状态（清空内容，显示加载提示）
+            content.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><div>加载中...</div></div>';
+            
             try {
                 const url = boardId ? `/api/admin/articles?board_id=${boardId}` : '/api/admin/articles';
                 const res = await fetch(url);
@@ -278,7 +281,7 @@
                     `;
                 }
                 html += '</tbody></table>';
-                content.innerHTML = html;
+                content.innerHTML = '<div class="fade-in">' + html + '</div>';
             } catch (e) {
                 content.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>加载失败：${e.message}</div></div>`;
             }
