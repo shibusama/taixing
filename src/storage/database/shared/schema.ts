@@ -244,7 +244,7 @@ export const financeSections = pgTable("finance_sections", {
 // ============ 爬虫数据 ============
 
 export const rawArticles = pgTable("raw_articles", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  id: integer("id").primaryKey(),
   boardId: text("board_id"),
   source: text("source"),
   title: text("title"),
