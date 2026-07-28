@@ -1,0 +1,23 @@
+[project]
+sub_id = "ec55411c"
+name = "taixing-news"
+requires = ["python-3.13"]
+project_type = "web"
+
+[preview]
+preview_enable = "enabled"
+
+[dev]
+build = ["bash", "scripts/coze-preview-build.sh"]
+run = ["bash", "scripts/coze-preview-run.sh"]
+
+[deploy]
+build = ["bash", "scripts/deploy-build.sh"]
+run = ["bash", "scripts/deploy-run.sh", "-p", "5000"]
+
+[deploy.profile]
+kind = "service"
+flavor = "web"
+
+[subprojects]
+path = ["."]
