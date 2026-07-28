@@ -230,6 +230,10 @@
             const sortOrder = document.getElementById('sort-order').value;
             const content = document.getElementById('articles-content');
             
+            // 优雅的重新加载效果：先淡出，再加载，再淡入
+            content.style.transition = 'opacity 0.2s ease';
+            content.style.opacity = '0.3';
+            
             try {
                 const url = boardId ? `/api/admin/articles?board_id=${boardId}` : '/api/admin/articles';
                 const res = await fetch(url);
@@ -279,8 +283,13 @@
                 }
                 html += '</tbody></table>';
                 content.innerHTML = html;
+                // 淡入效果
+                setTimeout(() => {
+                    content.style.opacity = '1';
+                }, 50);
             } catch (e) {
                 content.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>加载失败：${e.message}</div></div>`;
+                content.style.opacity = '1';
             }
         }
         
