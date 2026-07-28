@@ -66,7 +66,11 @@
 - **部署模式**：通过 `scripts/deploy-build.sh` 和 `scripts/deploy-run.sh` 启动（Coze Deploy）
 - **端口**：预览和部署使用 5000 端口，生产使用 8080 端口
 - **预览服务器**：`scripts/preview_server.py` 使用 Python FastAPI 同时服务静态文件和 API，替代 Nginx
-- **Nginx 配置**：生产环境静态文件直接服务，`/api/` 反向代理到 FastAPI
+- **部署架构**：Coze Deploy 使用 Nginx + FastAPI + Supervisor 三件套（Docker 级别）
+  - Nginx：监听 5000 端口，静态文件服务 + API 反向代理
+  - FastAPI/Uvicorn：监听 8000 端口，后端 API
+  - Supervisor：管理 Nginx 和 FastAPI 进程
+- **Nginx 配置**：静态文件直接服务（带缓存策略），`/api/` 反向代理到 FastAPI
 
 ## Coze 配置说明
 
