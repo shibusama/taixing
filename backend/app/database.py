@@ -2,11 +2,10 @@
 钛星科技新闻站 - 数据库模块
 使用 Supabase (Coze 内置数据库)
 
-表名和列名严格与 model.py 保持一致：
-  - raw_articles: board, source, title, url, content, published_at, crawled_at
-  - crawl_logs: board, source, status, message, articles_count, created_at
-  - board_status: board, last_crawl_at, articles_count, sources_count, updated_at
-  - rocket_companies, rocket_timeline, moon_highlights, ...
+列名严格匹配生产环境 schema（从 SQLite 迁移而来）：
+  - board_status: board_id, last_crawled_at, new_items_count, total_sources, error_sources, last_message, rocket_intro
+  - raw_articles: board_id, source, title, url, summary, date, raw_json, dedup_key, is_new, created_at
+  - crawl_logs: board_id, status, source_name, items_count, error_message, started_at, finished_at, created_at
 """
 import os
 import json
@@ -14,7 +13,6 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional
 from supabase import create_client, Client
 
-# Supabase 客户端（Coze 内置数据库）
 _supabase: Optional[Client] = None
 
 
@@ -33,7 +31,7 @@ def get_supabase() -> Client:
 
 
 def init_db():
-    """初始化数据库（Supabase 不需要手动创建表）"""
+    """初始化数据库"""
     try:
         sb = get_supabase()
         print("数据库连接成功（Supabase）")
@@ -45,14 +43,12 @@ def init_db():
 # ============ board_status ============
 
 def get_board_status(board_id: str) -> Optional[Dict]:
-    """获取板块状态"""
     sb = get_supabase()
-    result = sb.table("board_status").select("*").eq("board", board_id).execute()
+    result = sb.table("board_status").select("*").eq("board_id", board_id).execute()
     return result.data[0] if result.data else None
 
 
 def get_all_board_status() -> List[Dict]:
-    """获取所有板块状态"""
     sb = get_supabase()
     result = sb.table("board_status").select("*").execute()
     return result.data
@@ -65,34 +61,34 @@ def update_board_status(board_id: str, total_new: int = 0, total_sources: int = 
 
     existing = get_board_status(board_id)
     if existing:
-        # 累加文章数
-        new_count = (existing.get("articles_count") or 0) + total_new
+        new_count = int(existing.get("new_items_count") or 0) + total_new
         sb.table("board_status").update({
-            "articles_count": new_count,
-            "sources_count": total_sources,
-            "last_crawl_at": now,
-            "updated_at": now,
-        }).eq("board", board_id).execute()
+            "new_items_count": str(new_count),
+            "total_sources": str(total_sources),
+            "error_sources": str(error_sources),
+            "last_crawled_at": now,
+            "last_message": msg,
+        }).eq("board_id", board_id).execute()
     else:
         sb.table("board_status").insert({
-            "board": board_id,
-            "articles_count": total_new,
-            "sources_count": total_sources,
-            "last_crawl_at": now,
+            "board_id": board_id,
+            "new_items_count": str(total_new),
+            "total_sources": str(total_sources),
+            "error_sources": str(error_sources),
+            "last_crawled_at": now,
+            "last_message": msg,
         }).execute()
 
 
-# ============ boards 兼容（get_board / list_boards） ============
+# ============ boards 兼容 ============
 
 def get_board(board_id: str) -> Optional[Dict]:
-    """获取板块信息（兼容 api.py）"""
     sb = get_supabase()
-    result = sb.table("board_status").select("*").eq("board", board_id).execute()
+    result = sb.table("board_status").select("*").eq("board_id", board_id).execute()
     return result.data[0] if result.data else None
 
 
 def list_boards() -> List[Dict]:
-    """获取所有板块（兼容 api.py）"""
     sb = get_supabase()
     result = sb.table("board_status").select("*").execute()
     return result.data
@@ -101,17 +97,15 @@ def list_boards() -> List[Dict]:
 # ============ raw_articles ============
 
 def get_raw_articles(board_id: str = None, limit: int = 50) -> List[Dict]:
-    """获取原始文章"""
     sb = get_supabase()
     query = sb.table("raw_articles").select("*")
     if board_id:
-        query = query.eq("board", board_id)
-    result = query.order("crawled_at", desc=True).limit(limit).execute()
+        query = query.eq("board_id", board_id)
+    result = query.order("created_at", desc=True).limit(limit).execute()
     return result.data
 
 
 def insert_raw_article(article: Dict) -> int:
-    """插入原始文章"""
     sb = get_supabase()
     result = sb.table("raw_articles").insert(article).execute()
     if result.data:
@@ -120,52 +114,52 @@ def insert_raw_article(article: Dict) -> int:
 
 
 def upsert_article(board_id: str, source: str, title: str, url: str, summary: str = "", date: str = "", raw_json: str = "") -> bool:
-    """插入或更新文章（去重：按 board + url）。返回 True 表示新增。"""
+    """插入或更新文章（去重：按 board_id + url）。返回 True 表示新增。"""
     sb = get_supabase()
-    # 检查是否已存在
-    existing = sb.table("raw_articles").select("id").eq("board", board_id).eq("url", url).limit(1).execute()
+    existing = sb.table("raw_articles").select("id").eq("board_id", board_id).eq("url", url).limit(1).execute()
     if existing.data:
-        return False  # 已存在，跳过
+        return False
 
+    dedup_key = f"{board_id}:{url}"
     sb.table("raw_articles").insert({
-        "board": board_id,
+        "board_id": board_id,
         "source": source,
         "title": title,
         "url": url,
-        "content": summary or raw_json or "",
-        "published_at": date or None,
+        "summary": summary,
+        "date": date or None,
+        "raw_json": raw_json,
+        "dedup_key": dedup_key,
+        "is_new": "true",
+        "created_at": datetime.now().isoformat(),
     }).execute()
     return True
 
 
 def update_article(article_id: int, **kwargs):
-    """更新文章"""
     sb = get_supabase()
     sb.table("raw_articles").update(kwargs).eq("id", article_id).execute()
 
 
 def delete_article(article_id: int):
-    """删除文章"""
     sb = get_supabase()
     sb.table("raw_articles").delete().eq("id", article_id).execute()
 
 
 def get_recent_articles(board_id: str = None, limit: int = 10) -> List[Dict]:
-    """获取最近文章"""
     sb = get_supabase()
     query = sb.table("raw_articles").select("*")
     if board_id:
-        query = query.eq("board", board_id)
-    result = query.order("crawled_at", desc=True).limit(limit).execute()
+        query = query.eq("board_id", board_id)
+    result = query.order("created_at", desc=True).limit(limit).execute()
     return result.data
 
 
 def get_articles_stats(board_id: str = None) -> Dict:
-    """获取文章统计"""
     sb = get_supabase()
     query = sb.table("raw_articles").select("id")
     if board_id:
-        query = query.eq("board", board_id)
+        query = query.eq("board_id", board_id)
     result = query.execute()
     return {"total": len(result.data)}
 
@@ -173,23 +167,25 @@ def get_articles_stats(board_id: str = None) -> Dict:
 # ============ crawl_logs ============
 
 def log_crawl(board_id: str, status: str, message: str = "", items_count: int = 0):
-    """记录爬虫日志"""
     sb = get_supabase()
+    now = datetime.now().isoformat()
     sb.table("crawl_logs").insert({
-        "board": board_id,
-        "source": "scheduler",
+        "board_id": board_id,
+        "source_name": "scheduler",
         "status": status,
-        "message": message,
-        "articles_count": items_count,
+        "error_message": message if status == "failed" else None,
+        "items_count": items_count,
+        "started_at": now,
+        "finished_at": now,
+        "created_at": now,
     }).execute()
 
 
 def get_crawl_logs(board_id: str = None, limit: int = 20) -> List[Dict]:
-    """获取爬虫日志"""
     sb = get_supabase()
     query = sb.table("crawl_logs").select("*")
     if board_id:
-        query = query.eq("board", board_id)
+        query = query.eq("board_id", board_id)
     result = query.order("created_at", desc=True).limit(limit).execute()
     return result.data
 
@@ -197,7 +193,6 @@ def get_crawl_logs(board_id: str = None, limit: int = 20) -> List[Dict]:
 # ============ 全局更新时间 ============
 
 def get_global_last_updated() -> str:
-    """获取全局最后更新时间"""
     sb = get_supabase()
     result = sb.table("crawl_logs").select("created_at").order("created_at", desc=True).limit(1).execute()
     if result.data:
@@ -220,57 +215,47 @@ def _classify_crawled_item(item: dict) -> tuple:
 # ============ 火箭板块 ============
 
 def get_rocket_companies() -> List[Dict]:
-    """获取可回收火箭公司列表"""
     sb = get_supabase()
     result = sb.table("rocket_companies").select("*").execute()
     return result.data
 
 
 def get_rocket_timeline() -> List[Dict]:
-    """获取可回收火箭时间线"""
     sb = get_supabase()
-    result = sb.table("rocket_timeline").select("*").order("event_date", desc=True).execute()
+    result = sb.table("rocket_timeline").select("*").execute()
     return result.data
 
 
 def get_rocket_intro() -> Optional[Dict]:
-    """获取火箭简介（从 board_status 读取）"""
     sb = get_supabase()
-    result = sb.table("board_status").select("*").eq("board", "rocket").execute()
+    result = sb.table("board_status").select("rocket_intro").eq("board_id", "rocket").execute()
     if result.data:
-        return {"intro": result.data[0].get("last_crawl_at", "")}
+        return {"intro": result.data[0].get("rocket_intro", "")}
     return None
 
 
 def set_rocket_intro(intro: str):
-    """设置火箭简介（写入 board_status 的 last_crawl_at 字段暂存）"""
     sb = get_supabase()
-    existing = get_board_status("rocket")
-    if existing:
-        sb.table("board_status").update({"last_crawl_at": intro}).eq("board", "rocket").execute()
+    sb.table("board_status").update({"rocket_intro": intro}).eq("board_id", "rocket").execute()
 
 
 def sync_launch_api_to_timeline():
-    """同步发射 API 到时间线（占位）"""
     return 0
 
 
 def sync_rocket_companies():
-    """同步火箭公司数据（占位）"""
     return 0
 
 
 # ============ 登月板块 ============
 
 def get_moon_highlights() -> List[Dict]:
-    """获取登月亮点"""
     sb = get_supabase()
     result = sb.table("moon_highlights").select("*").execute()
     return result.data
 
 
 def get_moon_comparison() -> List[Dict]:
-    """获取中美登月对比"""
     sb = get_supabase()
     result = sb.table("moon_comparison").select("*").execute()
     return result.data
@@ -279,77 +264,66 @@ def get_moon_comparison() -> List[Dict]:
 # ============ 半导体板块 ============
 
 def get_semiconductor_highlights() -> List[Dict]:
-    """获取半导体亮点"""
     sb = get_supabase()
-    # model.py 中是 semiconductor_companies
-    result = sb.table("semiconductor_companies").select("*").execute()
+    result = sb.table("semiconductor_highlights").select("*").execute()
     return result.data
 
 
 def get_semiconductor_tab_highlights() -> List[Dict]:
-    """获取半导体 Tab 亮点"""
     sb = get_supabase()
-    result = sb.table("semiconductor_companies").select("*").execute()
+    result = sb.table("semiconductor_tab_highlights").select("*").execute()
     return result.data
 
 
 def get_semiconductor_tab_progress() -> List[Dict]:
-    """获取半导体 Tab 进展"""
     sb = get_supabase()
-    result = sb.table("semiconductor_timeline").select("*").execute()
+    result = sb.table("semiconductor_tab_progress").select("*").execute()
     return result.data
 
 
 # ============ 中国科技 AI ============
 
 def get_china_tech_highlights() -> List[Dict]:
-    """获取中国科技 AI 亮点"""
     sb = get_supabase()
-    result = sb.table("china_tech_companies").select("*").execute()
+    result = sb.table("china_tech_highlights").select("*").execute()
     return result.data
 
 
 def get_china_tech_llm() -> List[Dict]:
-    """获取中国科技 AI 大模型"""
     sb = get_supabase()
-    result = sb.table("china_tech_companies").select("*").execute()
+    result = sb.table("china_tech_llm").select("*").execute()
     return result.data
 
 
 # ============ 大工程 ============
 
 def get_mega_projects() -> List[Dict]:
-    """获取大工程列表"""
     sb = get_supabase()
     result = sb.table("mega_projects").select("*").execute()
     return result.data
 
 
 def get_mega_project_highlights() -> List[Dict]:
-    """获取大工程亮点"""
     sb = get_supabase()
-    result = sb.table("mega_projects").select("*").execute()
+    result = sb.table("mega_project_highlights").select("*").execute()
     return result.data
 
 
 def get_mega_project_milestones() -> List[Dict]:
-    """获取大工程里程碑"""
     sb = get_supabase()
-    result = sb.table("mega_project_timeline").select("*").execute()
+    result = sb.table("mega_project_milestones").select("*").execute()
     return result.data
 
 
 # ============ 核聚变 ============
 
 def get_fusion_highlights() -> List[Dict]:
-    """获取核聚变亮点"""
     sb = get_supabase()
-    result = sb.table("fusion_projects").select("*").execute()
+    result = sb.table("fusion_highlights").select("*").execute()
     return result.data
 
 
 def get_fusion_timeline() -> List[Dict]:
-    """获取核聚变时间线"""
     sb = get_supabase()
     result = sb.table("fusion_timeline").select("*").execute()
     return result.data
@@ -358,45 +332,38 @@ def get_fusion_timeline() -> List[Dict]:
 # ============ 科技资本 ============
 
 def get_finance_grids() -> List[Dict]:
-    """获取科技资本网格数据"""
     sb = get_supabase()
-    result = sb.table("finance_companies").select("*").execute()
+    result = sb.table("finance_grids").select("*").execute()
     return result.data
 
 
 def get_finance_highlights() -> List[Dict]:
-    """获取科技资本亮点"""
     sb = get_supabase()
-    result = sb.table("finance_companies").select("*").execute()
+    result = sb.table("finance_highlights").select("*").execute()
     return result.data
 
 
 def get_finance_sections() -> List[Dict]:
-    """获取科技资本板块"""
     sb = get_supabase()
-    result = sb.table("finance_funding_events").select("*").execute()
+    result = sb.table("finance_sections").select("*").execute()
     return result.data
 
 
 # ============ 同步 / 重同步 ============
 
 def re_sync_all_from_json():
-    """从 JSON 重新同步所有数据（占位）"""
     pass
 
 
 def re_sync_board_from_json(board_id: str):
-    """从 JSON 重新同步板块数据（占位）"""
     pass
 
 
 # ============ 兼容旧代码 ============
 
 def get_cursor():
-    """获取数据库游标（兼容旧代码，Supabase 下不可用）"""
     return None
 
 
 def _list(data):
-    """列表转换（兼容旧代码）"""
     return data if isinstance(data, list) else []
