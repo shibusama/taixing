@@ -233,3 +233,12 @@ def delete_article(article_id: int):
     """删除文章"""
     sb = get_supabase()
     sb.table("raw_articles").delete().eq("id", article_id).execute()
+
+
+def get_global_last_updated() -> str:
+    """获取全局最后更新时间"""
+    sb = get_supabase()
+    result = sb.table("crawl_logs").select("timestamp").order("timestamp", desc=True).limit(1).execute()
+    if result.data:
+        return result.data[0].get("timestamp", "")
+    return ""

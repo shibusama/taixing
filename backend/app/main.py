@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from app.database import init_db, auto_migrate
+from app.database import init_db
 from app.routers.api import router
 from app.scheduler import start_scheduler, shutdown_scheduler
 
@@ -21,7 +21,6 @@ from app.scheduler import start_scheduler, shutdown_scheduler
 async def lifespan(app: FastAPI):
     # 启动时
     init_db()
-    auto_migrate()
     start_scheduler()
     yield
     # 关闭时
