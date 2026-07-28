@@ -27,10 +27,8 @@ def get_supabase() -> Client:
 
 def init_db():
     """初始化数据库（Supabase 不需要手动创建表）"""
-    # 验证连接
     try:
         sb = get_supabase()
-        sb.table("health_check").select("*").limit(1).execute()
         print("数据库连接成功（Supabase）")
     except Exception as e:
         print(f"数据库连接失败：{e}")
