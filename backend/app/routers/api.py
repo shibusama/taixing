@@ -269,9 +269,13 @@ def api_ai_update_board(board_id: str):
 def api_get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0):
     """获取原始文章列表（管理后台用）"""
     from app.database import get_raw_articles, get_raw_article_stats
-    articles = get_raw_articles(board_id, limit, offset)
-    stats = get_raw_article_stats(board_id)
-    return {"stats": stats, "articles": articles}
+    try:
+        articles = get_raw_articles(board_id, limit, offset)
+        stats = get_raw_article_stats(board_id)
+        return {"stats": stats, "articles": articles}
+    except Exception as e:
+        print(f"[admin articles error] {e}")
+        return {"stats": {"total": 0, "new": 0}, "articles": []}
 
 
 @router.post("/admin/articles/{article_id}/publish")

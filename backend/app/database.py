@@ -477,20 +477,25 @@ def get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0) -> 
 def get_raw_article_stats(board_id: str = None) -> Dict:
     """获取文章统计"""
     sb = get_supabase()
-    query = sb.table("raw_articles").select("id", count="exact")
-    if board_id:
-        query = query.eq("board_id", board_id)
-    result = query.execute()
-    total = result.count if result.count else 0
-    
-    # 统计 is_new
-    new_query = sb.table("raw_articles").select("id", count="exact").eq("is_new", "true")
-    if board_id:
-        new_query = new_query.eq("board_id", board_id)
-    new_result = new_query.execute()
-    new_count = new_result.count if new_result.count else 0
-    
-    return {"total": total, "new": new_count}
+    try:
+        # 获取总数
+        if board_id:
+            result = sb.table("raw_articles").select("id", count="exact").eq("board_id", board_id).execute()
+        else:
+            result = sb.table("raw_articles").select("id", count="exact").execute()
+        total = len(result.data) if result.data else 0
+        
+        # 统计 is_new
+        if board_id:
+            new_result = sb.table("raw_articles").select("id").eq("is_new", "true").eq("board_id", board_id).execute()
+        else:
+            new_result = sb.table("raw_articles").select("id").eq("is_new", "true").execute()
+        new_count = len(new_result.data) if new_result.data else 0
+        
+        return {"total": total, "new": new_count}
+    except Exception as e:
+        print(f"[stats error] {e}")
+        return {"total": 0, "new": 0}
 
 
 def publish_article(article_id: int, board_id: str, target_table: str, content: Dict) -> bool:
