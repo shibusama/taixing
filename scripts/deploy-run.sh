@@ -33,5 +33,5 @@ export PORT
 
 echo "[deploy-run] 启动服务，监听 0.0.0.0:$PORT"
 
-# 使用 Python 预览服务器（同时服务静态文件和 API）
-exec python scripts/preview_server.py
+# 直接使用 uvicorn 启动 FastAPI 应用
+exec python -m uvicorn backend.app.main:app --host 0.0.0.0 --port "$PORT"
