@@ -214,3 +214,41 @@ def run_crawler(board_id: str) -> dict:
 
 
 BOARD_IDS = list(CRAWLER_MODULES.keys())
+
+
+# ============================================================
+#  AI 解读 + SQLite 同步（手动触发）
+# ============================================================
+
+@router.post("/ai-update")
+def api_ai_update_all():
+    """手动触发全量 AI 解读并同步到 SQLite"""
+    import sys, os
+    from pathlib import Path
+    project_root = Path(__file__).resolve().parent.parent.parent.parent  # taixing/
+    sys.path.insert(0, str(project_root))
+    import ai_update
+    from app.database import re_sync_all_from_json
+
+    result = ai_update.run_ai_update(base_dir=str(project_root))
+    re_sync_all_from_json()
+    return {"status": "ok", "ai_result": result}
+
+
+@router.post("/ai-update/{board_id}")
+def api_ai_update_board(board_id: str):
+    """手动触发单个板块 AI 解读并同步到 SQLite"""
+    import sys, os
+    from pathlib import Path
+    project_root = Path(__file__).resolve().parent.parent.parent.parent  # taixing/
+    sys.path.insert(0, str(project_root))
+    import ai_update
+    from app.database import re_sync_board_from_json
+
+    if board_id not in ai_update.BOARDS:
+        raise HTTPException(404, f"Unknown board: {board_id}")
+
+    result = ai_update.run_ai_update(board_ids=[board_id], base_dir=str(project_root))
+    if result["success"]:
+        re_sync_board_from_json(board_id)
+    return {"status": "ok", "ai_result": result}

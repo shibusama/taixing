@@ -88,36 +88,41 @@ def get_api_key():
     return "sk-REMOVED"
 
 
-def load_json(filename):
+def load_json(filename, data_dir=None):
     """加载 JSON 文件"""
-    with open(DATA_DIR / filename, "r", encoding="utf-8") as f:
+    dd = Path(data_dir) if data_dir else DATA_DIR
+    with open(dd / filename, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def save_json(filename, data):
+def save_json(filename, data, data_dir=None):
     """保存 JSON 文件（UTF-8 + 2空格缩进）"""
-    with open(DATA_DIR / filename, "w", encoding="utf-8") as f:
+    dd = Path(data_dir) if data_dir else DATA_DIR
+    with open(dd / filename, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
 
-def backup_json(filename):
+def backup_json(filename, data_dir=None, backup_dir=None):
     """写入前创建备份"""
-    src = DATA_DIR / filename
+    dd = Path(data_dir) if data_dir else DATA_DIR
+    bd = Path(backup_dir) if backup_dir else BACKUP_DIR
+    src = dd / filename
     if src.exists():
-        BACKUP_DIR.mkdir(exist_ok=True)
+        bd.mkdir(exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        dst = BACKUP_DIR / f"{filename}.{ts}.bak"
+        dst = bd / f"{filename}.{ts}.bak"
         shutil.copy2(src, dst)
         return dst
     return None
 
 
-def find_latest_snapshot(prefix):
+def find_latest_snapshot(prefix, snapshot_dir=None):
     """查找最新的快照文件（按文件名时间戳排序）"""
-    if not SNAPSHOT_DIR.exists():
+    sd = Path(snapshot_dir) if snapshot_dir else SNAPSHOT_DIR
+    if not sd.exists():
         return None
-    files = sorted(SNAPSHOT_DIR.glob(f"{prefix}_*.json"), reverse=True)
+    files = sorted(sd.glob(f"{prefix}_*.json"), reverse=True)
     return files[0] if files else None
 
 
@@ -293,8 +298,20 @@ def update_meta_timestamp(data):
             data["meta"]["updated"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00")
 
 
-def update_board(board_key, dry_run=False):
-    """更新单个板块的 JSON"""
+def update_board(board_key, dry_run=False, base_dir=None):
+    """更新单个板块的 JSON
+    
+    Args:
+        board_key: 板块标识 (rocket/moon/semiconductor/china-tech/mega-projects/fusion/finance)
+        dry_run: 仅分析不写入
+        base_dir: 项目根目录，默认为 ai_update.py 所在目录
+    """
+    # 计算路径
+    bd = Path(base_dir) if base_dir else BASE_DIR
+    data_dir = bd / "data"
+    snapshot_dir = data_dir / "_snapshots"
+    backup_dir = data_dir / "_backups"
+
     board = BOARDS[board_key]
     json_file = board["json_file"]
 
@@ -306,7 +323,7 @@ def update_board(board_key, dry_run=False):
     snapshots_text = []
     found = 0
     for prefix in board["snapshots"]:
-        snap_file = find_latest_snapshot(prefix)
+        snap_file = find_latest_snapshot(prefix, snapshot_dir=snapshot_dir)
         if snap_file:
             snapshots_text.append(format_snapshot(snap_file))
             found += 1
@@ -319,7 +336,7 @@ def update_board(board_key, dry_run=False):
         return False
 
     # 2. 加载当前 JSON
-    current_data = load_json(json_file)
+    current_data = load_json(json_file, data_dir=data_dir)
     current_json_str = json.dumps(current_data, ensure_ascii=False, indent=2)
 
     # 3. 构建 Prompt
@@ -408,9 +425,9 @@ def update_board(board_key, dry_run=False):
     if dry_run:
         print(f"  [dry-run] 未写入文件")
     else:
-        backup = backup_json(json_file)
+        backup = backup_json(json_file, data_dir=data_dir, backup_dir=backup_dir)
         update_meta_timestamp(new_data)
-        save_json(json_file, new_data)
+        save_json(json_file, new_data, data_dir=data_dir)
         if backup:
             print(f"  备份: {backup.name}")
         print(f"  已写入 {json_file}")
@@ -418,9 +435,55 @@ def update_board(board_key, dry_run=False):
     return True
 
 
-# ============ 主入口 ============
+# ============ 公共 API（供外部调用） ============
 
-def main():
+def run_ai_update(board_ids=None, base_dir=None, dry_run=False):
+    """AI 解读入口（可被后端 scheduler/api 调用）
+    
+    Args:
+        board_ids: 要处理的板块ID列表，None 表示全部
+        base_dir: 项目根目录（Path 或 str），默认自动推断
+        dry_run: 仅分析不写入
+    
+    Returns:
+        dict: {"success": [...], "fail": [...]}
+    """
+    bd = Path(base_dir) if base_dir else BASE_DIR
+    data_dir = bd / "data"
+    snapshot_dir = data_dir / "_snapshots"
+
+    if not snapshot_dir.exists():
+        print(f"快照目录不存在: {snapshot_dir}，跳过 AI 解读")
+        return {"success": [], "fail": []}
+
+    boards_to_run = board_ids if board_ids else list(BOARDS.keys())
+    result = {"success": [], "fail": []}
+
+    for bk in boards_to_run:
+        if bk not in BOARDS:
+            print(f"未知板块: {bk}")
+            result["fail"].append(bk)
+            continue
+        try:
+            ok = update_board(bk, dry_run=dry_run, base_dir=bd)
+            if ok:
+                result["success"].append(bk)
+            else:
+                result["fail"].append(bk)
+        except Exception as e:
+            print(f"板块 {bk} AI 解读异常: {e}")
+            result["fail"].append(bk)
+
+    return result
+
+
+# ============ CLI 主入口 ============
+
+def main(base_dir=None):
+    bd = Path(base_dir) if base_dir else BASE_DIR
+    data_dir = bd / "data"
+    snapshot_dir = data_dir / "_snapshots"
+
     # 解析参数
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = set(a for a in sys.argv[1:] if a.startswith("--"))
@@ -446,8 +509,8 @@ def main():
         boards_to_run = list(BOARDS.keys())
 
     # 检查快照目录
-    if not SNAPSHOT_DIR.exists():
-        print(f"\n快照目录不存在: {SNAPSHOT_DIR}")
+    if not snapshot_dir.exists():
+        print(f"\n快照目录不存在: {snapshot_dir}")
         print(f"请先运行: python fetch_data.py")
         sys.exit(1)
 
@@ -456,7 +519,7 @@ def main():
     fail = 0
     for board_key in boards_to_run:
         try:
-            if update_board(board_key, dry_run=dry_run):
+            if update_board(board_key, dry_run=dry_run, base_dir=bd):
                 success += 1
             else:
                 fail += 1

@@ -293,6 +293,54 @@ def auto_migrate():
                 migrator(cur, data)
 
 
+def re_sync_board_from_json(board_id: str):
+    """AI 更新 JSON 后，清空对应结构化表并从 JSON 重新导入到 SQLite"""
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
+
+    re_sync_mappings = [
+        ("rocket", "rocket.json", _migrate_rocket,
+         ["rocket_companies", "rocket_timeline"]),
+        ("moon", "moon.json", _migrate_moon,
+         ["moon_highlights", "moon_comparison"]),
+        ("semiconductor", "semiconductor.json", _migrate_semiconductor,
+         ["semiconductor_highlights", "semiconductor_tab_progress", "semiconductor_tab_highlights"]),
+        ("china-tech", "china-tech.json", _migrate_china_tech,
+         ["china_tech_highlights", "china_tech_llm"]),
+        ("mega-projects", "mega-projects.json", _migrate_mega,
+         ["mega_project_highlights", "mega_projects", "mega_project_milestones"]),
+        ("controlled-fusion", "fusion.json", _migrate_fusion,
+         ["fusion_highlights", "fusion_timeline"]),
+        ("finance", "finance.json", _migrate_finance,
+         ["finance_highlights", "finance_sections", "finance_grids"]),
+    ]
+
+    for bid, fname, migrator, tables in re_sync_mappings:
+        if bid != board_id:
+            continue
+        path = os.path.join(data_dir, fname)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"JSON file not found: {path}")
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        with get_cursor() as cur:
+            for table in tables:
+                cur.execute(f"DELETE FROM {table}")
+            migrator(cur, data)
+        return
+    raise ValueError(f"Unknown board_id: {board_id}")
+
+
+def re_sync_all_from_json():
+    """AI 更新完成后，从 JSON 同步全部板块到 SQLite"""
+    for board_id in ["rocket", "moon", "semiconductor", "china-tech",
+                      "mega-projects", "controlled-fusion", "finance"]:
+        try:
+            re_sync_board_from_json(board_id)
+            print(f"[re-sync] {board_id} OK")
+        except Exception as e:
+            print(f"[re-sync] {board_id} FAILED: {e}")
+
+
 def _migrate_rocket(cur, d):
     for i, r in enumerate(d.get("comparison_table", [])):
         cur.execute(
