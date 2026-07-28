@@ -36,7 +36,7 @@ def get_cursor():
 SCHEMA = [
     # ---- 可回收火箭 ----
     """CREATE TABLE IF NOT EXISTS rocket_companies (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         rocket      TEXT NOT NULL,
         company     TEXT NOT NULL,
         country     TEXT NOT NULL,
@@ -51,7 +51,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS rocket_timeline (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         period      TEXT NOT NULL DEFAULT 'h2',
         event_date  TEXT NOT NULL,
         title       TEXT NOT NULL,
@@ -65,7 +65,7 @@ SCHEMA = [
 
     # ---- 中美登月 ----
     """CREATE TABLE IF NOT EXISTS moon_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
         color       TEXT,
@@ -73,7 +73,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS moon_comparison (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         dimension   TEXT NOT NULL,
         china       TEXT,
         us          TEXT,
@@ -83,7 +83,7 @@ SCHEMA = [
 
     # ---- 半导体 ----
     """CREATE TABLE IF NOT EXISTS semiconductor_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
         color       TEXT,
@@ -91,7 +91,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS semiconductor_tab_progress (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         tab_id      TEXT NOT NULL,
         year        TEXT NOT NULL,
         value       TEXT,
@@ -101,7 +101,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS semiconductor_tab_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         tab_id      TEXT NOT NULL,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
@@ -111,7 +111,7 @@ SCHEMA = [
 
     # ---- 尖端科技 (AI 大模型) ----
     """CREATE TABLE IF NOT EXISTS china_tech_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
         color       TEXT,
@@ -119,7 +119,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS china_tech_llm (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         model       TEXT NOT NULL,
         company     TEXT NOT NULL,
         params      TEXT,
@@ -135,7 +135,7 @@ SCHEMA = [
 
     # ---- 大工程 ----
     """CREATE TABLE IF NOT EXISTS mega_project_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
         color       TEXT,
@@ -143,7 +143,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS mega_projects (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         tab_id      TEXT NOT NULL,
         emoji       TEXT,
         project_name TEXT NOT NULL,
@@ -154,7 +154,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS mega_project_milestones (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         project_id  INTEGER NOT NULL REFERENCES mega_projects(id),
         marker      TEXT,
         event_date  TEXT,
@@ -166,7 +166,7 @@ SCHEMA = [
 
     # ---- 可控核聚变 ----
     """CREATE TABLE IF NOT EXISTS fusion_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         num         TEXT NOT NULL,
         label       TEXT NOT NULL,
         color       TEXT,
@@ -174,7 +174,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS fusion_timeline (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         region      TEXT NOT NULL,
         region_label TEXT NOT NULL,
         event_date  TEXT NOT NULL,
@@ -186,7 +186,7 @@ SCHEMA = [
 
     # ---- 科技资本 ----
     """CREATE TABLE IF NOT EXISTS finance_highlights (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         section     TEXT NOT NULL,
         label       TEXT NOT NULL,
         num         TEXT NOT NULL,
@@ -196,7 +196,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS finance_sections (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         section     TEXT NOT NULL UNIQUE,
         tag         TEXT,
         name        TEXT,
@@ -206,7 +206,7 @@ SCHEMA = [
     )""",
 
     """CREATE TABLE IF NOT EXISTS finance_grids (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         section     TEXT NOT NULL,
         key         TEXT NOT NULL,
         value       TEXT NOT NULL,
@@ -215,7 +215,7 @@ SCHEMA = [
 
     # ---- 系统 ----
     """CREATE TABLE IF NOT EXISTS crawl_logs (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         board_id    TEXT NOT NULL,
         status      TEXT NOT NULL DEFAULT 'pending',
         message     TEXT DEFAULT '',
@@ -224,7 +224,7 @@ SCHEMA = [
 
     # ---- 爬虫去重 & 状态 ----
     """CREATE TABLE IF NOT EXISTS raw_articles (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        id          INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         board_id    TEXT NOT NULL,
         source      TEXT NOT NULL,
         title       TEXT NOT NULL,
