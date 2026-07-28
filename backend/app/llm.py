@@ -11,7 +11,7 @@ LLM 调用模块 — 爬虫后自动更新火箭板块引言
 import os
 import json
 import requests
-from app.database import get_cursor, _list
+from app.database import get_rocket_companies
 
 # ---- 配置 ----
 API_KEY = os.environ.get("OPENAI_API_KEY", "")
@@ -54,9 +54,7 @@ def generate_rocket_intro() -> str | None:
         return None
 
     # 1. 读取火箭数据
-    with get_cursor() as cur:
-        cur.execute("SELECT * FROM rocket_companies ORDER BY sort_order DESC, id")
-        companies = _list(cur)
+    companies = get_rocket_companies()
 
     if not companies:
         return None

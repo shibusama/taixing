@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.database import get_board, list_boards
+from app.database import get_board, list_boards, log_crawl
 
 router = APIRouter(prefix="/api")
 
