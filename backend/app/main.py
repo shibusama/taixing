@@ -56,11 +56,10 @@ async def serve_index():
     """服务首页"""
     return FileResponse(os.path.join(PROJECT_ROOT, "index.html"))
 
-# 挂载静态文件目录（CSS, JS, data, 图片等）
+# 挂载静态文件目录（CSS, JS, data 等）
 app.mount("/css", StaticFiles(directory=os.path.join(PROJECT_ROOT, "css")), name="css")
 app.mount("/js", StaticFiles(directory=os.path.join(PROJECT_ROOT, "js")), name="js")
 app.mount("/data", StaticFiles(directory=os.path.join(PROJECT_ROOT, "data")), name="data")
-app.mount("/assets", StaticFiles(directory=os.path.join(PROJECT_ROOT, "assets")), name="assets")
 
 # 服务其他 HTML 页面
 @app.get("/{page}")
