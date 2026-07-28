@@ -7,10 +7,22 @@ from datetime import datetime, timezone
 from contextlib import contextmanager
 
 # PostgreSQL 连接配置
-DATABASE_URL = os.environ.get(
-    'DATABASE_URL',
-    'postgresql://postgres:b7Mti4WLKt5pWy8I58@cp-magic-still-ddeab31b.pg5.aidap-global.cn-beijing.volces.com:5432/postgres?sslmode=require'
-)
+# 开发环境使用 DEVELOP_DATABASE_URL，生产环境使用 PRODUCT_DATABASE_URL
+# 如果未设置，默认使用 DEVELOP_DATABASE_URL
+ENV = os.environ.get('ENV', 'develop')
+
+if ENV == 'product':
+    DATABASE_URL = os.environ.get(
+        'PRODUCT_DATABASE_URL',
+        'postgresql://postgres:b7Mti4WLKt5pWy8I58@cp-magic-still-ddeab31b.pg5.aidap-global.cn-beijing.volces.com:5432/postgres?sslmode=require'
+    )
+else:
+    DATABASE_URL = os.environ.get(
+        'DEVELOP_DATABASE_URL',
+        'postgresql://postgres:b7Mti4WLKt5pWy8I58@cp-magic-still-ddeab31b.pg5.aidap-global.cn-beijing.volces.com:5432/postgres_dev?sslmode=require'
+    )
+
+print(f"[Database] 环境: {ENV}, 数据库: {DATABASE_URL.split('@')[1].split('/')[1].split('?')[0] if '@' in DATABASE_URL else 'unknown'}")
 
 
 def get_db():
