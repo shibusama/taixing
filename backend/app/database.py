@@ -460,3 +460,66 @@ def get_board_full(board_id: str) -> Optional[Dict]:
             }
 
     return result
+
+
+# ============ 内容管理 ============
+
+def get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0) -> List[Dict]:
+    """获取原始文章列表（用于管理后台）"""
+    sb = get_supabase()
+    query = sb.table("raw_articles").select("*").order("created_at", desc=True)
+    if board_id:
+        query = query.eq("board_id", board_id)
+    result = query.range(offset, offset + limit - 1).execute()
+    return result.data
+
+
+def get_raw_article_stats(board_id: str = None) -> Dict:
+    """获取文章统计"""
+    sb = get_supabase()
+    query = sb.table("raw_articles").select("id", count="exact")
+    if board_id:
+        query = query.eq("board_id", board_id)
+    result = query.execute()
+    total = result.count if result.count else 0
+    
+    # 统计 is_new
+    new_query = sb.table("raw_articles").select("id", count="exact").eq("is_new", "true")
+    if board_id:
+        new_query = new_query.eq("board_id", board_id)
+    new_result = new_query.execute()
+    new_count = new_result.count if new_result.count else 0
+    
+    return {"total": total, "new": new_count}
+
+
+def publish_article(article_id: int, board_id: str, target_table: str, content: Dict) -> bool:
+    """
+    发布文章：从 raw_articles 复制到目标表
+    content: 要写入目标表的数据（如 {num, label, color, sort_order}）
+    """
+    sb = get_supabase()
+    
+    # 插入到目标表
+    content["board_id"] = board_id
+    result = sb.table(target_table).insert(content).execute()
+    
+    if result.data:
+        # 标记为已发布（更新 is_new 为 false）
+        sb.table("raw_articles").update({"is_new": "false"}).eq("id", article_id).execute()
+        return True
+    return False
+
+
+def update_published_content(table_name: str, item_id: int, content: Dict) -> bool:
+    """更新已发布的内容"""
+    sb = get_supabase()
+    result = sb.table(table_name).update(content).eq("id", item_id).execute()
+    return len(result.data) > 0 if result.data else False
+
+
+def delete_raw_article(article_id: int) -> bool:
+    """删除原始文章"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").delete().eq("id", article_id).execute()
+    return True

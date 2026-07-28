@@ -3,296 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>钛星 · 管理端</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>钛星 · 内容管理后台</title>
     <style>
-        .admin-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .admin-header {
-            text-align: center;
-            padding: 30px 0;
-            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
-            margin-bottom: 30px;
-        }
-        .admin-header h1 {
-            font-size: 28px;
-            color: #00d9ff;
-            margin: 0;
-        }
-        .admin-header p {
-            color: #888;
-            margin-top: 10px;
-        }
-        .board-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .board-card {
-            background: rgba(13, 27, 42, 0.8);
-            border: 1px solid rgba(0, 217, 255, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-        .board-card:hover {
-            border-color: rgba(0, 217, 255, 0.5);
-            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
-        }
-        .board-card h3 {
-            color: #00d9ff;
-            margin: 0 0 10px 0;
-            font-size: 18px;
-        }
-        .board-card .board-id {
-            color: #666;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-        .board-card .status {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
-            min-height: 40px;
-        }
-        .board-card .status.success {
-            color: #00ff88;
-        }
-        .board-card .status.error {
-            color: #ff4444;
-        }
-        .board-card .status.loading {
-            color: #ffaa00;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            flex: 1;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        .btn-crawl {
-            background: linear-gradient(135deg, #00d9ff, #0099cc);
-            color: #fff;
-        }
-        .btn-crawl:hover {
-            background: linear-gradient(135deg, #00eeff, #00aadd);
-        }
-        .btn-ai {
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            color: #fff;
-        }
-        .btn-ai:hover {
-            background: linear-gradient(135deg, #b865ff, #8c4aed);
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .global-actions {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .btn-global {
-            padding: 12px 30px;
-            font-size: 16px;
-            margin: 0 10px;
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #00d9ff;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00d4ff; margin-bottom: 20px; font-size: 24px; }
+        h2 { color: #00d4ff; margin: 20px 0 10px; font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        
+        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 15px 20px; min-width: 150px; }
+        .stat-value { font-size: 28px; font-weight: bold; color: #00d4ff; }
+        .stat-label { font-size: 12px; color: #888; margin-top: 5px; }
+        
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        select, button, input { background: #1a1a1a; border: 1px solid #333; color: #e0e0e0; padding: 8px 12px; border-radius: 4px; font-size: 14px; }
+        button { cursor: pointer; background: #00d4ff; color: #000; border: none; font-weight: bold; }
+        button:hover { background: #00b8d4; }
+        button.secondary { background: #333; color: #e0e0e0; }
+        button.secondary:hover { background: #444; }
+        button.danger { background: #ff4444; color: white; }
+        button.danger:hover { background: #cc0000; }
+        
+        table { width: 100%; border-collapse: collapse; background: #1a1a1a; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: #222; color: #00d4ff; font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        tr:hover { background: #222; }
+        td { font-size: 13px; }
+        .title-cell { max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .url-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #888; }
+        .date-cell { color: #888; font-size: 12px; }
+        .status-new { color: #00ff88; font-weight: bold; }
+        .status-published { color: #888; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .modal-header h3 { color: #00d4ff; }
+        .close-btn { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; padding: 0; }
+        .close-btn:hover { color: #fff; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #888; font-size: 12px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #e0e0e0; padding: 8px; border-radius: 4px; }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        
+        .actions { display: flex; gap: 5px; }
+        .actions button { padding: 5px 10px; font-size: 12px; }
+        
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .error { color: #ff4444; padding: 10px; background: #330000; border-radius: 4px; margin: 10px 0; }
+        .success { color: #00ff88; padding: 10px; background: #003300; border-radius: 4px; margin: 10px 0; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1>钛星 · 管理端</h1>
-            <p>数据爬取与 AI 解读管理</p>
+    <div class="container">
+        <h1>钛星 · 内容管理后台</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total">-</div>
+                <div class="stat-label">总文章数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-new">-</div>
+                <div class="stat-label">待处理</div>
+            </div>
         </div>
-
-        <div class="global-actions">
-            <button class="btn btn-crawl btn-global" onclick="crawlAll()">全部爬取</button>
-            <button class="btn btn-ai btn-global" onclick="aiUpdateAll()">全部 AI 解读</button>
+        
+        <div class="controls">
+            <select id="board-filter">
+                <option value="">全部板块</option>
+                <option value="rocket">可回收火箭</option>
+                <option value="moon">中美登月</option>
+                <option value="semiconductor">中国半导体</option>
+                <option value="china-tech">中国科技 AI</option>
+                <option value="mega-projects">中国大工程</option>
+                <option value="controlled-fusion">可控核聚变</option>
+                <option value="finance">科技资本</option>
+            </select>
+            <button onclick="loadArticles()">刷新</button>
+            <button class="secondary" onclick="triggerCrawl()">触发爬虫</button>
         </div>
-
-        <div class="board-grid" id="boardGrid"></div>
-
-        <a href="index.html" class="back-link">← 返回首页</a>
+        
+        <div id="content">
+            <div class="loading">加载中...</div>
+        </div>
     </div>
-
-    <script>
-        const BOARDS = [
-            { id: 'rocket', name: '可回收火箭' },
-            { id: 'moon', name: '中美登月' },
-            { id: 'semiconductor', name: '中国半导体' },
-            { id: 'china-tech', name: '中国科技AI' },
-            { id: 'mega-projects', name: '中国大工程' },
-            { id: 'controlled-fusion', name: '可控核聚变' },
-            { id: 'finance', name: '科技资本' }
-        ];
-
-        function init() {
-            const grid = document.getElementById('boardGrid');
-            grid.innerHTML = BOARDS.map(board => `
-                <div class="board-card" id="card-${board.id}">
-                    <h3>${board.name}</h3>
-                    <div class="board-id">${board.id}</div>
-                    <div class="status" id="status-${board.id}">点击按钮开始操作</div>
-                    <div class="btn-group">
-                        <button class="btn btn-crawl" onclick="crawlBoard('${board.id}')">爬取数据</button>
-                        <button class="btn btn-ai" onclick="aiUpdateBoard('${board.id}')">AI 解读</button>
-                    </div>
+    
+    <!-- 发布模态框 -->
+    <div class="modal" id="publish-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>发布文章</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="publish-form">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="pub-title" readonly>
                 </div>
-            `).join('');
-            
-            // 加载初始状态
-            BOARDS.forEach(board => loadStatus(board.id));
-        }
-
-        async function loadStatus(boardId) {
-            try {
-                const res = await fetch(`/api/status/${boardId}`);
-                const data = await res.json();
-                const statusEl = document.getElementById(`status-${boardId}`);
-                if (data.status === 'never_crawled') {
-                    statusEl.textContent = '从未爬取';
-                } else {
-                    statusEl.textContent = `上次: ${data.last_crawl_time || '未知'} | 新增: ${data.new_items || 0}`;
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function setStatus(boardId, message, type = '') {
-            const statusEl = document.getElementById(`status-${boardId}`);
-            statusEl.textContent = message;
-            statusEl.className = `status ${type}`;
-        }
-
-        function setButtonsDisabled(boardId, disabled) {
-            const card = document.getElementById(`card-${boardId}`);
-            const buttons = card.querySelectorAll('.btn');
-            buttons.forEach(btn => btn.disabled = disabled);
-        }
-
-        async function crawlBoard(boardId) {
-            setStatus(boardId, '正在爬取...', 'loading');
-            setButtonsDisabled(boardId, true);
+                <div class="form-group">
+                    <label>目标表</label>
+                    <select id="pub-table">
+                        <option value="rocket_highlights">rocket_highlights</option>
+                        <option value="rocket_timeline">rocket_timeline</option>
+                        <option value="moon_highlights">moon_highlights</option>
+                        <option value="moon_comparison">moon_comparison</option>
+                        <option value="semiconductor_highlights">semiconductor_highlights</option>
+                        <option value="china_tech_highlights">china_tech_highlights</option>
+                        <option value="mega_project_highlights">mega_project_highlights</option>
+                        <option value="fusion_highlights">fusion_highlights</option>
+                        <option value="finance_highlights">finance_highlights</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>内容 (JSON)</label>
+                    <textarea id="pub-content" placeholder='{"num": "值", "label": "标签", "color": "green", "sort_order": 0}'></textarea>
+                </div>
+                <button onclick="doPublish()">发布</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentArticle = null;
+        
+        async function loadArticles() {
+            const boardId = document.getElementById('board-filter').value;
+            const content = document.getElementById('content');
+            content.innerHTML = '<div class="loading">加载中...</div>';
             
             try {
-                const res = await fetch(`/api/crawl/${boardId}`, { method: 'POST' });
+                const url = boardId ? `/api/admin/articles?board_id=${boardId}` : '/api/admin/articles';
+                const res = await fetch(url);
                 const data = await res.json();
                 
-                if (data.status === 'success') {
-                    const detail = data.detail;
-                    setStatus(boardId, `成功! 新增 ${detail.new_items} 条数据`, 'success');
-                } else {
-                    setStatus(boardId, `失败: ${data.detail?.error || '未知错误'}`, 'error');
+                document.getElementById('stat-total').textContent = data.stats.total;
+                document.getElementById('stat-new').textContent = data.stats.new;
+                
+                if (data.articles.length === 0) {
+                    content.innerHTML = '<div class="loading">暂无数据</div>';
+                    return;
                 }
+                
+                let html = '<table><thead><tr><th>标题</th><th>来源</th><th>日期</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+                for (const article of data.articles) {
+                    const statusClass = article.is_new === 'true' ? 'status-new' : 'status-published';
+                    const statusText = article.is_new === 'true' ? '待处理' : '已发布';
+                    html += `
+                        <tr>
+                            <td class="title-cell" title="${escapeHtml(article.title)}">${escapeHtml(article.title)}</td>
+                            <td>${escapeHtml(article.source)}</td>
+                            <td class="date-cell">${article.date || '-'}</td>
+                            <td class="${statusClass}">${statusText}</td>
+                            <td class="actions">
+                                <button onclick='openPublishModal(${JSON.stringify(article)})'>发布</button>
+                                <button class="danger" onclick="deleteArticle(${article.id})">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                html += '</tbody></table>';
+                content.innerHTML = html;
             } catch (e) {
-                setStatus(boardId, `错误: ${e.message}`, 'error');
+                content.innerHTML = `<div class="error">加载失败：${e.message}</div>`;
             }
-            
-            setButtonsDisabled(boardId, false);
-            loadStatus(boardId);
         }
-
-        async function aiUpdateBoard(boardId) {
-            setStatus(boardId, '正在 AI 解读...', 'loading');
-            setButtonsDisabled(boardId, true);
+        
+        function openPublishModal(article) {
+            currentArticle = article;
+            document.getElementById('pub-title').value = article.title;
+            document.getElementById('pub-content').value = JSON.stringify({
+                num: '',
+                label: article.title,
+                color: 'cyan',
+                sort_order: 0
+            }, null, 2);
+            document.getElementById('publish-modal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('publish-modal').classList.remove('active');
+            currentArticle = null;
+        }
+        
+        async function doPublish() {
+            if (!currentArticle) return;
+            
+            const table = document.getElementById('pub-table').value;
+            const contentStr = document.getElementById('pub-content').value;
             
             try {
-                const res = await fetch(`/api/ai-update/${boardId}`, { method: 'POST' });
-                const data = await res.json();
+                const content = JSON.parse(contentStr);
+                const res = await fetch(`/api/admin/articles/${currentArticle.id}/publish`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        board_id: currentArticle.board,
+                        target_table: table,
+                        content: content
+                    })
+                });
                 
-                if (data.status === 'ok') {
-                    setStatus(boardId, 'AI 解读完成!', 'success');
+                if (res.ok) {
+                    alert('发布成功');
+                    closeModal();
+                    loadArticles();
                 } else {
-                    setStatus(boardId, `失败: ${JSON.stringify(data)}`, 'error');
+                    const err = await res.json();
+                    alert('发布失败：' + err.detail);
                 }
             } catch (e) {
-                setStatus(boardId, `错误: ${e.message}`, 'error');
+                alert('JSON 格式错误：' + e.message);
             }
-            
-            setButtonsDisabled(boardId, false);
-            loadStatus(boardId);
         }
-
-        async function crawlAll() {
-            if (!confirm('确定要爬取所有板块吗？')) return;
+        
+        async function deleteArticle(id) {
+            if (!confirm('确定删除这篇文章？')) return;
             
-            BOARDS.forEach(board => {
-                setStatus(board.id, '正在爬取...', 'loading');
-                setButtonsDisabled(board.id, true);
-            });
+            try {
+                const res = await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadArticles();
+                } else {
+                    alert('删除失败');
+                }
+            } catch (e) {
+                alert('删除失败：' + e.message);
+            }
+        }
+        
+        async function triggerCrawl() {
+            if (!confirm('确定触发爬虫？这将抓取所有板块的最新数据。')) return;
             
             try {
                 const res = await fetch('/api/crawl', { method: 'POST' });
                 const data = await res.json();
-                
-                for (const [boardId, result] of Object.entries(data.results || {})) {
-                    if (result.error) {
-                        setStatus(boardId, `失败: ${result.error}`, 'error');
-                    } else {
-                        setStatus(boardId, `成功! 新增 ${result.new_items} 条`, 'success');
-                    }
-                    setButtonsDisabled(boardId, false);
-                    loadStatus(boardId);
-                }
+                alert('爬虫已触发，请等待完成后刷新页面。');
             } catch (e) {
-                BOARDS.forEach(board => {
-                    setStatus(board.id, `错误: ${e.message}`, 'error');
-                    setButtonsDisabled(board.id, false);
-                });
+                alert('触发失败：' + e.message);
             }
         }
-
-        async function aiUpdateAll() {
-            if (!confirm('确定要对所有板块进行 AI 解读吗？')) return;
-            
-            BOARDS.forEach(board => {
-                setStatus(board.id, '正在 AI 解读...', 'loading');
-                setButtonsDisabled(board.id, true);
-            });
-            
-            try {
-                const res = await fetch('/api/ai-update', { method: 'POST' });
-                const data = await res.json();
-                
-                BOARDS.forEach(board => {
-                    if (data.status === 'ok') {
-                        setStatus(board.id, 'AI 解读完成!', 'success');
-                    } else {
-                        setStatus(board.id, `失败: ${JSON.stringify(data)}`, 'error');
-                    }
-                    setButtonsDisabled(board.id, false);
-                    loadStatus(board.id);
-                });
-            } catch (e) {
-                BOARDS.forEach(board => {
-                    setStatus(board.id, `错误: ${e.message}`, 'error');
-                    setButtonsDisabled(board.id, false);
-                });
-            }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        init();
+        
+        // 初始加载
+        loadArticles();
     </script>
 </body>
 </html>

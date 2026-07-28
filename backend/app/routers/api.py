@@ -261,3 +261,42 @@ def api_ai_update_board(board_id: str):
     if result["success"]:
         re_sync_board_from_json(board_id)
     return {"status": "ok", "ai_result": result}
+
+
+# ---- 内容管理 API ----
+
+@router.get("/admin/articles")
+def api_get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0):
+    """获取原始文章列表（管理后台用）"""
+    from app.database import get_raw_articles, get_raw_article_stats
+    articles = get_raw_articles(board_id, limit, offset)
+    stats = get_raw_article_stats(board_id)
+    return {"stats": stats, "articles": articles}
+
+
+@router.post("/admin/articles/{article_id}/publish")
+def api_publish_article(article_id: int, board_id: str, target_table: str, content: dict):
+    """发布文章到目标表"""
+    from app.database import publish_article
+    success = publish_article(article_id, board_id, target_table, content)
+    if success:
+        return {"status": "ok", "message": "发布成功"}
+    raise HTTPException(status_code=500, detail="发布失败")
+
+
+@router.put("/admin/content/{table_name}/{item_id}")
+def api_update_content(table_name: str, item_id: int, content: dict):
+    """更新已发布的内容"""
+    from app.database import update_published_content
+    success = update_published_content(table_name, item_id, content)
+    if success:
+        return {"status": "ok", "message": "更新成功"}
+    raise HTTPException(status_code=500, detail="更新失败")
+
+
+@router.delete("/admin/articles/{article_id}")
+def api_delete_article(article_id: int):
+    """删除原始文章"""
+    from app.database import delete_raw_article
+    delete_raw_article(article_id)
+    return {"status": "ok", "message": "删除成功"}

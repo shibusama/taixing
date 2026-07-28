@@ -29,6 +29,16 @@ DATA_DIR = BASE_DIR / "data"
 REPORT_DIR = DATA_DIR / "_reports"
 CONFIG_FILE = BASE_DIR / "data_sources.json"
 
+# 添加 backend 到 Python 路径，以便导入数据库模块
+sys.path.insert(0, str(BASE_DIR / "backend"))
+try:
+    from app.database import upsert_article, log_crawl
+    DB_AVAILABLE = True
+except ImportError as e:
+    print(f"[警告] 数据库模块导入失败：{e}")
+    print("  将仅写入 JSON 文件，不写入数据库")
+    DB_AVAILABLE = False
+
 
 # ============ 配置加载器 ============
 
@@ -220,10 +230,26 @@ def run_crawler(src_cfg):
         return [], True
 
     if isinstance(result, list):
+        db_count = 0
         for item in result:
             if "board" not in item:
                 item["board"] = board_id
-        print(f"  [完成] 获取 {len(result)} 条数据")
+            # 写入数据库（raw_articles 表）
+            if DB_AVAILABLE:
+                try:
+                    upsert_article(
+                        board_id=board_id,
+                        source=src_cfg.get("name", ""),
+                        title=item.get("title", ""),
+                        url=item.get("url", ""),
+                        summary=item.get("summary", ""),
+                        date=item.get("date", ""),
+                        raw_json=json.dumps(item, ensure_ascii=False),
+                    )
+                    db_count += 1
+                except Exception as e:
+                    print(f"  [数据库] 写入失败：{e}")
+        print(f"  [完成] 获取 {len(result)} 条数据，写入数据库 {db_count} 条")
     else:
         print(f"  [完成] 返回非列表结果: {type(result).__name__}")
 
