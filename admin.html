@@ -392,7 +392,14 @@
                 const res = await fetch(`/api/crawl/${boardId}/logs`);
                 const data = await res.json();
                 
-                if (data.status === 'idle') return;
+                if (data.status === 'idle') {
+                    // 空闲状态，停止轮询
+                    if (crawlPollingTimer) {
+                        clearInterval(crawlPollingTimer);
+                        crawlPollingTimer = null;
+                    }
+                    return;
+                }
                 
                 // 显示新日志
                 const container = document.getElementById('log-container');
@@ -421,6 +428,11 @@
                 }
             } catch (e) {
                 console.error('Polling error:', e);
+                // 出错也停止轮询
+                if (crawlPollingTimer) {
+                    clearInterval(crawlPollingTimer);
+                    crawlPollingTimer = null;
+                }
             }
         }
         
