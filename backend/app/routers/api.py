@@ -304,3 +304,43 @@ def api_delete_article(article_id: int):
     from app.database import delete_raw_article
     delete_raw_article(article_id)
     return {"status": "ok", "message": "删除成功"}
+
+
+# ---- 爬虫实时日志 ----
+
+_crawl_logs = {}  # board_id -> log lines
+
+@router.post("/crawl/{board_id}/start")
+def api_crawl_board_async(board_id: str):
+    """异步触发爬虫，记录实时日志"""
+    import threading
+    from app.database import log_crawl
+    
+    _crawl_logs[board_id] = {
+        "status": "running",
+        "lines": [],
+        "started_at": __import__('datetime').datetime.now().isoformat()
+    }
+    
+    def _run():
+        try:
+            _crawl_logs[board_id]["lines"].append(f"[{board_id}] 开始抓取...")
+            result = run_crawler(board_id)
+            _crawl_logs[board_id]["lines"].append(f"[{board_id}] 完成：{result.get('message', 'OK')}")
+            _crawl_logs[board_id]["status"] = "success"
+            log_crawl(board_id, "success", result.get("message", "OK"))
+        except Exception as e:
+            _crawl_logs[board_id]["lines"].append(f"[{board_id}] 错误：{str(e)}")
+            _crawl_logs[board_id]["status"] = "failed"
+            log_crawl(board_id, "failed", str(e))
+    
+    threading.Thread(target=_run, daemon=True).start()
+    return {"board_id": board_id, "status": "started"}
+
+
+@router.get("/crawl/{board_id}/logs")
+def api_get_crawl_logs(board_id: str):
+    """获取爬虫实时日志"""
+    if board_id not in _crawl_logs:
+        return {"status": "idle", "lines": []}
+    return _crawl_logs[board_id]
