@@ -1,16 +1,21 @@
 import hashlib
-import sqlite3
 import os
 import json
+import psycopg2
+import psycopg2.extras
 from datetime import datetime, timezone
 from contextlib import contextmanager
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "taixing_v2.db")
+# PostgreSQL 连接配置
+DATABASE_URL = os.environ.get(
+    'DATABASE_URL',
+    'postgresql://postgres:b7Mti4WLKt5pWy8I58@cp-magic-still-ddeab31b.pg5.aidap-global.cn-beijing.volces.com:5432/postgres?sslmode=require'
+)
 
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL)
+    conn.cursor_factory = psycopg2.extras.RealDictCursor
     return conn
 
 
