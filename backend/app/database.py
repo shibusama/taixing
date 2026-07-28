@@ -114,13 +114,13 @@ def insert_raw_article(article: Dict) -> int:
 
 
 def upsert_article(board_id: str, source: str, title: str, url: str, summary: str = "", date: str = "", raw_json: str = "") -> bool:
-    """插入或更新文章（去重：按 board_id + url）。返回 True 表示新增。"""
+    """插入或更新文章（去重：按 board_id + source + title）。返回 True 表示新增。"""
     sb = get_supabase()
-    existing = sb.table("raw_articles").select("id").eq("board_id", board_id).eq("url", url).limit(1).execute()
+    dedup_key = f"{board_id}:{source}:{title}"
+    existing = sb.table("raw_articles").select("id").eq("dedup_key", dedup_key).limit(1).execute()
     if existing.data:
         return False
 
-    dedup_key = f"{board_id}:{url}"
     sb.table("raw_articles").insert({
         "board_id": board_id,
         "source": source,
