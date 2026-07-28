@@ -242,3 +242,31 @@ def get_global_last_updated() -> str:
     if result.data:
         return result.data[0].get("timestamp", "")
     return ""
+
+
+def get_board(board_id: str) -> Optional[Dict]:
+    """获取板块信息"""
+    sb = get_supabase()
+    result = sb.table("boards").select("*").eq("id", board_id).execute()
+    return result.data[0] if result.data else None
+
+
+def list_boards() -> List[Dict]:
+    """获取所有板块"""
+    sb = get_supabase()
+    result = sb.table("boards").select("*").order("sort_order").execute()
+    return result.data
+
+
+def update_board_status(board_id: str, **kwargs):
+    """更新板块状态"""
+    sb = get_supabase()
+    kwargs["updated_at"] = datetime.now().isoformat()
+    sb.table("boards").update(kwargs).eq("id", board_id).execute()
+
+
+def get_board_status(board_id: str) -> Optional[Dict]:
+    """获取板块状态"""
+    sb = get_supabase()
+    result = sb.table("boards").select("*").eq("id", board_id).execute()
+    return result.data[0] if result.data else None
