@@ -241,7 +241,8 @@ SCHEMA = [
         new_items_count INTEGER DEFAULT 0,
         total_sources   INTEGER DEFAULT 0,
         error_sources   INTEGER DEFAULT 0,
-        last_message    TEXT DEFAULT ''
+        last_message    TEXT DEFAULT '',
+        rocket_intro    TEXT DEFAULT ''
     )""",
 ]
 
@@ -251,6 +252,11 @@ def init_db():
     with get_cursor() as cur:
         for sql in SCHEMA:
             cur.execute(sql)
+        # -- migration: add rocket_intro column to existing board_status tables --
+        try:
+            cur.execute("ALTER TABLE board_status ADD COLUMN rocket_intro TEXT DEFAULT ''")
+        except sqlite3.OperationalError:
+            pass  # column already exists
 
 
 def needs_migration() -> bool:
@@ -943,3 +949,30 @@ def sync_rocket_companies() -> int:
             continue  # 单个 API 失败不阻塞其他
 
     return updated
+
+
+# ============================================================
+#  Rocket 引言（AI 动态更新）
+# ============================================================
+
+_DEFAULT_ROCKET_INTRO = '<p>火箭一子级造价占全箭约 70%——过去打完就扔，相当于\u201c用黄金造一次性筷子\u201d。可回收火箭把消耗品变成可反复使用的\u201c太空交通工具\u201d，复用 10 次以上成本可直降 80%。这不仅是技术突破，更是航天经济学的底层重写。</p>\n<p>截至 2026 年 7 月，全球已形成 <strong>美国领跑、中国国家突击、民营多线并进</strong> 的格局。下面逐家拆解最新进展。</p>'
+
+
+def get_rocket_intro() -> str:
+    """读取 rocket 板块引言，若未设置则返回默认值。"""
+    with get_cursor() as cur:
+        cur.execute("SELECT rocket_intro FROM board_status WHERE board_id='rocket'")
+        row = cur.fetchone()
+    if row and row["rocket_intro"]:
+        return row["rocket_intro"]
+    return _DEFAULT_ROCKET_INTRO
+
+
+def set_rocket_intro(text: str):
+    """更新 rocket 板块引言（AI 生成后写入）。"""
+    with get_cursor() as cur:
+        cur.execute("""
+            INSERT INTO board_status (board_id, rocket_intro)
+            VALUES ('rocket', ?)
+            ON CONFLICT(board_id) DO UPDATE SET rocket_intro = excluded.rocket_intro
+        """, (text,))

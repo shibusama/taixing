@@ -67,3 +67,17 @@
     })
     .catch(function(){ /* 接口不可用时保持占位文字 */ });
 })();
+
+// --- 动态火箭引言 ---
+(function(){
+  const el = document.getElementById('rocket-intro');
+  if (!el) return;
+  fetch('/api/rocket-intro')
+    .then(r => r.json())
+    .then(data => {
+      if (data.intro) {
+        el.innerHTML = data.intro;
+      }
+    })
+    .catch(function(){ /* 接口不可用时保持静态占位文字 */ });
+})();

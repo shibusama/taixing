@@ -93,6 +93,13 @@ def api_last_updated():
     return {"last_updated": get_global_last_updated()}
 
 
+@router.get("/rocket-intro")
+def api_get_rocket_intro():
+    """返回火箭板块 AI 动态引言（HTML 片段）"""
+    from app.database import get_rocket_intro
+    return {"intro": get_rocket_intro()}
+
+
 @router.get("/status/{board_id}")
 def api_get_board_status(board_id: str):
     """查询某个板块的爬取状态（最近一次爬取时间、新增数量等）"""
@@ -186,6 +193,12 @@ def run_crawler(board_id: str) -> dict:
         try:
             from app.database import sync_rocket_companies
             companies_new = sync_rocket_companies()
+        except Exception:
+            pass
+        # 6. LLM 更新引言
+        try:
+            from app.llm import update_rocket_intro_if_needed
+            update_rocket_intro_if_needed()
         except Exception:
             pass
 
