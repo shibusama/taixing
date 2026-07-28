@@ -1,0 +1,534 @@
+[
+  {
+    "id": 1,
+    "section": "fed_schedule",
+    "key": "1月28日",
+    "value": "维持不变",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "section": "fed_schedule",
+    "key": "3月18日",
+    "value": "维持不变 <strong>·点阵图</strong>",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "section": "fed_schedule",
+    "key": "4月29日",
+    "value": "维持不变",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "section": "fed_schedule",
+    "key": "6月17日",
+    "value": "维持不变 <strong>·点阵图·鹰派</strong>",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "section": "fed_schedule",
+    "key": "7月29日",
+    "value": "<em>85.6%概率不变</em>",
+    "sort_order": 4
+  },
+  {
+    "id": 6,
+    "section": "fed_schedule",
+    "key": "9月16日",
+    "value": "65%概率加息 <strong>·点阵图</strong>",
+    "sort_order": 5
+  },
+  {
+    "id": 7,
+    "section": "fed_schedule",
+    "key": "10月28日",
+    "value": "待定",
+    "sort_order": 6
+  },
+  {
+    "id": 8,
+    "section": "fed_schedule",
+    "key": "12月",
+    "value": "待定 <strong>·点阵图</strong>",
+    "sort_order": 7
+  },
+  {
+    "id": 9,
+    "section": "fed_officials",
+    "key": "沃什（主席）",
+    "value": "淡化前瞻指引，强调<strong>抗通胀零容忍</strong>",
+    "sort_order": 0
+  },
+  {
+    "id": 10,
+    "section": "fed_officials",
+    "key": "洛根（达拉斯）",
+    "value": "<strong>唯一公开主张加息</strong>的票委",
+    "sort_order": 1
+  },
+  {
+    "id": 11,
+    "section": "fed_officials",
+    "key": "沃勒（理事）",
+    "value": "曾主张降息，现转向<em>观望</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 12,
+    "section": "fed_officials",
+    "key": "库克（理事）",
+    "value": "6月通胀降温后倾向<em>按兵不动</em>",
+    "sort_order": 3
+  },
+  {
+    "id": 13,
+    "section": "fed_officials",
+    "key": "哈玛克（克利夫兰）",
+    "value": "<strong>公开主张加息</strong>的票委",
+    "sort_order": 4
+  },
+  {
+    "id": 14,
+    "section": "fed_officials",
+    "key": "卡什卡利（明尼阿波利斯）",
+    "value": "可能加入<em>加息阵营</em>",
+    "sort_order": 5
+  },
+  {
+    "id": 15,
+    "section": "fx_rates",
+    "key": "当日",
+    "value": "163.820 <em>+0.21%</em>",
+    "sort_order": 0
+  },
+  {
+    "id": 16,
+    "section": "fx_rates",
+    "key": "周变动",
+    "value": "162.50 → 163.86 <strong>+0.83%</strong>",
+    "sort_order": 1
+  },
+  {
+    "id": 17,
+    "section": "fx_rates",
+    "key": "月变动",
+    "value": "161.76 → 163.86 <strong>+1.30%</strong>",
+    "sort_order": 2
+  },
+  {
+    "id": 18,
+    "section": "fx_rates",
+    "key": "3个月",
+    "value": "159.40 → 163.86 <strong>+2.80%</strong>",
+    "sort_order": 3
+  },
+  {
+    "id": 19,
+    "section": "fx_rates",
+    "key": "6个月",
+    "value": "152.46 → 163.86 <strong>+7.48%</strong>",
+    "sort_order": 4
+  },
+  {
+    "id": 20,
+    "section": "fx_rates",
+    "key": "1年",
+    "value": "147.82 → 163.86 <strong>+10.85%</strong>",
+    "sort_order": 5
+  },
+  {
+    "id": 21,
+    "section": "fx_rates",
+    "key": "5年",
+    "value": "109.76 → 163.86 <strong>+49.28%</strong>",
+    "sort_order": 6
+  },
+  {
+    "id": 22,
+    "section": "fx_cb_rates",
+    "key": "美联储 FED",
+    "value": "<strong>3.50—3.75%</strong> · CPI 3.5% · PCE 4.1%",
+    "sort_order": 0
+  },
+  {
+    "id": 23,
+    "section": "fx_cb_rates",
+    "key": "欧洲央行 ECB",
+    "value": "2.40% · CPI 2.8%",
+    "sort_order": 1
+  },
+  {
+    "id": 24,
+    "section": "fx_cb_rates",
+    "key": "日本央行 BOJ",
+    "value": "1.00% · CPI 1.5% <em>·6月加息</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 25,
+    "section": "fx_cb_rates",
+    "key": "英国央行 BOE",
+    "value": "3.75% · CPI 2.8%",
+    "sort_order": 3
+  },
+  {
+    "id": 26,
+    "section": "fx_cb_rates",
+    "key": "中国央行 PBOC",
+    "value": "3.10% · LPR 1年",
+    "sort_order": 4
+  },
+  {
+    "id": 27,
+    "section": "fx_cb_rates",
+    "key": "瑞士央行 SNB",
+    "value": "0.00% · CPI 0.5%",
+    "sort_order": 5
+  },
+  {
+    "id": 28,
+    "section": "spacex_finance",
+    "key": "2025营收",
+    "value": "<strong>$187亿</strong>",
+    "sort_order": 0
+  },
+  {
+    "id": 29,
+    "section": "spacex_finance",
+    "key": "净亏损",
+    "value": "$49亿",
+    "sort_order": 1
+  },
+  {
+    "id": 30,
+    "section": "spacex_finance",
+    "key": "资本支出",
+    "value": "$207亿 <em>·超营收</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 31,
+    "section": "spacex_finance",
+    "key": "市销率",
+    "value": "~118x <em>·极高估值</em>",
+    "sort_order": 3
+  },
+  {
+    "id": 32,
+    "section": "spacex_finance",
+    "key": "Starlink客户",
+    "value": "<strong>1030万</strong> ·覆盖164国",
+    "sort_order": 4
+  },
+  {
+    "id": 33,
+    "section": "spacex_finance",
+    "key": "在轨卫星",
+    "value": "~9600颗",
+    "sort_order": 5
+  },
+  {
+    "id": 34,
+    "section": "spacex_finance",
+    "key": "总股本",
+    "value": "131.59亿股",
+    "sort_order": 6
+  },
+  {
+    "id": 35,
+    "section": "spacex_finance",
+    "key": "流通股",
+    "value": "5.56亿股",
+    "sort_order": 7
+  },
+  {
+    "id": 36,
+    "section": "spacex_breakdown",
+    "key": "Starlink连接",
+    "value": "<strong>$114亿</strong> ·占比61% ·营业利润$44亿",
+    "sort_order": 0
+  },
+  {
+    "id": 37,
+    "section": "spacex_breakdown",
+    "key": "发射服务",
+    "value": "~$41亿 ·占比22%",
+    "sort_order": 1
+  },
+  {
+    "id": 38,
+    "section": "spacex_breakdown",
+    "key": "AI业务",
+    "value": "$32亿 ·营业亏损<em>$64亿</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 39,
+    "section": "spacex_breakdown",
+    "key": "Starlink移动",
+    "value": "30家运营商合作 ·覆盖19亿人",
+    "sort_order": 3
+  },
+  {
+    "id": 40,
+    "section": "spacex_analyst",
+    "key": "目标均价",
+    "value": "<strong>$236.72</strong>",
+    "sort_order": 0
+  },
+  {
+    "id": 41,
+    "section": "spacex_analyst",
+    "key": "最高目标",
+    "value": "$800.00",
+    "sort_order": 1
+  },
+  {
+    "id": 42,
+    "section": "spacex_analyst",
+    "key": "最低目标",
+    "value": "$115.00",
+    "sort_order": 2
+  },
+  {
+    "id": 43,
+    "section": "spacex_analyst",
+    "key": "买入/增持",
+    "value": "76% <em>·7月数据</em>",
+    "sort_order": 3
+  },
+  {
+    "id": 44,
+    "section": "spacex_analyst",
+    "key": "持有",
+    "value": "19%",
+    "sort_order": 4
+  },
+  {
+    "id": 45,
+    "section": "spacex_analyst",
+    "key": "减持/卖出",
+    "value": "5%",
+    "sort_order": 5
+  },
+  {
+    "id": 46,
+    "section": "ai_anthropic",
+    "key": "S-1递表",
+    "value": "<strong>2026.6.1</strong> ·保密提交",
+    "sort_order": 0
+  },
+  {
+    "id": 47,
+    "section": "ai_anthropic",
+    "key": "最新估值",
+    "value": "<strong>$9650亿</strong> ·5月H轮$650亿融资",
+    "sort_order": 1
+  },
+  {
+    "id": 48,
+    "section": "ai_anthropic",
+    "key": "二级市场",
+    "value": "~$1.2万亿 <em>·持续攀升</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 49,
+    "section": "ai_anthropic",
+    "key": "IPO目标",
+    "value": "<strong>~$1万亿</strong>",
+    "sort_order": 3
+  },
+  {
+    "id": 50,
+    "section": "ai_anthropic",
+    "key": "Q1收入",
+    "value": "$48亿",
+    "sort_order": 4
+  },
+  {
+    "id": 51,
+    "section": "ai_anthropic",
+    "key": "Q2预计收入",
+    "value": "<strong>$109亿</strong> ·环比翻倍",
+    "sort_order": 5
+  },
+  {
+    "id": 52,
+    "section": "ai_anthropic",
+    "key": "ARR（年化收入）",
+    "value": "<strong>$470亿</strong> ·5月数据",
+    "sort_order": 6
+  },
+  {
+    "id": 53,
+    "section": "ai_anthropic",
+    "key": "Q2营业利润",
+    "value": "<strong>$5.59亿</strong> ·<em>首次季度盈利</em>",
+    "sort_order": 7
+  },
+  {
+    "id": 54,
+    "section": "ai_anthropic",
+    "key": "毛利率",
+    "value": "60% <em>·推理效率提升3倍</em>",
+    "sort_order": 8
+  },
+  {
+    "id": 55,
+    "section": "ai_anthropic",
+    "key": "企业客户",
+    "value": "财富10强中<strong>8家</strong>采用",
+    "sort_order": 9
+  },
+  {
+    "id": 56,
+    "section": "ai_anthropic",
+    "key": "净美元留存率",
+    "value": "<strong>500%</strong> ·客户支出5倍增长",
+    "sort_order": 10
+  },
+  {
+    "id": 57,
+    "section": "ai_anthropic",
+    "key": "主要股东",
+    "value": "亚马逊15-20% ·谷歌14%",
+    "sort_order": 11
+  },
+  {
+    "id": 58,
+    "section": "ai_openai",
+    "key": "S-1递表",
+    "value": "<strong>2026.6.8</strong> ·保密提交",
+    "sort_order": 0
+  },
+  {
+    "id": 59,
+    "section": "ai_openai",
+    "key": "私募估值",
+    "value": "<strong>$8520亿</strong> ·3月$1220亿融资",
+    "sort_order": 1
+  },
+  {
+    "id": 60,
+    "section": "ai_openai",
+    "key": "IPO目标",
+    "value": "<strong>$1万亿</strong> ·<em>奥特曼不妥协</em>",
+    "sort_order": 2
+  },
+  {
+    "id": 61,
+    "section": "ai_openai",
+    "key": "上市时间",
+    "value": "<strong>2027年</strong> ·从9月推迟",
+    "sort_order": 3
+  },
+  {
+    "id": 62,
+    "section": "ai_openai",
+    "key": "2025全年营收",
+    "value": "$131亿",
+    "sort_order": 4
+  },
+  {
+    "id": 63,
+    "section": "ai_openai",
+    "key": "月营收",
+    "value": "~$20亿 <em>·当前</em>",
+    "sort_order": 5
+  },
+  {
+    "id": 64,
+    "section": "ai_openai",
+    "key": "净亏损",
+    "value": "$385亿 <em>·含重组会计调整</em>",
+    "sort_order": 6
+  },
+  {
+    "id": 65,
+    "section": "ai_openai",
+    "key": "ChatGPT周活",
+    "value": "<strong>9亿</strong>",
+    "sort_order": 7
+  },
+  {
+    "id": 66,
+    "section": "ai_openai",
+    "key": "微软持股",
+    "value": "~27% ·价值约$1350亿",
+    "sort_order": 8
+  },
+  {
+    "id": 67,
+    "section": "ai_openai",
+    "key": "累计融资",
+    "value": "超$1800亿",
+    "sort_order": 9
+  },
+  {
+    "id": 68,
+    "section": "ai_openai",
+    "key": "主要投资方",
+    "value": "软银·亚马逊·英伟达·微软",
+    "sort_order": 10
+  },
+  {
+    "id": 69,
+    "section": "ai_openai",
+    "key": "Azure承诺",
+    "value": "OpenAI承诺采购$2500亿 Azure服务",
+    "sort_order": 11
+  },
+  {
+    "id": 70,
+    "section": "ai_comparison",
+    "key": "估值",
+    "value": "Anthropic <strong>$9650亿</strong> vs OpenAI $8520亿",
+    "sort_order": 0
+  },
+  {
+    "id": 71,
+    "section": "ai_comparison",
+    "key": "IPO节奏",
+    "value": "Anthropic <strong>10月</strong> vs OpenAI <em>2027</em>",
+    "sort_order": 1
+  },
+  {
+    "id": 72,
+    "section": "ai_comparison",
+    "key": "收入增速",
+    "value": "Anthropic ARR $470亿 vs OpenAI月$20亿",
+    "sort_order": 2
+  },
+  {
+    "id": 73,
+    "section": "ai_comparison",
+    "key": "盈利能力",
+    "value": "Anthropic <strong>Q2已盈利</strong> vs OpenAI <em>巨额亏损</em>",
+    "sort_order": 3
+  },
+  {
+    "id": 74,
+    "section": "ai_comparison",
+    "key": "客户结构",
+    "value": "Anthropic 80%企业 vs OpenAI 40%个人订阅",
+    "sort_order": 4
+  },
+  {
+    "id": 75,
+    "section": "ai_comparison",
+    "key": "核心产品",
+    "value": "Claude Code vs ChatGPT + Codex",
+    "sort_order": 5
+  },
+  {
+    "id": 76,
+    "section": "ai_comparison",
+    "key": "最大股东",
+    "value": "亚马逊15-20% vs 微软27%",
+    "sort_order": 6
+  }
+]

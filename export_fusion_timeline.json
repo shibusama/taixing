@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "region": "china",
+    "region_label": "磁约束托卡马克",
+    "event_date": "2026",
+    "title": "EAST 1亿℃ 1066秒稳态运行",
+    "description": "全球唯一实现千秒级亿度约束。",
+    "color": "green",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "region": "china",
+    "region_label": "磁约束托卡马克",
+    "event_date": "2027",
+    "title": "CRAFT综合研究设施全面建成",
+    "description": "验证磁体、低温、氚增殖全套工程技术。",
+    "color": "",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "region": "china",
+    "region_label": "磁约束托卡马克",
+    "event_date": "2028–2030",
+    "title": "CFEDR示范堆主机开工建造",
+    "description": "核心部件总装，关键部件样机试制测试。",
+    "color": "amber",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "region": "china",
+    "region_label": "磁约束托卡马克",
+    "event_date": "2030年前后",
+    "title": "聚变发电演示 · 产出第一度电",
+    "description": "中国目标：全球率先实现可控核聚变发电输出。",
+    "color": "green",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2022.12",
+    "title": "NIF首次实现聚变点火",
+    "description": "能量增益1.5倍，人类首次实验室点火。",
+    "color": "green",
+    "sort_order": 0
+  },
+  {
+    "id": 6,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2025",
+    "title": "NIF能量增益突破4倍",
+    "description": "单次释放8.6兆焦，再创新高。",
+    "color": "green",
+    "sort_order": 1
+  },
+  {
+    "id": 7,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2026",
+    "title": "CFS SPARC建造75%完成",
+    "description": "真空室半体就位、磁体安装、低温工厂运行，2027年首次等离子体。",
+    "color": "cyan",
+    "sort_order": 2
+  },
+  {
+    "id": 8,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2027",
+    "title": "CFS SPARC 首次等离子体",
+    "description": "目标达成Q>1净能量增益，为ARC聚变电站奠基。",
+    "color": "amber",
+    "sort_order": 3
+  },
+  {
+    "id": 9,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2028",
+    "title": "Helion\"北极星\"发电演示",
+    "description": "原型机目标发电，已签微软购电协议。",
+    "color": "amber",
+    "sort_order": 4
+  },
+  {
+    "id": 10,
+    "region": "us",
+    "region_label": "惯性约束 + 商业化",
+    "event_date": "2030s",
+    "title": "CFS ARC首座聚变电站",
+    "description": "400MW净电力并网，全球首座商业聚变电站。",
+    "color": "amber",
+    "sort_order": 5
+  },
+  {
+    "id": 11,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2023.10",
+    "title": "JET创造69MJ聚变能量纪录",
+    "description": "磁约束聚变最大能量输出。",
+    "color": "green",
+    "sort_order": 0
+  },
+  {
+    "id": 12,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2024",
+    "title": "JET正式退役",
+    "description": "运行40年关停，数据遗产赋能ITER。",
+    "color": "green",
+    "sort_order": 1
+  },
+  {
+    "id": 13,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2025",
+    "title": "W7-X创三乘积世界纪录",
+    "description": "德国仿星器验证稳态运行可行性。",
+    "color": "green",
+    "sort_order": 2
+  },
+  {
+    "id": 14,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2026.06",
+    "title": "ITER五真空室扇段就位 + 磁体冷测启动",
+    "description": "超导线圈冷至-269℃、68kA电流测试启动；中国牵头完成偏滤器研制。",
+    "color": "cyan",
+    "sort_order": 3
+  },
+  {
+    "id": 15,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2026底",
+    "title": "偏滤器原型集成测试",
+    "description": "中国海盐专用设施启动全球首个堆级偏滤器原型机测试。",
+    "color": "amber",
+    "sort_order": 4
+  },
+  {
+    "id": 16,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2034",
+    "title": "ITER研究运行启动",
+    "description": "全球最大托卡马克开始实验。",
+    "color": "",
+    "sort_order": 5
+  },
+  {
+    "id": 17,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2039",
+    "title": "ITER首次氘氚聚变实验",
+    "description": "验证大规模能量输出。",
+    "color": "amber",
+    "sort_order": 6
+  },
+  {
+    "id": 18,
+    "region": "eu",
+    "region_label": "ITER + 仿星器",
+    "event_date": "2050s",
+    "title": "EU-DEMO示范堆",
+    "description": "欧洲路线图终局，商业发电示范。",
+    "color": "amber",
+    "sort_order": 7
+  }
+]

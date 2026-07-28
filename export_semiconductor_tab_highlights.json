@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "tab_id": "tab-eda",
+    "num": "600+亿",
+    "label": "华大九天市值",
+    "color": "purple",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "tab_id": "tab-eda",
+    "num": "5x",
+    "label": "3DIC验证反超海外",
+    "color": "cyan",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "tab_id": "tab-eda",
+    "num": "2周→2天",
+    "label": "验证周期压缩",
+    "color": "green",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "tab_id": "tab-eda",
+    "num": "唯一",
+    "label": "3DIC全流程EDA提供商",
+    "color": "amber",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "tab_id": "tab-litho",
+    "num": "28nm",
+    "label": "SSA800批量交付",
+    "color": "cyan",
+    "sort_order": 0
+  },
+  {
+    "id": 6,
+    "tab_id": "tab-litho",
+    "num": "92~95%",
+    "label": "量产良率",
+    "color": "green",
+    "sort_order": 1
+  },
+  {
+    "id": 7,
+    "tab_id": "tab-litho",
+    "num": ">85%",
+    "label": "整机国产化率",
+    "color": "amber",
+    "sort_order": 2
+  },
+  {
+    "id": 8,
+    "tab_id": "tab-litho",
+    "num": "217%",
+    "label": "出货量同比增速",
+    "color": "purple",
+    "sort_order": 3
+  },
+  {
+    "id": 9,
+    "tab_id": "tab-subst",
+    "num": "55%",
+    "label": "成熟制程国产化率",
+    "color": "green",
+    "sort_order": 0
+  },
+  {
+    "id": 10,
+    "tab_id": "tab-subst",
+    "num": "35%",
+    "label": "芯片整体自给率",
+    "color": "cyan",
+    "sort_order": 1
+  },
+  {
+    "id": 11,
+    "tab_id": "tab-subst",
+    "num": "30%",
+    "label": "设备整体国产化率",
+    "color": "amber",
+    "sort_order": 2
+  },
+  {
+    "id": 12,
+    "tab_id": "tab-subst",
+    "num": "29%",
+    "label": "材料国产化率",
+    "color": "purple",
+    "sort_order": 3
+  }
+]

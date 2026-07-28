@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "tab_id": "tab-transport",
+    "emoji": "🚆",
+    "project_name": "川藏铁路雅林段",
+    "target_id": "proj-sichuan-tibet",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "tab_id": "tab-transport",
+    "emoji": "🚂",
+    "project_name": "中吉乌铁路",
+    "target_id": "proj-china-kyrgyz-uzbek",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "tab_id": "tab-transport",
+    "emoji": "🚢",
+    "project_name": "湛海高铁",
+    "target_id": "proj-zhanhai",
+    "status": "即将开工",
+    "status_class": "st-ready",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "tab_id": "tab-transport",
+    "emoji": "🌊",
+    "project_name": "渤海海峡通道",
+    "target_id": "proj-bohai",
+    "status": "规划中",
+    "status_class": "st-plan",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "tab_id": "tab-water",
+    "emoji": "⛵",
+    "project_name": "三峡水运新通道",
+    "target_id": "proj-three-gorges",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 4
+  },
+  {
+    "id": 6,
+    "tab_id": "tab-water",
+    "emoji": "🚢",
+    "project_name": "平陆运河",
+    "target_id": "proj-pinglu",
+    "status": "即将通航",
+    "status_class": "st-ready",
+    "sort_order": 5
+  },
+  {
+    "id": 7,
+    "tab_id": "tab-water",
+    "emoji": "💧",
+    "project_name": "引江补汉",
+    "target_id": "proj-yinjiang",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 6
+  },
+  {
+    "id": 8,
+    "tab_id": "tab-water",
+    "emoji": "💧",
+    "project_name": "南水北调西线",
+    "target_id": "proj-snd-west",
+    "status": "规划中",
+    "status_class": "st-plan",
+    "sort_order": 7
+  },
+  {
+    "id": 9,
+    "tab_id": "tab-energy",
+    "emoji": "⚡",
+    "project_name": "陇电入浙",
+    "target_id": "proj-longdian",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 8
+  },
+  {
+    "id": 10,
+    "tab_id": "tab-energy",
+    "emoji": "⚡",
+    "project_name": "浙江特高压环网",
+    "target_id": "proj-zhejiang-ring",
+    "status": "在建",
+    "status_class": "st-building",
+    "sort_order": 9
+  },
+  {
+    "id": 11,
+    "tab_id": "tab-science",
+    "emoji": "🔬",
+    "project_name": "FAST 天眼",
+    "target_id": "proj-fast",
+    "status": "运行",
+    "status_class": "st-ready",
+    "sort_order": 10
+  },
+  {
+    "id": 12,
+    "tab_id": "tab-science",
+    "emoji": "🔬",
+    "project_name": "散裂中子源",
+    "target_id": "proj-csns",
+    "status": "运行",
+    "status_class": "st-ready",
+    "sort_order": 11
+  },
+  {
+    "id": 13,
+    "tab_id": "tab-science",
+    "emoji": "🔬",
+    "project_name": "HEPS",
+    "target_id": "proj-heps",
+    "status": "建设中",
+    "status_class": "st-building",
+    "sort_order": 12
+  }
+]

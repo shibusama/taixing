@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "section": "fed",
+    "label": "当前利率",
+    "num": "3.50<span class='unit'>—3.75%</span>",
+    "sub": "连续4次维持不变",
+    "color": "",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "section": "fed",
+    "label": "最新CPI",
+    "num": "3.5<span class='unit'>%</span>",
+    "sub": "6月环比-0.4%，核心PCE仍3.4%",
+    "color": "",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "section": "fed",
+    "label": "下次会议",
+    "num": "7.29",
+    "sub": "85.6%概率不变，9月65%加息",
+    "color": "",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "section": "fed",
+    "label": "通胀目标",
+    "num": "2<span class='unit'>%</span>",
+    "sub": "CPI连续6年超标，鹰派施压",
+    "color": "",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "section": "fx",
+    "label": "美元/日元",
+    "num": "163.82",
+    "sub": "7月27日实时",
+    "color": "",
+    "sort_order": 0
+  },
+  {
+    "id": 6,
+    "section": "fx",
+    "label": "月内高点",
+    "num": "163.82",
+    "sub": "7月峰值",
+    "color": "",
+    "sort_order": 1
+  },
+  {
+    "id": 7,
+    "section": "fx",
+    "label": "月内低点",
+    "num": "161.15",
+    "sub": "7月谷底",
+    "color": "",
+    "sort_order": 2
+  },
+  {
+    "id": 8,
+    "section": "fx",
+    "label": "年涨幅（红）",
+    "num": "+10.95<span class='unit'>%</span>",
+    "sub": "逼近40年高位",
+    "color": "var(--red)",
+    "sort_order": 3
+  },
+  {
+    "id": 9,
+    "section": "spacex",
+    "label": "最新股价",
+    "num": "$115.07",
+    "sub": "7月24日收盘",
+    "color": "var(--green)",
+    "sort_order": 0
+  },
+  {
+    "id": 10,
+    "section": "spacex",
+    "label": "IPO价格",
+    "num": "$135",
+    "sub": "6月上市发行价",
+    "color": "",
+    "sort_order": 1
+  },
+  {
+    "id": 11,
+    "section": "spacex",
+    "label": "总市值",
+    "num": "~$1.5<span class='unit'>万亿</span>",
+    "sub": "峰值$2.2万亿→回落",
+    "color": "",
+    "sort_order": 2
+  },
+  {
+    "id": 12,
+    "section": "spacex",
+    "label": "较IPO（跌）",
+    "num": "-14.8<span class='unit'>%</span>",
+    "sub": "逼近发行价",
+    "color": "var(--green)",
+    "sort_order": 3
+  },
+  {
+    "id": 13,
+    "section": "ai",
+    "label": "Anthropic估值",
+    "num": "$9650<span class='unit'>亿</span>",
+    "sub": "二级市场~$1.2万亿",
+    "color": "",
+    "sort_order": 0
+  },
+  {
+    "id": 14,
+    "section": "ai",
+    "label": "OpenAI估值",
+    "num": "$8520<span class='unit'>亿</span>",
+    "sub": "3月私募融资后",
+    "color": "",
+    "sort_order": 1
+  },
+  {
+    "id": 15,
+    "section": "ai",
+    "label": "Anthropic IPO",
+    "num": "10月",
+    "sub": "最快2026年10月挂牌",
+    "color": "",
+    "sort_order": 2
+  },
+  {
+    "id": 16,
+    "section": "ai",
+    "label": "OpenAI IPO",
+    "num": "2027",
+    "sub": "从9月推迟至2027年",
+    "color": "",
+    "sort_order": 3
+  }
+]

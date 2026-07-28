@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "tab_id": "tab-mfg",
+    "year": "2024",
+    "value": "7nm",
+    "label": "中芯N+2量产",
+    "cls": "done",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "tab_id": "tab-mfg",
+    "year": "2025",
+    "value": "5nm",
+    "label": "N+3风险试产",
+    "cls": "done",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "tab_id": "tab-mfg",
+    "year": "2026",
+    "value": "等效3nm",
+    "label": "逻辑折叠首发",
+    "cls": "cur",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "tab_id": "tab-mfg",
+    "year": "2031",
+    "value": "等效1.4nm",
+    "label": "韬定律远期目标",
+    "cls": "next",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "tab_id": "tab-subst",
+    "year": "2018",
+    "value": "<12%",
+    "label": "材料自给率",
+    "cls": "done",
+    "sort_order": 0
+  },
+  {
+    "id": 6,
+    "tab_id": "tab-subst",
+    "year": "2021",
+    "value": "8%",
+    "label": "设备国产化",
+    "cls": "done",
+    "sort_order": 1
+  },
+  {
+    "id": 7,
+    "tab_id": "tab-subst",
+    "year": "2026",
+    "value": "29~55%",
+    "label": "分层全面替代",
+    "cls": "cur",
+    "sort_order": 2
+  },
+  {
+    "id": 8,
+    "tab_id": "tab-subst",
+    "year": "2030",
+    "value": "70%+",
+    "label": "全链自主可控目标",
+    "cls": "next",
+    "sort_order": 3
+  }
+]

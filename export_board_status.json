@@ -1,0 +1,65 @@
+[
+  {
+    "board_id": "rocket",
+    "last_crawled_at": "2026-07-28 06:00:41",
+    "new_items_count": 0,
+    "total_sources": 6,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "moon",
+    "last_crawled_at": "2026-07-28 06:01:25",
+    "new_items_count": 0,
+    "total_sources": 1,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "semiconductor",
+    "last_crawled_at": "2026-07-28 06:01:27",
+    "new_items_count": 0,
+    "total_sources": 2,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "china-tech",
+    "last_crawled_at": "2026-07-28 06:01:30",
+    "new_items_count": 0,
+    "total_sources": 4,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "mega-projects",
+    "last_crawled_at": "2026-07-28 06:01:33",
+    "new_items_count": 0,
+    "total_sources": 1,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "controlled-fusion",
+    "last_crawled_at": "2026-07-28 06:01:43",
+    "new_items_count": 0,
+    "total_sources": 3,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  },
+  {
+    "board_id": "finance",
+    "last_crawled_at": "2026-07-28 06:02:14",
+    "new_items_count": 0,
+    "total_sources": 2,
+    "error_sources": 0,
+    "last_message": "no new data",
+    "rocket_intro": ""
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "section": "fed_schedule",
+    "tag": "利率决议",
+    "name": "美联储议息会议时间表",
+    "en": "FOMC Meeting Schedule 2026",
+    "description": "利率决议每年8次，通常在北京时间周四凌晨公布。季末会议附带经济预测、点阵图和主席发布会。",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "section": "fed_officials",
+    "tag": "官员动态",
+    "name": "鹰鸽阵营分化",
+    "en": "Hawks vs Doves",
+    "description": "",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "section": "fx_rates",
+    "tag": "实时行情",
+    "name": "USD/JPY 多周期走势",
+    "en": "Dollar-Yen Exchange Rate",
+    "description": "",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "section": "fx_cb_rates",
+    "tag": "全球视角",
+    "name": "各国央行基准利率",
+    "en": "Global Central Bank Rates",
+    "description": "",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "section": "spacex_finance",
+    "tag": "财务概况",
+    "name": "SpaceX 2025财年关键数据",
+    "en": "SpaceX Financial Overview",
+    "description": "",
+    "sort_order": 4
+  },
+  {
+    "id": 6,
+    "section": "spacex_breakdown",
+    "tag": "业务拆解",
+    "name": "收入结构分析",
+    "en": "Revenue Breakdown",
+    "description": "Starlink连接服务是唯一盈利板块，AI业务仍处高额亏损期。",
+    "sort_order": 5
+  },
+  {
+    "id": 7,
+    "section": "spacex_analyst",
+    "tag": "分析师评级",
+    "name": "32家机构目标价",
+    "en": "Analyst Price Targets",
+    "description": "",
+    "sort_order": 6
+  },
+  {
+    "id": 8,
+    "section": "ai_anthropic",
+    "tag": "冲刺IPO",
+    "name": "Anthropic — Claude大模型开发商",
+    "en": "Anthropic IPO Pipeline",
+    "description": "6月1日秘密递表，选定摩根士丹利、高盛、摩根大通为主承销商。7月已开始密集举办IPO投资者会议，最快10月挂牌。核心增长引擎为Claude Code编程工具。7月24日发布Claude Opus 5，强化长时运行代理与编程能力。",
+    "sort_order": 7
+  },
+  {
+    "id": 9,
+    "section": "ai_openai",
+    "tag": "推迟上市",
+    "name": "OpenAI — ChatGPT开发商",
+    "en": "OpenAI IPO Pipeline",
+    "description": "6月8日秘密递表，原计划9月上市，因SpaceX IPO后股价大跌及市场动荡，CEO奥特曼拒绝降低$1万亿估值目标，IPO推迟至2027年。高盛、摩根士丹利为主承销商。",
+    "sort_order": 8
+  },
+  {
+    "id": 10,
+    "section": "ai_comparison",
+    "tag": "竞速对比",
+    "name": "Anthropic vs OpenAI",
+    "en": "Head-to-Head Comparison",
+    "description": "",
+    "sort_order": 9
+  }
+]

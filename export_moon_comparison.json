@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "dimension": "载人登月目标",
+    "china": "2030年前",
+    "us": "2028年（Artemis IV）",
+    "highlight": "china",
+    "sort_order": 0
+  },
+  {
+    "id": 2,
+    "dimension": "2026南极任务",
+    "china": "嫦娥七号（8月，国家队）",
+    "us": "蓝月MK1/格里芬一号（商业）",
+    "highlight": "china",
+    "sort_order": 1
+  },
+  {
+    "id": 3,
+    "dimension": "火箭",
+    "china": "长征十号（液氧甲烷，复用）",
+    "us": "SLS Block 1（一次性）",
+    "highlight": "",
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "dimension": "着陆器",
+    "china": "揽月着陆器（自研）",
+    "us": "星舰HLS / 蓝月Mark 2（商业）",
+    "highlight": "",
+    "sort_order": 3
+  },
+  {
+    "id": 5,
+    "dimension": "组织模式",
+    "china": "国家队主导",
+    "us": "NASA资助+商业自主研发",
+    "highlight": "",
+    "sort_order": 4
+  },
+  {
+    "id": 6,
+    "dimension": "长期愿景",
+    "china": "国际月球科研站(ILRS)",
+    "us": "月球基地→火星",
+    "highlight": "",
+    "sort_order": 5
+  },
+  {
+    "id": 7,
+    "dimension": "节奏特点",
+    "china": "稳步推进、调整小",
+    "us": "多轮延期、调整大",
+    "highlight": "",
+    "sort_order": 6
+  }
+]
