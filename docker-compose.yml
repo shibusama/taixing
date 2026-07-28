@@ -1,8 +1,0 @@
-services:
-  taixing:
-    image: lilizhangchi524/taixing:latest
-    build: .
-    container_name: taixing
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
