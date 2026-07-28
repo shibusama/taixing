@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钛星 · 管理端</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .admin-header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            margin-bottom: 30px;
+        }
+        .admin-header h1 {
+            font-size: 28px;
+            color: #00d9ff;
+            margin: 0;
+        }
+        .admin-header p {
+            color: #888;
+            margin-top: 10px;
+        }
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .board-card {
+            background: rgba(13, 27, 42, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .board-card:hover {
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.1);
+        }
+        .board-card h3 {
+            color: #00d9ff;
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .board-card .board-id {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        .board-card .status {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+        .board-card .status.success {
+            color: #00ff88;
+        }
+        .board-card .status.error {
+            color: #ff4444;
+        }
+        .board-card .status.loading {
+            color: #ffaa00;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-crawl {
+            background: linear-gradient(135deg, #00d9ff, #0099cc);
+            color: #fff;
+        }
+        .btn-crawl:hover {
+            background: linear-gradient(135deg, #00eeff, #00aadd);
+        }
+        .btn-ai {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: #fff;
+        }
+        .btn-ai:hover {
+            background: linear-gradient(135deg, #b865ff, #8c4aed);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .global-actions {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .btn-global {
+            padding: 12px 30px;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #00d9ff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>钛星 · 管理端</h1>
+            <p>数据爬取与 AI 解读管理</p>
+        </div>
+
+        <div class="global-actions">
+            <button class="btn btn-crawl btn-global" onclick="crawlAll()">全部爬取</button>
+            <button class="btn btn-ai btn-global" onclick="aiUpdateAll()">全部 AI 解读</button>
+        </div>
+
+        <div class="board-grid" id="boardGrid"></div>
+
+        <a href="index.html" class="back-link">← 返回首页</a>
+    </div>
+
+    <script>
+        const BOARDS = [
+            { id: 'rocket', name: '可回收火箭' },
+            { id: 'moon', name: '中美登月' },
+            { id: 'semiconductor', name: '中国半导体' },
+            { id: 'china-tech', name: '中国科技AI' },
+            { id: 'mega-projects', name: '中国大工程' },
+            { id: 'controlled-fusion', name: '可控核聚变' },
+            { id: 'finance', name: '科技资本' }
+        ];
+
+        function init() {
+            const grid = document.getElementById('boardGrid');
+            grid.innerHTML = BOARDS.map(board => `
+                <div class="board-card" id="card-${board.id}">
+                    <h3>${board.name}</h3>
+                    <div class="board-id">${board.id}</div>
+                    <div class="status" id="status-${board.id}">点击按钮开始操作</div>
+                    <div class="btn-group">
+                        <button class="btn btn-crawl" onclick="crawlBoard('${board.id}')">爬取数据</button>
+                        <button class="btn btn-ai" onclick="aiUpdateBoard('${board.id}')">AI 解读</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 加载初始状态
+            BOARDS.forEach(board => loadStatus(board.id));
+        }
+
+        async function loadStatus(boardId) {
+            try {
+                const res = await fetch(`/api/status/${boardId}`);
+                const data = await res.json();
+                const statusEl = document.getElementById(`status-${boardId}`);
+                if (data.status === 'never_crawled') {
+                    statusEl.textContent = '从未爬取';
+                } else {
+                    statusEl.textContent = `上次: ${data.last_crawl_time || '未知'} | 新增: ${data.new_items || 0}`;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function setStatus(boardId, message, type = '') {
+            const statusEl = document.getElementById(`status-${boardId}`);
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+
+        function setButtonsDisabled(boardId, disabled) {
+            const card = document.getElementById(`card-${boardId}`);
+            const buttons = card.querySelectorAll('.btn');
+            buttons.forEach(btn => btn.disabled = disabled);
+        }
+
+        async function crawlBoard(boardId) {
+            setStatus(boardId, '正在爬取...', 'loading');
+            setButtonsDisabled(boardId, true);
+            
+            try {
+                const res = await fetch(`/api/crawl/${boardId}`, { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    const detail = data.detail;
+                    setStatus(boardId, `成功! 新增 ${detail.new_items} 条数据`, 'success');
+                } else {
+                    setStatus(boardId, `失败: ${data.detail?.error || '未知错误'}`, 'error');
+                }
+            } catch (e) {
+                setStatus(boardId, `错误: ${e.message}`, 'error');
+            }
+            
+            setButtonsDisabled(boardId, false);
+            loadStatus(boardId);
+        }
+
+        async function aiUpdateBoard(boardId) {
+            setStatus(boardId, '正在 AI 解读...', 'loading');
+            setButtonsDisabled(boardId, true);
+            
+            try {
+                const res = await fetch(`/api/ai-update/${boardId}`, { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.status === 'ok') {
+                    setStatus(boardId, 'AI 解读完成!', 'success');
+                } else {
+                    setStatus(boardId, `失败: ${JSON.stringify(data)}`, 'error');
+                }
+            } catch (e) {
+                setStatus(boardId, `错误: ${e.message}`, 'error');
+            }
+            
+            setButtonsDisabled(boardId, false);
+            loadStatus(boardId);
+        }
+
+        async function crawlAll() {
+            if (!confirm('确定要爬取所有板块吗？')) return;
+            
+            BOARDS.forEach(board => {
+                setStatus(board.id, '正在爬取...', 'loading');
+                setButtonsDisabled(board.id, true);
+            });
+            
+            try {
+                const res = await fetch('/api/crawl', { method: 'POST' });
+                const data = await res.json();
+                
+                for (const [boardId, result] of Object.entries(data.results || {})) {
+                    if (result.error) {
+                        setStatus(boardId, `失败: ${result.error}`, 'error');
+                    } else {
+                        setStatus(boardId, `成功! 新增 ${result.new_items} 条`, 'success');
+                    }
+                    setButtonsDisabled(boardId, false);
+                    loadStatus(boardId);
+                }
+            } catch (e) {
+                BOARDS.forEach(board => {
+                    setStatus(board.id, `错误: ${e.message}`, 'error');
+                    setButtonsDisabled(board.id, false);
+                });
+            }
+        }
+
+        async function aiUpdateAll() {
+            if (!confirm('确定要对所有板块进行 AI 解读吗？')) return;
+            
+            BOARDS.forEach(board => {
+                setStatus(board.id, '正在 AI 解读...', 'loading');
+                setButtonsDisabled(board.id, true);
+            });
+            
+            try {
+                const res = await fetch('/api/ai-update', { method: 'POST' });
+                const data = await res.json();
+                
+                BOARDS.forEach(board => {
+                    if (data.status === 'ok') {
+                        setStatus(board.id, 'AI 解读完成!', 'success');
+                    } else {
+                        setStatus(board.id, `失败: ${JSON.stringify(data)}`, 'error');
+                    }
+                    setButtonsDisabled(board.id, false);
+                    loadStatus(board.id);
+                });
+            } catch (e) {
+                BOARDS.forEach(board => {
+                    setStatus(board.id, `错误: ${e.message}`, 'error');
+                    setButtonsDisabled(board.id, false);
+                });
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
