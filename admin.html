@@ -140,8 +140,14 @@
                 const res = await fetch(url);
                 const data = await res.json();
                 
-                document.getElementById('stat-total').textContent = data.stats.total;
-                document.getElementById('stat-new').textContent = data.stats.new;
+                // 检查返回数据结构
+                if (!data || !data.stats) {
+                    content.innerHTML = '<div class="error">API 返回数据格式错误</div>';
+                    return;
+                }
+                
+                document.getElementById('stat-total').textContent = data.stats.total || 0;
+                document.getElementById('stat-new').textContent = data.stats.new || 0;
                 
                 if (data.articles.length === 0) {
                     content.innerHTML = '<div class="loading">暂无数据</div>';
