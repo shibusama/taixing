@@ -1,7 +1,7 @@
 [project]
 sub_id = "ec55411c"
 name = "taixing-news"
-requires = ["python-3.13"]
+requires = ["python-3.12"]
 project_type = "web"
 
 [preview]

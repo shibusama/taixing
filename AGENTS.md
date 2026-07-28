@@ -80,7 +80,7 @@
 - **预览链路**：`[dev].build` → `scripts/coze-preview-build.sh`（安装依赖），`[dev].run` → `scripts/coze-preview-run.sh`（启动预览服务器）
 - **部署链路**：`[deploy].build` → `scripts/deploy-build.sh`（安装依赖），`[deploy].run` → `scripts/deploy-run.sh`（启动服务，监听 5000 端口）
 - **部署 profile**：kind = "service", flavor = "web"
-- **运行时**：python-3.13
+- **运行时**：python-3.12
 
 ## 用户偏好与长期约束
 
