@@ -71,7 +71,7 @@ export const moonComparison = pgTable("moon_comparison", {
 // ============ 中国半导体 ============
 
 export const semiconductorHighlights = pgTable("semiconductor_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -79,7 +79,7 @@ export const semiconductorHighlights = pgTable("semiconductor_highlights", {
 });
 
 export const semiconductorTabHighlights = pgTable("semiconductor_tab_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   tabId: text("tab_id").notNull(),
   num: text("num").notNull(),
   label: text("label").notNull(),
@@ -88,7 +88,7 @@ export const semiconductorTabHighlights = pgTable("semiconductor_tab_highlights"
 });
 
 export const semiconductorTabProgress = pgTable("semiconductor_tab_progress", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   tabId: text("tab_id").notNull(),
   year: text("year").notNull(),
   value: text("value"),
@@ -118,7 +118,7 @@ export const semiconductorTimeline = pgTable("semiconductor_timeline", {
 // ============ 中国科技 AI ============
 
 export const chinaTechHighlights = pgTable("china_tech_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -126,7 +126,7 @@ export const chinaTechHighlights = pgTable("china_tech_highlights", {
 });
 
 export const chinaTechLlm = pgTable("china_tech_llm", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   model: text("model").notNull(),
   company: text("company").notNull(),
   params: text("params"),
@@ -163,7 +163,7 @@ export const megaProjects = pgTable("mega_projects", {
 });
 
 export const megaProjectHighlights = pgTable("mega_project_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -171,7 +171,7 @@ export const megaProjectHighlights = pgTable("mega_project_highlights", {
 });
 
 export const megaProjectMilestones = pgTable("mega_project_milestones", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   projectId: integer("project_id").notNull(),
   marker: text("marker"),
   eventDate: text("event_date"),
@@ -184,7 +184,7 @@ export const megaProjectMilestones = pgTable("mega_project_milestones", {
 // ============ 可控核聚变 ============
 
 export const fusionHighlights = pgTable("fusion_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   num: text("num").notNull(),
   label: text("label").notNull(),
   color: text("color"),
@@ -205,7 +205,7 @@ export const fusionTimeline = pgTable("fusion_timeline", {
 // ============ 科技资本 ============
 
 export const financeGrids = pgTable("finance_grids", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   section: text("section").notNull(),
   key: text("key").notNull(),
   value: text("value").notNull(),
@@ -213,7 +213,7 @@ export const financeGrids = pgTable("finance_grids", {
 });
 
 export const financeHighlights = pgTable("finance_highlights", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   section: text("section").notNull(),
   label: text("label").notNull(),
   num: text("num").notNull(),
@@ -223,7 +223,7 @@ export const financeHighlights = pgTable("finance_highlights", {
 });
 
 export const financeSections = pgTable("finance_sections", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   section: text("section").notNull(),
   tag: text("tag"),
   name: text("name"),
