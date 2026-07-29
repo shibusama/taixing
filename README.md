@@ -103,7 +103,7 @@
 
 ## 数据库表（25 个）
 
-### 通用表
+### 通用表（5 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
@@ -113,21 +113,21 @@
 | `crawl_logs` | 160 | 爬虫执行日志 |
 | `health_check` | 1 | 健康检查 |
 
-### 可回收火箭（rocket）
+### 可回收火箭（rocket）（2 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
 | `rocket_companies` | 9 | 火箭公司档案 |
 | `rocket_launch_timeline` | 10 | 发射时间线（AI 提取） |
 
-### 中美登月（moon）
+### 中美登月（moon）（2 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
 | `moon_comparison` | 7 | 中美登月对比 |
 | `moon_highlights` | 4 | 登月亮点 |
 
-### 中国半导体（semiconductor）
+### 中国半导体（semiconductor）（5 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
@@ -137,7 +137,7 @@
 | `semiconductor_technologies` | 0 | 技术列表（空） |
 | `semiconductor_timeline` | 0 | 时间线（空） |
 
-### 中国科技AI（china_tech）
+### 中国科技AI（china_tech）（3 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
@@ -145,7 +145,7 @@
 | `china_tech_llm` | 11 | 大模型对比 |
 | `china_tech_timeline` | 0 | 时间线（空） |
 
-### 中国大工程（mega_projects）
+### 中国大工程（mega_projects）（3 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
@@ -153,14 +153,14 @@
 | `mega_project_highlights` | 4 | 大工程亮点 |
 | `mega_project_milestones` | 28 | 里程碑 |
 
-### 可控核聚变（fusion）
+### 可控核聚变（fusion）（2 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
 | `fusion_highlights` | 4 | 核聚变亮点 |
 | `fusion_timeline` | 18 | 核聚变时间线 |
 
-### 科技资本（finance）
+### 科技资本（finance）（3 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
