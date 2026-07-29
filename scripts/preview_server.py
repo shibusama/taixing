@@ -31,7 +31,12 @@ app.add_middleware(
 )
 
 # 挂载静态文件服务（放在最后，这样 API 路由优先匹配）
-app.mount("/", StaticFiles(directory=str(PROJECT_DIR), html=True), name="static")
+# HTML 文件在 pages/ 目录，其他静态文件（css/js/data）在根目录
+app.mount("/css", StaticFiles(directory=str(PROJECT_DIR / "css")), name="css")
+app.mount("/js", StaticFiles(directory=str(PROJECT_DIR / "js")), name="js")
+app.mount("/data", StaticFiles(directory=str(PROJECT_DIR / "data")), name="data")
+app.mount("/assets", StaticFiles(directory=str(PROJECT_DIR / "assets")), name="assets")
+app.mount("/", StaticFiles(directory=str(PROJECT_DIR / "pages"), html=True), name="static")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
