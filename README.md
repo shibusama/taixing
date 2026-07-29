@@ -101,14 +101,72 @@
     前端展示（API → 页面）
 ```
 
-## 数据库表
+## 数据库表（25 个）
 
-| 表名 | 用途 |
-|------|------|
-| `raw_articles` | 统一新闻池（所有爬虫数据入库） |
-| `rocket_launch_timeline` | 火箭发射时间线（AI 提取） |
-| `rocket_companies` | 火箭公司档案 |
-| `board_meta` | 版块元信息 |
+### 通用表
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `raw_articles` | 96 | 统一新闻池（所有爬虫数据入库） |
+| `board_meta` | 7 | 版块元信息 |
+| `board_status` | 7 | 版块状态 |
+| `crawl_logs` | 160 | 爬虫执行日志 |
+| `health_check` | 1 | 健康检查 |
+
+### 可回收火箭（rocket）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `rocket_companies` | 9 | 火箭公司档案 |
+| `rocket_launch_timeline` | 10 | 发射时间线（AI 提取） |
+
+### 中美登月（moon）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `moon_comparison` | 7 | 中美登月对比 |
+| `moon_highlights` | 4 | 登月亮点 |
+
+### 中国半导体（semiconductor）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `semiconductor_highlights` | 4 | 半导体亮点 |
+| `semiconductor_tab_highlights` | 12 | Tab 亮点 |
+| `semiconductor_tab_progress` | 8 | Tab 进展 |
+| `semiconductor_technologies` | 0 | 技术列表（空） |
+| `semiconductor_timeline` | 0 | 时间线（空） |
+
+### 中国科技AI（china_tech）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `china_tech_highlights` | 4 | 科技AI亮点 |
+| `china_tech_llm` | 11 | 大模型对比 |
+| `china_tech_timeline` | 0 | 时间线（空） |
+
+### 中国大工程（mega_projects）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `mega_projects` | 13 | 工程项目列表 |
+| `mega_project_highlights` | 4 | 大工程亮点 |
+| `mega_project_milestones` | 28 | 里程碑 |
+
+### 可控核聚变（fusion）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `fusion_highlights` | 4 | 核聚变亮点 |
+| `fusion_timeline` | 18 | 核聚变时间线 |
+
+### 科技资本（finance）
+
+| 表名 | 行数 | 用途 |
+|------|------|------|
+| `finance_sections` | 10 | 资本版块 |
+| `finance_highlights` | 16 | 资本亮点 |
+| `finance_grids` | 76 | 资本数据网格 |
 
 ### raw_articles 字段
 
