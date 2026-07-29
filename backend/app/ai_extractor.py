@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-DEEPSEEK_MODEL = "deepseek-chat"
+DEEPSEEK_MODEL = "deepseek-v4-flash"
 DEEPSEEK_API_KEY = "sk-REMOVED"
 
 
