@@ -28,11 +28,21 @@ API_HEADERS = {
 }
 
 
-def fetch_json_api(url, params=None, timeout=15):
-    """专为 JSON API 设计的请求函数，确保返回 JSON"""
-    resp = requests.get(url, params=params, timeout=timeout, headers=API_HEADERS, verify=False)
-    resp.raise_for_status()
-    return resp.json()
+def fetch_json_api(url, params=None, timeout=15, retries=3):
+    """专为 JSON API 设计的请求函数，确保返回 JSON，支持重试"""
+    import time
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, params=params, timeout=timeout, headers=API_HEADERS, verify=False)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429 and attempt < retries - 1:
+                wait_time = (attempt + 1) * 10  # 10s, 20s, 30s
+                print(f"    限流，等待 {wait_time}s 后重试...")
+                time.sleep(wait_time)
+            else:
+                raise
 
 
 def generate_news_id(url):
@@ -44,8 +54,8 @@ def crawl_rocket_launches():
     """火箭发射日历 → rocket_launch_timeline 表（Launch Library 2 API）"""
     print("\n[火箭发射] 抓取 Launch Library 2 API...")
     try:
-        data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
-                          params={"limit": 50, "ordering": "net"})
+        data = fetch_json_api("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
+                              params={"limit": 50, "ordering": "net"})
         launches = data.get("results", [])
         WATCH = ["SpaceX", "Blue Origin", "Rocket Lab", "CASC",
                  "LandSpace", "Galactic Energy", "Space Pioneer", "iSpace",
