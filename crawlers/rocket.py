@@ -1,16 +1,40 @@
 """
-火箭板块爬虫 — 火箭发射日历、SpaceX、Blue Origin、Rocket Lab、Relativity Space、Stoke Space
+火箭板块爬虫 — 火箭发射日历 + SNAPI 航天新闻聚合
+数据源：
+  - Launch Library 2 API：发射日历（结构化数据）
+  - Spaceflight News API (SNAPI)：航天新闻聚合（35000+ 篇，20+ 权威来源）
 """
 
-import re
+import requests
 
-from bs4 import BeautifulSoup
+from .utils import fetch_json
 
-from .utils import fetch_html, fetch_json, parse_date
+
+# SNAPI 搜索关键词 → 公司映射
+ROCKET_COMPANIES = {
+    "SpaceX": "spacex",
+    "Blue Origin": "blue_origin",
+    "Rocket Lab": "rocket_lab",
+    "Relativity Space": "relativity",
+    "Stoke Space": "stoke_space",
+}
+
+# API 请求头（Accept: application/json 确保返回 JSON）
+API_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Accept": "application/json",
+}
+
+
+def fetch_json_api(url, params=None, timeout=15):
+    """专为 JSON API 设计的请求函数，确保返回 JSON"""
+    resp = requests.get(url, params=params, timeout=timeout, headers=API_HEADERS, verify=False)
+    resp.raise_for_status()
+    return resp.json()
 
 
 def crawl_rocket_launches():
-    """火箭发射日历 → 结构化数据"""
+    """火箭发射日历 → 结构化数据（Launch Library 2 API）"""
     print("\n[火箭发射] 抓取 Launch Library 2 API...")
     try:
         data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
@@ -68,264 +92,62 @@ def crawl_rocket_launches():
             return []
 
 
-def crawl_blue_origin():
-    """Blue Origin 官网新闻 → 日期+标题+摘要"""
-    print("\n[Blue Origin] 抓取官网新闻...")
-    try:
-        html = fetch_html("https://www.blueorigin.com/news")
-        soup = BeautifulSoup(html, "lxml")
-        items = []
+def crawl_rocket_news_snapi():
+    """
+    通过 Spaceflight News API (SNAPI) 获取可回收火箭公司新闻
+    聚合来源：NASASpaceflight, SpaceNews, NASA, Ars Technica, Spaceflight Now 等 20+ 权威媒体
+    """
+    print("\n[SNAPI] 抓取可回收火箭公司新闻...")
+    all_items = []
 
-        skip_words = {"The Latest from Blue", "Space Systems", "Company",
-                      "Press Inquiries", "Follow Blue Origin", "Subscribe",
-                      "News", "Careers", "Sustainability"}
+    for company, source_id in ROCKET_COMPANIES.items():
+        try:
+            # SNAPI v4: 搜索关键词，按时间倒序，取最新 20 条
+            data = fetch_json_api(
+                "https://api.spaceflightnewsapi.net/v4/articles/",
+                params={"search": company, "limit": 20, "ordering": "-published_at"}
+            )
+            articles = data.get("results", [])
+            count = data.get("count", 0)
+            print(f"  [{company}] 共 {count} 篇，获取最新 {len(articles)} 篇")
 
-        for tag in ["h2", "h3", "h4"]:
-            for h in soup.find_all(tag):
-                title = h.get_text(strip=True)
-                if not title or len(title) < 15 or title in skip_words:
-                    continue
-                if any(sw in title for sw in ["Blue Origin", "Subscribe", "Follow"]):
-                    if len(title) < 30:
-                        continue
+            for article in articles:
+                # 解析日期：SNAPI 返回 ISO 格式 "2026-07-29T01:24:07Z"
+                pub_date = article.get("published_at", "")
+                if pub_date:
+                    pub_date = pub_date[:10]  # 取 "2026-07-29"
 
-                date_str = ""
-                parent = h.find_parent()
-                if parent:
-                    text = parent.get_text(separator=" ")
-                    date_match = re.search(
-                        r'((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})',
-                        text)
-                    if date_match:
-                        date_str = parse_date(date_match.group(1))
+                # 提取摘要（去除 HTML 标签和多余空白）
+                summary = article.get("summary", "")
+                if summary:
+                    # 去除可能的换行和多余空格
+                    summary = " ".join(summary.split())[:300]
 
-                link = h.find("a") or (parent.find("a") if parent else None)
-                url = link.get("href", "") if link else ""
-                if url and not url.startswith("http"):
-                    url = "https://www.blueorigin.com" + url
+                # 提取新闻来源
+                news_site = article.get("news_site", "")
 
-                if not any(i["title"] == title for i in items):
-                    items.append({
-                        "source": "blue_origin",
-                        "board": "rocket",
-                        "title": title,
-                        "date": date_str,
-                        "summary": "",
-                        "url": url or "https://www.blueorigin.com/news",
-                    })
+                # 提取作者
+                authors = article.get("authors", [])
+                author_str = ", ".join(a.get("name", "") for a in authors[:3]) if authors else ""
 
-        if len(items) < 3:
-            all_text = soup.get_text(separator="\n")
-            pattern = re.compile(
-                r'((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})\s*(?:News)?\s*(.+?)(?:Read more|$)',
-                re.MULTILINE)
-            for m in pattern.finditer(all_text):
-                date_str = parse_date(m.group(1))
-                title = m.group(2).strip()[:150]
-                if title and len(title) > 10 and not any(i["title"] == title for i in items):
-                    items.append({
-                        "source": "blue_origin",
-                        "board": "rocket",
-                        "title": title,
-                        "date": date_str,
-                        "summary": "",
-                        "url": "https://www.blueorigin.com/news",
-                    })
-
-        print(f"  解析到 {len(items)} 条新闻")
-        for item in items[:5]:
-            print(f"    {item['date'] or '?':<12} | {item['title'][:60]}")
-        return items
-    except Exception as e:
-        print(f"  [Blue Origin] 失败: {e}")
-        return []
-
-
-def crawl_rocket_lab():
-    """Rocket Lab 官网新闻 → 解析日期+标题"""
-    print("\n[Rocket Lab] 抓取官网新闻...")
-    try:
-        html = fetch_html("https://www.rocketlabusa.com/updates/")
-        soup = BeautifulSoup(html, "lxml")
-        items = []
-
-        for elem in soup.find_all(["div", "article", "li", "p"]):
-            text = elem.get_text(separator=" ", strip=True)
-            if len(text) < 20:
-                continue
-
-            date_match = re.search(
-                r'((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4})',
-                text)
-            if not date_match:
-                continue
-
-            date_str = parse_date(date_match.group(1))
-            after_date = text[date_match.end():].strip()
-            title = after_date.split("Read more")[0].strip()[:150]
-
-            if title and not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "rocket_lab",
+                all_items.append({
+                    "source": source_id,
                     "board": "rocket",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": "https://www.rocketlabusa.com/updates/",
+                    "title": article.get("title", ""),
+                    "date": pub_date,
+                    "summary": summary,
+                    "url": article.get("url", ""),
+                    "image_url": article.get("image_url", ""),
+                    "news_site": news_site,
+                    "author": author_str,
+                    "company": company,
                 })
 
-        print(f"  解析到 {len(items)} 条新闻")
-        for item in items[:5]:
-            print(f"    {item['date']} | {item['title'][:60]}")
-        return items
-    except Exception as e:
-        print(f"  [Rocket Lab] 失败: {e}")
-        return []
+        except Exception as e:
+            print(f"  [{company}] SNAPI 查询失败: {e}")
 
+    print(f"\n  [SNAPI] 共获取 {len(all_items)} 条新闻")
+    for item in all_items[:10]:
+        print(f"    {item['date'] or '?':<12} | {item['company']:<16} | {item['title'][:50]}")
 
-def crawl_spacex():
-    """SpaceX 没有可抓的 HTML 新闻页（JS渲染），从 Launch Library API 提取"""
-    print("\n[SpaceX] 通过 Launch Library API 提取最新发射...")
-    try:
-        data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
-                          params={"limit": 20, "ordering": "-net",
-                                  "launch_service_provider": "SpaceX"})
-        launches = data.get("results", [])
-        past_data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/previous/",
-                               params={"limit": 10, "ordering": "-net",
-                                       "launch_service_provider": "SpaceX"})
-        launches.extend(past_data.get("results", []))
-
-        items = []
-        for l in launches:
-            items.append({
-                "source": "spacex",
-                "board": "rocket",
-                "title": l.get("name", ""),
-                "date": l.get("net", "")[:10],
-                "agency": "SpaceX",
-                "rocket": l.get("rocket", {}).get("configuration", {}).get("name", ""),
-                "status": l.get("status", {}).get("name", "") if l.get("status") else "",
-                "summary": (l.get("mission", {}).get("description", "")[:200] if l.get("mission") else ""),
-                "url": l.get("url", ""),
-            })
-
-        print(f"  获取 {len(items)} 条 SpaceX 发射记录")
-        for item in items[:5]:
-            print(f"    {item['date']} | {item['status']:<20} | {item['title'][:50]}")
-        return items
-    except Exception as e:
-        print(f"  [SpaceX] 失败: {e}")
-        return []
-
-
-def crawl_relativity():
-    """Relativity Space 官网新闻 — Terran R 可回收火箭"""
-    print("\n[Relativity Space] 抓取官网新闻...")
-    try:
-        html = fetch_html("https://www.relativityspace.com/news")
-        soup = BeautifulSoup(html, "lxml")
-        items = []
-
-        # Squarespace blog summary block — 尝试多种选择器
-        for article in soup.select("article, .summary-item, .blog-item, [class*='blog-list'] a[href*='press-release']"):
-            text = article.get_text(separator=" ", strip=True)
-            if len(text) < 20:
-                continue
-
-            date_match = re.search(
-                r'((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})',
-                text)
-            if not date_match:
-                continue
-
-            date_str = parse_date(date_match.group(1))
-            after = text[date_match.end():].strip()
-            title = after.split("Read")[0].strip()[:150]
-
-            link = article.find("a") if article.name != "a" else article
-            url = link.get("href", "") if link else ""
-
-            if title and not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "relativity",
-                    "board": "rocket",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": url or "https://www.relativityspace.com/news",
-                })
-
-        # 备用：全文正则
-        if len(items) < 2:
-            all_text = soup.get_text(separator="\n")
-            pattern = re.compile(
-                r'((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})\s*\n\s*(.+?)(?:\n|$)',
-                re.MULTILINE)
-            for m in pattern.finditer(all_text):
-                date_str = parse_date(m.group(1))
-                title = m.group(2).strip()[:150]
-                if title and len(title) > 10 and not any(i["title"] == title for i in items):
-                    items.append({
-                        "source": "relativity",
-                        "board": "rocket",
-                        "title": title,
-                        "date": date_str,
-                        "summary": "",
-                        "url": "https://www.relativityspace.com/news",
-                    })
-
-        print(f"  解析到 {len(items)} 条新闻")
-        for item in items[:5]:
-            print(f"    {item['date'] or '?':<12} | {item['title'][:60]}")
-        return items
-    except Exception as e:
-        print(f"  [Relativity Space] 失败: {e}")
-        return []
-
-
-def crawl_stoke():
-    """Stoke Space 官网新闻 — Nova 全可回收火箭"""
-    print("\n[Stoke Space] 抓取官网新闻...")
-    try:
-        html = fetch_html("https://www.stokespace.com/news/")
-        soup = BeautifulSoup(html, "lxml")
-        items = []
-
-        for article in soup.find_all("article"):
-            text = article.get_text(separator=" ", strip=True)
-            if len(text) < 30:
-                continue
-
-            date_match = re.search(
-                r'((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})',
-                text)
-            if not date_match:
-                continue
-
-            date_str = parse_date(date_match.group(1))
-            title_tag = article.find(["h2", "h3"])
-            title = title_tag.get_text(strip=True) if title_tag else ""
-            if not title:
-                continue
-
-            link = article.find("a")
-            url = link.get("href", "") if link else ""
-
-            if title and not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "stoke_space",
-                    "board": "rocket",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": url or "https://www.stokespace.com/news/",
-                })
-
-        print(f"  解析到 {len(items)} 条新闻")
-        for item in items[:5]:
-            print(f"    {item['date'] or '?':<12} | {item['title'][:60]}")
-        return items
-    except Exception as e:
-        print(f"  [Stoke Space] 失败: {e}")
-        return []
+    return all_items

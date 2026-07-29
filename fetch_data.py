@@ -105,10 +105,7 @@ def list_sources(config, board_ids=None):
 # 从 crawlers/ 目录下各模块导入爬虫函数
 # 配置文件中的 crawler 字段对应这里的 key，新增爬虫只需在此注册
 
-from crawlers.rocket import (
-    crawl_rocket_launches, crawl_blue_origin, crawl_rocket_lab, crawl_spacex,
-    crawl_relativity, crawl_stoke,
-)
+from crawlers.rocket import crawl_rocket_launches, crawl_rocket_news_snapi
 from crawlers.moon import crawl_nasa_artemis
 from crawlers.controlled_fusion import crawl_iter, crawl_cfs, crawl_asipp
 from crawlers.semiconductor import crawl_smic, crawl_smee
@@ -119,11 +116,7 @@ from crawlers.finance import crawl_exchange_rates, crawl_fed_rate
 CRAWLER_REGISTRY = {
     # 火箭板块
     "crawl_rocket_launches": crawl_rocket_launches,
-    "crawl_blue_origin": crawl_blue_origin,
-    "crawl_rocket_lab": crawl_rocket_lab,
-    "crawl_spacex": crawl_spacex,
-    "crawl_relativity": crawl_relativity,
-    "crawl_stoke": crawl_stoke,
+    "crawl_rocket_news_snapi": crawl_rocket_news_snapi,
     # 登月板块
     "crawl_nasa_artemis": crawl_nasa_artemis,
     # 核聚变板块

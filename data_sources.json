@@ -20,47 +20,11 @@
           "sleep_after": 1
         },
         {
-          "id": "spacex",
-          "name": "SpaceX",
-          "crawler": "crawl_spacex",
+          "id": "rocket_news",
+          "name": "火箭公司新闻",
+          "crawler": "crawl_rocket_news_snapi",
           "type": "api",
-          "description": "SpaceX 官方发射信息",
-          "enabled": true,
-          "sleep_after": 1
-        },
-        {
-          "id": "blue_origin",
-          "name": "Blue Origin",
-          "crawler": "crawl_blue_origin",
-          "type": "html",
-          "description": "Blue Origin 官网新闻",
-          "enabled": true,
-          "sleep_after": 1
-        },
-        {
-          "id": "rocket_lab",
-          "name": "Rocket Lab",
-          "crawler": "crawl_rocket_lab",
-          "type": "html",
-          "description": "Rocket Lab 官网新闻",
-          "enabled": true,
-          "sleep_after": 1
-        },
-        {
-          "id": "relativity",
-          "name": "Relativity Space",
-          "crawler": "crawl_relativity",
-          "type": "html",
-          "description": "Relativity Space 官网新闻（Terran R可回收火箭）",
-          "enabled": true,
-          "sleep_after": 1
-        },
-        {
-          "id": "stoke_space",
-          "name": "Stoke Space",
-          "crawler": "crawl_stoke",
-          "type": "html",
-          "description": "Stoke Space 官网新闻（Nova全可回收火箭）",
+          "description": "Spaceflight News API (SNAPI)，聚合 SpaceX/Blue Origin/Rocket Lab/Relativity/Stoke Space 新闻（20+ 权威来源）",
           "enabled": true,
           "sleep_after": 1
         }
