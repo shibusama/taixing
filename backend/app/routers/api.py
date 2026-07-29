@@ -344,3 +344,35 @@ def api_get_crawl_logs(board_id: str):
     if board_id not in _crawl_logs:
         return {"status": "idle", "lines": []}
     return _crawl_logs[board_id]
+
+
+# ===== AI 提取 =====
+
+@router.post("/ai/extract")
+def api_ai_extract(category: str = "航空航天", limit: int = 10):
+    """AI 提取：从 raw_articles 提取结构化数据到时间线表"""
+    from app.ai_extractor import process_pending_articles
+    
+    result = process_pending_articles(category=category, limit=limit, auto_insert=True)
+    return result
+
+
+@router.get("/ai/stats")
+def api_ai_stats():
+    """AI 提取统计：待处理文章数、已提取数等"""
+    from app.database import get_supabase
+    
+    sb = get_supabase()
+    
+    # 待处理文章数
+    pending = sb.table("raw_articles").select("news_id", count="exact").eq("status", "pending").execute()
+    pending_count = pending.count if hasattr(pending, 'count') and pending.count else len(pending.data)
+    
+    # 时间线条数
+    timeline = sb.table("rocket_launch_timeline").select("timeline_id", count="exact").execute()
+    timeline_count = timeline.count if hasattr(timeline, 'count') and timeline.count else len(timeline.data)
+    
+    return {
+        "pending_articles": pending_count,
+        "timeline_entries": timeline_count
+    }

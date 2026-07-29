@@ -25,6 +25,8 @@
         .crawl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .crawl-header h2 { font-size: 18px; color: #fff; }
         .crawl-status { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .status-indicator { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; }
         .status-idle { background: #333; color: #888; }
         .status-running { background: #00d4ff; color: #000; animation: pulse 1.5s infinite; }
         .status-success { background: #00ff88; color: #000; }
@@ -129,6 +131,28 @@
             </div>
             <div class="log-container" id="log-container">
                 <div class="log-line"><span class="log-info">等待爬虫启动...</span></div>
+            </div>
+        </div>
+
+        <!-- AI 提取控制台 -->
+        <div class="section">
+            <div class="section-header">
+                <h2>AI 新闻提取</h2>
+                <span class="status-indicator" id="ai-status">
+                    <span class="status-dot"></span>
+                    <span id="ai-status-text">就绪</span>
+                </span>
+            </div>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
+                从原始新闻（raw_articles）中提取发射任务信息，写入时间线表。置信度 ≥ 0.7 自动入库，&lt; 0.7 待人工审核。
+            </p>
+            <div class="controls">
+                <button onclick="startAiExtract()">开始提取</button>
+                <button onclick="loadAiStats()" class="secondary">刷新统计</button>
+                <span id="ai-stats" style="margin-left: 1rem; color: #888;"></span>
+            </div>
+            <div class="log-container" id="ai-log-container" style="max-height: 200px;">
+                <div class="log-line"><span class="log-info">点击"开始提取"处理待审核新闻...</span></div>
             </div>
         </div>
 
@@ -364,6 +388,76 @@
             document.getElementById('log-container').innerHTML = '';
             addLog('日志已清空', 'info');
         }
+        
+        // ===== AI 提取 =====
+        
+        function addAiLog(msg, type = 'info') {
+            const container = document.getElementById('ai-log-container');
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            const time = new Date().toLocaleTimeString();
+            line.innerHTML = `<span class="log-time">${time}</span> <span class="log-${type}">${msg}</span>`;
+            container.appendChild(line);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        async function startAiExtract() {
+            const statusText = document.getElementById('ai-status-text');
+            const statusEl = document.getElementById('ai-status');
+            statusEl.className = 'status-indicator status-running';
+            statusText.textContent = '提取中...';
+            
+            addAiLog('开始 AI 提取...', 'info');
+            
+            try {
+                const resp = await fetch('/api/ai/extract?category=航空航天&limit=10', { method: 'POST' });
+                const result = await resp.json();
+                
+                if (result.error) {
+                    addAiLog(`错误: ${result.error}`, 'error');
+                    statusEl.className = 'status-indicator status-failed';
+                    statusText.textContent = '失败';
+                    return;
+                }
+                
+                addAiLog(`处理 ${result.total} 条，提取 ${result.extracted} 条`, 'success');
+                addAiLog(`自动入库 ${result.auto_inserted} 条，待审核 ${result.pending_review} 条`, 'info');
+                
+                if (result.results) {
+                    result.results.forEach(r => {
+                        const icon = r.auto_inserted ? '✓' : '○';
+                        const type = r.auto_inserted ? 'success' : 'warn';
+                        addAiLog(`${icon} [${r.confidence.toFixed(2)}] ${r.title} → ${r.mission_name || 'N/A'}`, type);
+                    });
+                }
+                
+                statusEl.className = 'status-indicator status-success';
+                statusText.textContent = '完成';
+                
+                // 刷新文章列表
+                loadArticles();
+                loadAiStats();
+                
+            } catch (err) {
+                addAiLog(`请求失败: ${err.message}`, 'error');
+                statusEl.className = 'status-indicator status-failed';
+                statusText.textContent = '失败';
+            }
+        }
+        
+        async function loadAiStats() {
+            try {
+                const resp = await fetch('/api/ai/stats');
+                const data = await resp.json();
+                document.getElementById('ai-stats').textContent = 
+                    `待处理: ${data.pending_articles} 条 | 时间线: ${data.timeline_entries} 条`;
+            } catch (err) {
+                document.getElementById('ai-stats').textContent = '获取统计失败';
+            }
+        }
+        
+        // 页面加载时获取统计
+        loadAiStats();
         
         function updateCrawlStatus(status) {
             const el = document.getElementById('crawl-status');
