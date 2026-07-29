@@ -41,7 +41,7 @@ def generate_news_id(url):
 
 
 def crawl_rocket_launches():
-    """火箭发射日历 → 结构化数据（Launch Library 2 API）"""
+    """火箭发射日历 → rocket_launch_timeline 表（Launch Library 2 API）"""
     print("\n[火箭发射] 抓取 Launch Library 2 API...")
     try:
         data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
@@ -56,22 +56,46 @@ def crawl_rocket_launches():
             agency = l.get("launch_service_provider", {}).get("name", "")
             if not any(w.lower() in agency.lower() for w in WATCH):
                 continue
+            
+            launch_url = l.get("url", "")
+            timeline_id = generate_news_id(launch_url) if launch_url else generate_news_id(l.get("name", ""))
+            
+            # 判断发射结果
+            status_name = l.get("status", {}).get("name", "") if l.get("status") else ""
+            if "Go" in status_name or "TBC" in status_name:
+                outcome = "计划中"
+            elif "Success" in status_name:
+                outcome = "成功"
+            elif "Partial" in status_name:
+                outcome = "部分成功"
+            elif "Failure" in status_name:
+                outcome = "失败"
+            else:
+                outcome = status_name or "计划中"
+            
+            # 构建简短描述
+            rocket_name = l.get("rocket", {}).get("configuration", {}).get("name", "")
+            mission_name = l.get("mission", {}).get("name", "") if l.get("mission") else ""
+            brief_desc = f"{agency} {rocket_name} 执行 {mission_name}" if mission_name else f"{agency} {rocket_name}"
+            
             items.append({
-                "source": "launch_library_2",
-                "board": "rocket",
-                "title": l.get("name", ""),
-                "date": l.get("net", "")[:10],
-                "agency": agency,
-                "rocket": l.get("rocket", {}).get("configuration", {}).get("name", ""),
-                "status": l.get("status", {}).get("name", "") if l.get("status") else "",
-                "mission": l.get("mission", {}).get("name", "") if l.get("mission") else "",
-                "summary": (l.get("mission", {}).get("description", "")[:200] if l.get("mission") else ""),
-                "url": l.get("url", ""),
+                "timeline_id": timeline_id,
+                "rocket_id": None,  # 后续关联 rocket_companies 表
+                "mission_name": l.get("name", ""),
+                "launch_time": l.get("net", "")[:10],
+                "launch_site": l.get("pad", {}).get("location", {}).get("name", "") if l.get("pad") else "",
+                "payload": mission_name,
+                "outcome": outcome,
+                "reuse_status": "",  # LL2 API 不直接提供回收状态
+                "brief_desc": brief_desc,
+                "related_news_ids": [],
+                "create_time": datetime.now().isoformat(),
+                "update_time": datetime.now().isoformat(),
             })
 
         print(f"  获取 {len(items)} 条关注火箭发射")
         for item in items[:8]:
-            print(f"    {item['date']} | {item['agency']:<12} | {item['title'][:50]}")
+            print(f"    {item['launch_time']} | {item['outcome']:<6} | {item['mission_name'][:50]}")
         return items
     except Exception as e:
         print(f"  [火箭发射] API失败: {e}")

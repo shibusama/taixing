@@ -225,15 +225,14 @@ def run_crawler(src_cfg):
     if isinstance(result, list):
         db_count = 0
         for item in result:
-            # 写入数据库（raw_articles 表）
+            # 写入数据库
             if DB_AVAILABLE:
                 try:
-                    # 检查是否已经是新格式（有 news_id）
                     if "news_id" in item:
-                        # 新格式：直接传入整个 dict
+                        # 新闻数据 → raw_articles 表
                         upsert_news_article(item)
                     else:
-                        # 旧格式：转换为新格式
+                        # 旧格式：转换为新闻格式
                         import hashlib
                         url = item.get("url", "")
                         news_id = hashlib.sha256(url.encode()).hexdigest()[:16] if url else hashlib.sha256(item.get("title", "").encode()).hexdigest()[:16]

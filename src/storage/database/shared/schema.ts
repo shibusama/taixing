@@ -46,16 +46,19 @@ export const rocketCompanies = pgTable("rocket_companies", {
   sortOrder: text("sort_order"),
 });
 
-export const rocketTimeline = pgTable("rocket_timeline", {
-  id: integer("id").primaryKey(),
-  period: text("period"),
-  eventDate: text("event_date"),
-  title: text("title"),
-  description: text("description"),
-  color: text("color"),
-  badge: text("badge"),
-  done: text("done"),
-  sortOrder: text("sort_order"),
+export const rocketLaunchTimeline = pgTable("rocket_launch_timeline", {
+  timelineId: text("timeline_id").primaryKey(),
+  rocketId: text("rocket_id"),
+  missionName: text("mission_name"),
+  launchTime: text("launch_time"),
+  launchSite: text("launch_site"),
+  payload: text("payload"),
+  outcome: text("outcome"),
+  reuseStatus: text("reuse_status"),
+  briefDesc: text("brief_desc"),
+  relatedNewsIds: json("related_news_ids"),
+  createTime: text("create_time"),
+  updateTime: text("update_time"),
 });
 
 // ============ 中美登月 ============

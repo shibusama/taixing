@@ -180,6 +180,33 @@ def delete_raw_article(news_id: str) -> bool:
     return True
 
 
+def upsert_launch_timeline(item: Dict) -> bool:
+    """写入/更新发射时间线（rocket_launch_timeline 表）"""
+    sb = get_supabase()
+    timeline_id = item.get("timeline_id")
+    if not timeline_id:
+        return False
+    
+    # 检查是否已存在
+    existing = sb.table("rocket_launch_timeline").select("timeline_id").eq("timeline_id", timeline_id).execute()
+    if existing.data:
+        # 更新
+        update_data = {k: v for k, v in item.items() if k != "timeline_id"}
+        update_data["update_time"] = datetime.now().isoformat()
+        sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", timeline_id).execute()
+    else:
+        # 插入
+        sb.table("rocket_launch_timeline").insert(item).execute()
+    return True
+
+
+def get_launch_timeline(limit: int = 50) -> List[Dict]:
+    """获取发射时间线"""
+    sb = get_supabase()
+    result = sb.table("rocket_launch_timeline").select("*").order("launch_time", desc=False).limit(limit).execute()
+    return result.data
+
+
 def get_recent_articles(board_id: str = None, limit: int = 10) -> List[Dict]:
     sb = get_supabase()
     query = sb.table("raw_articles").select("*")
