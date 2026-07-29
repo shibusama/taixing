@@ -202,11 +202,8 @@ def upsert_launch_timeline(item: Dict) -> bool:
 
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
     """获取发射时间线（动态计算 color/badge/done）"""
-    from datetime import date
     sb = get_supabase()
-    today = date.today().isoformat()
-    # 只返回今天及之后的发射任务
-    result = sb.table("rocket_launch_timeline").select("*").gte("launch_time", today).order("launch_time", desc=False).limit(limit).execute()
+    result = sb.table("rocket_launch_timeline").select("*").order("launch_time", desc=False).limit(limit).execute()
     
     # 动态计算字段
     for item in result.data:

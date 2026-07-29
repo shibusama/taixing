@@ -511,22 +511,35 @@
     }
     // 按时间分组
     const now = new Date();
-    const h2Items = timelineData.filter(it => {
-      if (!it.date) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // 已完成：今天之前且 done=true
+    const doneItems = timelineData.filter(it => {
+      if (!it.date || !it.done) return false;
       const d = new Date(it.date);
-      return d.getFullYear() === now.getFullYear() && d.getMonth() >= 6;
+      return d < today;
     });
+    
+    // 即将发射：今天及之后且 done=false
+    const upcomingItems = timelineData.filter(it => {
+      if (!it.date || it.done) return false;
+      const d = new Date(it.date);
+      return d >= today;
+    });
+    
     const items2027 = timelineData.filter(it => {
       if (!it.date) return false;
       const d = new Date(it.date);
       return d.getFullYear() === 2027;
     });
+    
     // 已完成
-    document.getElementById('rocket-timeline-cn-done').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && it.done));
-    document.getElementById('rocket-timeline-us-done').innerHTML = renderTL(h2Items.filter(it => isUS(it) && it.done));
+    document.getElementById('rocket-timeline-cn-done').innerHTML = renderTL(doneItems.filter(it => !isUS(it)));
+    document.getElementById('rocket-timeline-us-done').innerHTML = renderTL(doneItems.filter(it => isUS(it)));
     // 即将发射
-    document.getElementById('rocket-timeline-cn-upcoming').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && !it.done));
-    document.getElementById('rocket-timeline-us-upcoming').innerHTML = renderTL(h2Items.filter(it => isUS(it) && !it.done));
+    document.getElementById('rocket-timeline-cn-upcoming').innerHTML = renderTL(upcomingItems.filter(it => !isUS(it)));
+    document.getElementById('rocket-timeline-us-upcoming').innerHTML = renderTL(upcomingItems.filter(it => isUS(it)));
     document.getElementById('rocket-timeline-2027').innerHTML = renderTL(items2027);
   } catch(e) { console.error('Rocket data load failed:', e); }
 
