@@ -512,7 +512,7 @@
     // 按时间分组
     const now = new Date();
     const h2Items = timelineData.filter(it => {
-      if (!it.date) return true;
+      if (!it.date) return false;
       const d = new Date(it.date);
       return d.getFullYear() === now.getFullYear() && d.getMonth() >= 6;
     });
