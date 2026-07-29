@@ -32,7 +32,7 @@ CONFIG_FILE = BASE_DIR / "data_sources.json"
 # 添加 backend 到 Python 路径，以便导入数据库模块
 sys.path.insert(0, str(BASE_DIR / "backend"))
 try:
-    from app.database import upsert_article, log_crawl
+    from app.database import upsert_news_article, log_crawl
     DB_AVAILABLE = True
 except ImportError as e:
     print(f"[警告] 数据库模块导入失败：{e}")
@@ -225,20 +225,35 @@ def run_crawler(src_cfg):
     if isinstance(result, list):
         db_count = 0
         for item in result:
-            if "board" not in item:
-                item["board"] = board_id
             # 写入数据库（raw_articles 表）
             if DB_AVAILABLE:
                 try:
-                    upsert_article(
-                        board_id=board_id,
-                        source=src_cfg.get("name", ""),
-                        title=item.get("title", ""),
-                        url=item.get("url", ""),
-                        summary=item.get("summary", ""),
-                        date=item.get("date", ""),
-                        raw_json=json.dumps(item, ensure_ascii=False),
-                    )
+                    # 检查是否已经是新格式（有 news_id）
+                    if "news_id" in item:
+                        # 新格式：直接传入整个 dict
+                        upsert_news_article(item)
+                    else:
+                        # 旧格式：转换为新格式
+                        import hashlib
+                        url = item.get("url", "")
+                        news_id = hashlib.sha256(url.encode()).hexdigest()[:16] if url else hashlib.sha256(item.get("title", "").encode()).hexdigest()[:16]
+                        new_item = {
+                            "news_id": news_id,
+                            "source_name": src_cfg.get("name", ""),
+                            "source_url": url,
+                            "title": item.get("title", ""),
+                            "raw_content": item.get("summary", ""),
+                            "summary": "",
+                            "cover_image": item.get("image_url", ""),
+                            "images": "[]",
+                            "tags": "[]",
+                            "category": board_id,
+                            "hot_score": 0,
+                            "sentiment": "neutral",
+                            "language": "en",
+                            "status": "pending",
+                        }
+                        upsert_news_article(new_item)
                     db_count += 1
                 except Exception as e:
                     print(f"  [数据库] 写入失败：{e}")

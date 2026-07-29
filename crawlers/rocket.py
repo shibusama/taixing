@@ -5,7 +5,9 @@
   - Spaceflight News API (SNAPI)：航天新闻聚合（35000+ 篇，20+ 权威来源）
 """
 
+import hashlib
 import requests
+from datetime import datetime
 
 from .utils import fetch_json
 
@@ -31,6 +33,11 @@ def fetch_json_api(url, params=None, timeout=15):
     resp = requests.get(url, params=params, timeout=timeout, headers=API_HEADERS, verify=False)
     resp.raise_for_status()
     return resp.json()
+
+
+def generate_news_id(url):
+    """根据 URL 生成唯一哈希 ID"""
+    return hashlib.sha256(url.encode()).hexdigest()[:16]
 
 
 def crawl_rocket_launches():
@@ -96,9 +103,11 @@ def crawl_rocket_news_snapi():
     """
     通过 Spaceflight News API (SNAPI) 获取可回收火箭公司新闻
     聚合来源：NASASpaceflight, SpaceNews, NASA, Ars Technica, Spaceflight Now 等 20+ 权威媒体
+    返回符合新 raw_articles 表结构的数据
     """
     print("\n[SNAPI] 抓取可回收火箭公司新闻...")
     all_items = []
+    crawl_time = datetime.utcnow().isoformat() + "Z"
 
     for company, source_id in ROCKET_COMPANIES.items():
         try:
@@ -112,16 +121,20 @@ def crawl_rocket_news_snapi():
             print(f"  [{company}] 共 {count} 篇，获取最新 {len(articles)} 篇")
 
             for article in articles:
-                # 解析日期：SNAPI 返回 ISO 格式 "2026-07-29T01:24:07Z"
-                pub_date = article.get("published_at", "")
-                if pub_date:
-                    pub_date = pub_date[:10]  # 取 "2026-07-29"
+                source_url = article.get("url", "")
+                if not source_url:
+                    continue
 
-                # 提取摘要（去除 HTML 标签和多余空白）
+                # 生成唯一 news_id
+                news_id = generate_news_id(source_url)
+
+                # 解析发布时间
+                publish_time = article.get("published_at", "")
+
+                # 提取摘要
                 summary = article.get("summary", "")
                 if summary:
-                    # 去除可能的换行和多余空格
-                    summary = " ".join(summary.split())[:300]
+                    summary = " ".join(summary.split())[:500]
 
                 # 提取新闻来源
                 news_site = article.get("news_site", "")
@@ -130,24 +143,43 @@ def crawl_rocket_news_snapi():
                 authors = article.get("authors", [])
                 author_str = ", ".join(a.get("name", "") for a in authors[:3]) if authors else ""
 
+                # 封面图片
+                cover_image = article.get("image_url", "")
+
+                # 构建符合新表结构的数据
                 all_items.append({
-                    "source": source_id,
-                    "board": "rocket",
+                    "news_id": news_id,
+                    "source_name": news_site,
+                    "source_url": source_url,
+                    "crawl_time": crawl_time,
+                    "publish_time": publish_time if publish_time else None,
                     "title": article.get("title", ""),
-                    "date": pub_date,
-                    "summary": summary,
-                    "url": article.get("url", ""),
-                    "image_url": article.get("image_url", ""),
-                    "news_site": news_site,
-                    "author": author_str,
-                    "company": company,
+                    "raw_content": summary,  # SNAPI 只提供摘要，无正文
+                    "summary": "",  # AI 摘要待生成
+                    "cover_image": cover_image,
+                    "images": "[]",  # JSON 数组
+                    "tags": f'["航天", "{company}"]',  # JSON 数组
+                    "category": "航天",
+                    "hot_score": 0,  # 待 AI 评分
+                    "sentiment": "neutral",
+                    "event_group_id": None,
+                    "language": "en",
+                    "status": "pending",
+                    # 额外字段（不入库，用于日志）
+                    "_company": company,
+                    "_author": author_str,
                 })
+
+            # 避免触发 SNAPI 速率限制
+            import time
+            time.sleep(1)
 
         except Exception as e:
             print(f"  [{company}] SNAPI 查询失败: {e}")
 
     print(f"\n  [SNAPI] 共获取 {len(all_items)} 条新闻")
-    for item in all_items[:10]:
-        print(f"    {item['date'] or '?':<12} | {item['company']:<16} | {item['title'][:50]}")
+    for item in all_items[:5]:
+        pub_time = item.get('publish_time') or ''
+        print(f"    {pub_time[:10] if pub_time else '?':<12} | {item['_company']:<16} | [{item['source_name']}] {item['title'][:50]}")
 
     return all_items

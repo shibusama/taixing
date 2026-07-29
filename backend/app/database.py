@@ -94,56 +94,90 @@ def list_boards() -> List[Dict]:
     return result.data
 
 
-# ============ raw_articles ============
+# ============ raw_articles（统一新闻表）============
 
-def get_raw_articles(board_id: str = None, limit: int = 50) -> List[Dict]:
+def upsert_news_article(article: Dict) -> bool:
+    """
+    插入或更新新闻（去重：按 news_id，即 URL 哈希）。
+    article 需包含: news_id, source_name, source_url, title 等字段
+    返回 True 表示新增，False 表示已存在。
+    """
     sb = get_supabase()
-    query = sb.table("raw_articles").select("*")
-    if board_id:
-        query = query.eq("board_id", board_id)
-    result = query.order("created_at", desc=True).limit(limit).execute()
-    return result.data
+    news_id = article.get("news_id", "")
+    if not news_id:
+        return False
 
-
-def insert_raw_article(article: Dict) -> int:
-    sb = get_supabase()
-    result = sb.table("raw_articles").insert(article).execute()
-    if result.data:
-        return result.data[0].get("id", 0)
-    return 0
-
-
-def upsert_article(board_id: str, source: str, title: str, url: str, summary: str = "", date: str = "", raw_json: str = "") -> bool:
-    """插入或更新文章（去重：按 board_id + source + title）。返回 True 表示新增。"""
-    sb = get_supabase()
-    dedup_key = f"{board_id}:{source}:{title}"
-    existing = sb.table("raw_articles").select("id").eq("dedup_key", dedup_key).limit(1).execute()
+    # 检查是否已存在
+    existing = sb.table("raw_articles").select("news_id").eq("news_id", news_id).limit(1).execute()
     if existing.data:
         return False
 
-    sb.table("raw_articles").insert({
-        "board_id": board_id,
-        "source": source,
-        "title": title,
-        "url": url,
-        "summary": summary,
-        "date": date or None,
-        "raw_json": raw_json,
-        "dedup_key": dedup_key,
-        "is_new": "true",
-        "created_at": datetime.now().isoformat(),
-    }).execute()
+    # 插入新文章（过滤掉以 _ 开头的临时字段）
+    clean_article = {k: v for k, v in article.items() if not k.startswith('_')}
+    sb.table("raw_articles").insert(clean_article).execute()
     return True
 
 
-def update_article(article_id: int, **kwargs):
+def get_raw_articles(category: str = None, status: str = None, limit: int = 50, offset: int = 0) -> List[Dict]:
+    """获取新闻列表（用于管理后台）"""
     sb = get_supabase()
-    sb.table("raw_articles").update(kwargs).eq("id", article_id).execute()
+    query = sb.table("raw_articles").select("*").order("crawl_time", desc=True)
+    if category:
+        query = query.eq("category", category)
+    if status:
+        query = query.eq("status", status)
+    result = query.range(offset, offset + limit - 1).execute()
+    return result.data
 
 
-def delete_article(article_id: int):
+def get_raw_article_stats(category: str = None) -> Dict:
+    """获取新闻统计"""
     sb = get_supabase()
-    sb.table("raw_articles").delete().eq("id", article_id).execute()
+    try:
+        query = sb.table("raw_articles").select("news_id")
+        if category:
+            query = query.eq("category", category)
+        result = query.execute()
+        total = len(result.data) if result.data else 0
+
+        # 统计各状态数量
+        pending_query = sb.table("raw_articles").select("news_id").eq("status", "pending")
+        online_query = sb.table("raw_articles").select("news_id").eq("status", "online")
+        if category:
+            pending_query = pending_query.eq("category", category)
+            online_query = online_query.eq("category", category)
+        pending_result = pending_query.execute()
+        online_result = online_query.execute()
+
+        return {
+            "total": total,
+            "pending": len(pending_result.data) if pending_result.data else 0,
+            "online": len(online_result.data) if online_result.data else 0,
+        }
+    except Exception as e:
+        print(f"[stats error] {e}")
+        return {"total": 0, "pending": 0, "online": 0}
+
+
+def update_article_status(news_id: str, status: str) -> bool:
+    """更新文章状态（pending/online/block）"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").update({"status": status}).eq("news_id", news_id).execute()
+    return len(result.data) > 0 if result.data else False
+
+
+def update_article(news_id: str, **kwargs) -> bool:
+    """更新文章字段"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").update(kwargs).eq("news_id", news_id).execute()
+    return len(result.data) > 0 if result.data else False
+
+
+def delete_raw_article(news_id: str) -> bool:
+    """删除新闻"""
+    sb = get_supabase()
+    sb.table("raw_articles").delete().eq("news_id", news_id).execute()
+    return True
 
 
 def get_recent_articles(board_id: str = None, limit: int = 10) -> List[Dict]:
@@ -463,68 +497,5 @@ def get_board_full(board_id: str) -> Optional[Dict]:
 
 
 # ============ 内容管理 ============
-
-def get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0) -> List[Dict]:
-    """获取原始文章列表（用于管理后台）"""
-    sb = get_supabase()
-    query = sb.table("raw_articles").select("*").order("created_at", desc=True)
-    if board_id:
-        query = query.eq("board_id", board_id)
-    result = query.range(offset, offset + limit - 1).execute()
-    return result.data
-
-
-def get_raw_article_stats(board_id: str = None) -> Dict:
-    """获取文章统计"""
-    sb = get_supabase()
-    try:
-        # 获取总数
-        if board_id:
-            result = sb.table("raw_articles").select("id", count="exact").eq("board_id", board_id).execute()
-        else:
-            result = sb.table("raw_articles").select("id", count="exact").execute()
-        total = len(result.data) if result.data else 0
-        
-        # 统计 is_new
-        if board_id:
-            new_result = sb.table("raw_articles").select("id").eq("is_new", "true").eq("board_id", board_id).execute()
-        else:
-            new_result = sb.table("raw_articles").select("id").eq("is_new", "true").execute()
-        new_count = len(new_result.data) if new_result.data else 0
-        
-        return {"total": total, "new": new_count}
-    except Exception as e:
-        print(f"[stats error] {e}")
-        return {"total": 0, "new": 0}
-
-
-def publish_article(article_id: int, board_id: str, target_table: str, content: Dict) -> bool:
-    """
-    发布文章：从 raw_articles 复制到目标表
-    content: 要写入目标表的数据（如 {num, label, color, sort_order}）
-    """
-    sb = get_supabase()
-    
-    # 插入到目标表
-    content["board_id"] = board_id
-    result = sb.table(target_table).insert(content).execute()
-    
-    if result.data:
-        # 标记为已发布（更新 is_new 为 false）
-        sb.table("raw_articles").update({"is_new": "false"}).eq("id", article_id).execute()
-        return True
-    return False
-
-
-def update_published_content(table_name: str, item_id: int, content: Dict) -> bool:
-    """更新已发布的内容"""
-    sb = get_supabase()
-    result = sb.table(table_name).update(content).eq("id", item_id).execute()
-    return len(result.data) > 0 if result.data else False
-
-
-def delete_raw_article(article_id: int) -> bool:
-    """删除原始文章"""
-    sb = get_supabase()
-    result = sb.table("raw_articles").delete().eq("id", article_id).execute()
-    return True
+# get_raw_articles, get_raw_article_stats, update_article_status, update_article, delete_raw_article
+# 已在上方 raw_articles 区域定义

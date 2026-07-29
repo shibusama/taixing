@@ -266,43 +266,43 @@ def api_ai_update_board(board_id: str):
 # ---- 内容管理 API ----
 
 @router.get("/admin/articles")
-def api_get_raw_articles(board_id: str = None, limit: int = 50, offset: int = 0):
-    """获取原始文章列表（管理后台用）"""
+def api_get_raw_articles(category: str = None, status: str = None, limit: int = 50, offset: int = 0):
+    """获取新闻列表（管理后台用）"""
     from app.database import get_raw_articles, get_raw_article_stats
     try:
-        articles = get_raw_articles(board_id, limit, offset)
-        stats = get_raw_article_stats(board_id)
+        articles = get_raw_articles(category, status, limit, offset)
+        stats = get_raw_article_stats(category)
         return {"stats": stats, "articles": articles}
     except Exception as e:
         print(f"[admin articles error] {e}")
-        return {"stats": {"total": 0, "new": 0}, "articles": []}
+        return {"stats": {"total": 0, "pending": 0, "online": 0}, "articles": []}
 
 
-@router.post("/admin/articles/{article_id}/publish")
-def api_publish_article(article_id: int, board_id: str, target_table: str, content: dict):
-    """发布文章到目标表"""
-    from app.database import publish_article
-    success = publish_article(article_id, board_id, target_table, content)
+@router.post("/admin/articles/{news_id}/status")
+def api_update_article_status(news_id: str, status: str):
+    """更新文章状态（pending/online/block）"""
+    from app.database import update_article_status
+    success = update_article_status(news_id, status)
     if success:
-        return {"status": "ok", "message": "发布成功"}
-    raise HTTPException(status_code=500, detail="发布失败")
+        return {"status": "ok", "message": "状态更新成功"}
+    raise HTTPException(status_code=500, detail="更新失败")
 
 
-@router.put("/admin/content/{table_name}/{item_id}")
-def api_update_content(table_name: str, item_id: int, content: dict):
-    """更新已发布的内容"""
-    from app.database import update_published_content
-    success = update_published_content(table_name, item_id, content)
+@router.put("/admin/articles/{news_id}")
+def api_update_article(news_id: str, content: dict):
+    """更新文章字段"""
+    from app.database import update_article
+    success = update_article(news_id, **content)
     if success:
         return {"status": "ok", "message": "更新成功"}
     raise HTTPException(status_code=500, detail="更新失败")
 
 
-@router.delete("/admin/articles/{article_id}")
-def api_delete_article(article_id: int):
-    """删除原始文章"""
+@router.delete("/admin/articles/{news_id}")
+def api_delete_article(news_id: str):
+    """删除新闻"""
     from app.database import delete_raw_article
-    delete_raw_article(article_id)
+    delete_raw_article(news_id)
     return {"status": "ok", "message": "删除成功"}
 
 

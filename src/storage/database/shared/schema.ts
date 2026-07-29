@@ -241,20 +241,26 @@ export const financeSections = pgTable("finance_sections", {
   sortOrder: integer("sort_order").default(0),
 });
 
-// ============ 爬虫数据 ============
+// ============ 新闻数据（统一原始文章表）============
 
 export const rawArticles = pgTable("raw_articles", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  boardId: text("board_id"),
-  source: text("source"),
-  title: text("title"),
-  url: text("url"),
-  summary: text("summary"),
-  date: text("date"),
-  rawJson: text("raw_json"),
-  dedupKey: text("dedup_key"),
-  isNew: text("is_new"),
-  createdAt: text("created_at"),
+  newsId: text("news_id").primaryKey(),           // 唯一哈希ID（URL哈希/UUID）
+  sourceName: text("source_name"),                 // 来源媒体名称
+  sourceUrl: text("source_url"),                   // 原文链接（去重依据）
+  crawlTime: timestamp("crawl_time", { mode: 'string' }).defaultNow(),  // 抓取时间
+  publishTime: timestamp("publish_time", { mode: 'string' }),  // 新闻发布时间
+  title: text("title"),                            // 新闻标题
+  rawContent: text("raw_content"),                 // 原始正文文本
+  summary: text("summary"),                        // AI生成摘要
+  coverImage: text("cover_image"),                 // 封面图片链接
+  images: text("images"),                          // 文中图片数组（JSON）
+  tags: text("tags"),                              // AI自动标签（JSON数组）
+  category: text("category"),                      // 一级分类（航天/核聚变/半导体等）
+  hotScore: integer("hot_score").default(0),       // AI热度分值 0-100
+  sentiment: text("sentiment"),                    // 情感倾向 positive/neutral/negative
+  eventGroupId: text("event_group_id"),            // 事件聚类ID
+  language: text("language").default("en"),        // 语言 zh/en
+  status: text("status").default("pending"),       // 生命周期 pending/online/block
 });
 
 export const crawlLogs = pgTable("crawl_logs", {

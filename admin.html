@@ -97,11 +97,11 @@
         <!-- 统计卡片 -->
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-label">总文章数</div>
+                <div class="stat-label">总新闻数</div>
                 <div class="stat-value" id="stat-total">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">待处理</div>
+                <div class="stat-label">待审核</div>
                 <div class="stat-value new" id="stat-new">0</div>
             </div>
         </div>
@@ -137,20 +137,26 @@
             <div class="card-header">
                 <h2>原始文章列表</h2>
                 <div class="filter-group">
-                    <select id="filter-board">
-                        <option value="">全部版块</option>
-                        <option value="rocket">可回收火箭</option>
-                        <option value="moon">中美登月</option>
-                        <option value="semiconductor">中国半导体</option>
-                        <option value="china-tech">中国科技 AI</option>
-                        <option value="mega-projects">中国大工程</option>
-                        <option value="controlled-fusion">可控核聚变</option>
-                        <option value="finance">科技资本</option>
+                    <select id="filter-category">
+                        <option value="">全部分类</option>
+                        <option value="航天">航天</option>
+                        <option value="可控核聚变">可控核聚变</option>
+                        <option value="半导体">半导体</option>
+                        <option value="科技AI">科技AI</option>
+                        <option value="大工程">大工程</option>
+                        <option value="科技资本">科技资本</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="">全部状态</option>
+                        <option value="pending">待审核</option>
+                        <option value="online">已上线</option>
+                        <option value="block">已屏蔽</option>
                     </select>
                     <select id="sort-by">
-                        <option value="created_at">按创建时间</option>
-                        <option value="date">按文章日期</option>
-                        <option value="source">按来源</option>
+                        <option value="publish_time" selected>按发布时间</option>
+                        <option value="crawl_time">按抓取时间</option>
+                        <option value="source_name">按来源</option>
+                        <option value="hot_score">按热度</option>
                     </select>
                     <select id="sort-order">
                         <option value="desc">降序</option>
@@ -179,36 +185,11 @@
                 <input type="text" id="pub-title" readonly>
             </div>
             <div class="form-group">
-                <label>目标版块</label>
-                <select id="pub-board">
-                    <option value="rocket">可回收火箭</option>
-                    <option value="moon">中美登月</option>
-                    <option value="semiconductor">中国半导体</option>
-                    <option value="china-tech">中国科技 AI</option>
-                    <option value="mega-projects">中国大工程</option>
-                    <option value="controlled-fusion">可控核聚变</option>
-                    <option value="finance">科技资本</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>目标表</label>
-                <select id="pub-table">
-                    <option value="rocket_highlights">rocket_highlights</option>
-                    <option value="rocket_timeline">rocket_timeline</option>
-                    <option value="moon_highlights">moon_highlights</option>
-                    <option value="semiconductor_highlights">semiconductor_highlights</option>
-                    <option value="china_tech_highlights">china_tech_highlights</option>
-                    <option value="mega_project_highlights">mega_project_highlights</option>
-                    <option value="fusion_highlights">fusion_highlights</option>
-                    <option value="finance_highlights">finance_highlights</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>内容 (JSON)</label>
-                <textarea id="pub-content"></textarea>
+                <label>内容预览</label>
+                <textarea id="pub-content" readonly></textarea>
             </div>
             <div class="modal-actions">
-                <button onclick="doPublish()">确认发布</button>
+                <button onclick="doPublish()">确认发布（状态改为 online）</button>
                 <button onclick="closeModal()">取消</button>
             </div>
         </div>
@@ -225,7 +206,8 @@
         }
         
         async function loadArticles() {
-            const boardId = document.getElementById('filter-board').value;
+            const category = document.getElementById('filter-category').value;
+            const status = document.getElementById('filter-status').value;
             const sortBy = document.getElementById('sort-by').value;
             const sortOrder = document.getElementById('sort-order').value;
             const content = document.getElementById('articles-content');
@@ -235,12 +217,14 @@
             content.style.opacity = '0.3';
             
             try {
-                const url = boardId ? `/api/admin/articles?board_id=${boardId}` : '/api/admin/articles';
+                let url = '/api/admin/articles?';
+                if (category) url += `category=${category}&`;
+                if (status) url += `status=${status}&`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
                 document.getElementById('stat-total').textContent = data.stats?.total || 0;
-                document.getElementById('stat-new').textContent = data.stats?.new || 0;
+                document.getElementById('stat-new').textContent = data.stats?.pending || 0;
                 
                 if (!data.articles || data.articles.length === 0) {
                     content.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div>暂无数据</div></div>';
@@ -252,7 +236,7 @@
                 articles.sort((a, b) => {
                     let valA = a[sortBy] || '';
                     let valB = b[sortBy] || '';
-                    if (sortBy === 'created_at' || sortBy === 'date') {
+                    if (sortBy === 'crawl_time' || sortBy === 'publish_time') {
                         valA = new Date(valA).getTime() || 0;
                         valB = new Date(valB).getTime() || 0;
                     } else {
@@ -266,17 +250,21 @@
                 
                 let html = '<table><thead><tr><th>标题</th><th>来源</th><th>日期</th><th>状态</th><th>操作</th></tr></thead><tbody>';
                 for (const article of articles) {
-                    const statusClass = article.is_new === 'true' ? 'status-new' : 'status-published';
-                    const statusText = article.is_new === 'true' ? '待处理' : '已发布';
+                    const statusMap = { pending: '待审核', online: '已上线', block: '已屏蔽' };
+                    const statusClass = `status-${article.status || 'pending'}`;
+                    const statusText = statusMap[article.status] || '待审核';
+                    const pubDate = article.publish_time ? article.publish_time.substring(0, 10) : '-';
                     html += `
                         <tr>
                             <td class="title-cell" title="${escapeHtml(article.title)}">${escapeHtml(article.title)}</td>
-                            <td>${escapeHtml(article.source)}</td>
-                            <td class="date-cell">${article.date || '-'}</td>
+                            <td>${escapeHtml(article.source_name)}</td>
+                            <td class="date-cell">${pubDate}</td>
                             <td class="${statusClass}">${statusText}</td>
                             <td class="actions">
-                                <button onclick='openPublishModal(${JSON.stringify(article)})'>发布</button>
-                                <button class="danger" onclick="deleteArticle(${article.id})">删除</button>
+                                ${article.status === 'pending' ? `<button onclick="updateArticleStatus('${article.news_id}', 'online')">发布</button>` : ''}
+                                ${article.status === 'online' ? `<button onclick="updateArticleStatus('${article.news_id}', 'block')">屏蔽</button>` : ''}
+                                ${article.status === 'block' ? `<button onclick="updateArticleStatus('${article.news_id}', 'online')">恢复</button>` : ''}
+                                <button class="danger" onclick="deleteArticle('${article.news_id}')">删除</button>
                             </td>
                         </tr>
                     `;
@@ -296,12 +284,7 @@
         function openPublishModal(article) {
             currentArticle = article;
             document.getElementById('pub-title').value = article.title;
-            document.getElementById('pub-content').value = JSON.stringify({
-                num: '',
-                label: article.title,
-                color: 'cyan',
-                sort_order: 0
-            }, null, 2);
+            document.getElementById('pub-content').value = article.raw_content || article.summary || '';
             document.getElementById('publish-modal').classList.add('active');
         }
         
@@ -313,15 +296,12 @@
         async function doPublish() {
             if (!currentArticle) return;
             
-            const boardId = document.getElementById('pub-board').value;
-            const targetTable = document.getElementById('pub-table').value;
-            const content = JSON.parse(document.getElementById('pub-content').value);
+            const newsId = currentArticle.news_id;
             
             try {
-                const res = await fetch(`/api/admin/articles/${currentArticle.id}/publish`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ board_id: boardId, target_table: targetTable, content })
+                // 更新文章状态为 online
+                const res = await fetch(`/api/admin/articles/${newsId}/status?status=online`, {
+                    method: 'POST'
                 });
                 const data = await res.json();
                 
@@ -334,6 +314,21 @@
                 }
             } catch (e) {
                 alert(`发布失败：${e.message}`);
+            }
+        }
+        
+        async function updateArticleStatus(newsId, status) {
+            try {
+                const res = await fetch(`/api/admin/articles/${newsId}/status?status=${status}`, {
+                    method: 'POST'
+                });
+                if (res.ok) {
+                    loadArticles();
+                } else {
+                    alert('操作失败');
+                }
+            } catch (e) {
+                alert(`操作失败：${e.message}`);
             }
         }
         
