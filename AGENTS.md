@@ -93,7 +93,6 @@
 
 ## 常见问题和预防
 
-- **中芯国际官网爬取**：需使用 `curl_cffi` 伪装 Chrome TLS 指纹绕过 Apache 403
 - **NASA 官网**：经常超时，需做好容错
 - **汇率数据**：来自 Frankfurter API（ECB 数据），直接写入 `finance.json`
 - **AI 解读**：DeepSeek API 调用，需配置 `DEEPSEEK_API_KEY` 环境变量
