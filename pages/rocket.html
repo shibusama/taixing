@@ -510,20 +510,19 @@
       return usKeys.some(k => title.includes(k) || desc.includes(k));
     }
     // 按时间分组
-    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // 已完成：今天之前且 done=true
+    // 已完成：今天之前
     const doneItems = timelineData.filter(it => {
-      if (!it.date || !it.done) return false;
+      if (!it.date) return false;
       const d = new Date(it.date);
       return d < today;
     });
     
-    // 即将发射：今天及之后且 done=false
+    // 即将发射：今天及之后
     const upcomingItems = timelineData.filter(it => {
-      if (!it.date || it.done) return false;
+      if (!it.date) return false;
       const d = new Date(it.date);
       return d >= today;
     });
