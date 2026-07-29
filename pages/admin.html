@@ -147,6 +147,14 @@
                 从原始新闻（raw_articles）中提取发射任务信息，写入时间线表。置信度 ≥ 0.7 自动入库，&lt; 0.7 待人工审核。
             </p>
             <div class="controls">
+                <select id="ai-category" style="margin-right: 0.5rem;">
+                    <option value="航空航天">航空航天</option>
+                    <option value="可控核聚变">可控核聚变</option>
+                    <option value="半导体">半导体</option>
+                    <option value="中美登月">中美登月</option>
+                    <option value="中国大工程">中国大工程</option>
+                    <option value="科技资本">科技资本</option>
+                </select>
                 <button onclick="startAiExtract()">开始提取</button>
                 <button onclick="loadAiStats()" class="secondary">刷新统计</button>
                 <span id="ai-stats" style="margin-left: 1rem; color: #888;"></span>
@@ -402,15 +410,16 @@
         }
         
         async function startAiExtract() {
+            const category = document.getElementById('ai-category').value;
             const statusText = document.getElementById('ai-status-text');
             const statusEl = document.getElementById('ai-status');
             statusEl.className = 'status-indicator status-running';
             statusText.textContent = '提取中...';
             
-            addAiLog('开始 AI 提取...', 'info');
+            addAiLog(`开始 AI 提取 [${category}]...`, 'info');
             
             try {
-                const resp = await fetch('/api/ai/extract?category=航空航天&limit=10', { method: 'POST' });
+                const resp = await fetch(`/api/ai/extract?category=${encodeURIComponent(category)}&limit=10`, { method: 'POST' });
                 const result = await resp.json();
                 
                 if (result.error) {
@@ -446,8 +455,9 @@
         }
         
         async function loadAiStats() {
+            const category = document.getElementById('ai-category').value;
             try {
-                const resp = await fetch('/api/ai/stats');
+                const resp = await fetch(`/api/ai/stats?category=${encodeURIComponent(category)}`);
                 const data = await resp.json();
                 document.getElementById('ai-stats').textContent = 
                     `待处理: ${data.pending_articles} 条 | 时间线: ${data.timeline_entries} 条`;
@@ -458,6 +468,9 @@
         
         // 页面加载时获取统计
         loadAiStats();
+        
+        // 分类切换时更新统计
+        document.getElementById('ai-category').addEventListener('change', loadAiStats);
         
         function updateCrawlStatus(status) {
             const el = document.getElementById('crawl-status');

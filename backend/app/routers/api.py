@@ -365,21 +365,36 @@ def api_ai_extract(category: str = "航空航天", limit: int = 10):
 
 
 @router.get("/ai/stats")
-def api_ai_stats():
-    """AI 提取统计：待处理文章数、已提取数等"""
+def api_ai_stats(category: str = "航空航天"):
+    """AI 提取统计：待处理文章数（按分类）、时间线条数"""
     from app.database import get_supabase
     
     sb = get_supabase()
     
-    # 待处理文章数
-    pending = sb.table("raw_articles").select("news_id", count="exact").eq("status", "pending").execute()
+    # 分类到时间线表的映射
+    timeline_table_map = {
+        "航空航天": "rocket_launch_timeline",
+        "可控核聚变": "fusion_timeline",
+        "中国科技AI": "china_tech_timeline",
+        "半导体": "semiconductor_timeline",
+    }
+    
+    # 待处理文章数（按分类）
+    pending = sb.table("raw_articles").select("news_id", count="exact").eq("status", "pending").eq("category", category).execute()
     pending_count = pending.count if hasattr(pending, 'count') and pending.count else len(pending.data)
     
-    # 时间线条数
-    timeline = sb.table("rocket_launch_timeline").select("timeline_id", count="exact").execute()
-    timeline_count = timeline.count if hasattr(timeline, 'count') and timeline.count else len(timeline.data)
+    # 时间线条数（根据分类查询对应表）
+    timeline_table = timeline_table_map.get(category)
+    timeline_count = 0
+    if timeline_table:
+        try:
+            timeline = sb.table(timeline_table).select("timeline_id", count="exact").execute()
+            timeline_count = timeline.count if hasattr(timeline, 'count') and timeline.count else len(timeline.data)
+        except Exception:
+            timeline_count = 0
     
     return {
         "pending_articles": pending_count,
-        "timeline_entries": timeline_count
+        "timeline_entries": timeline_count,
+        "category": category
     }
