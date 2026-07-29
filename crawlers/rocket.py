@@ -211,6 +211,9 @@ def crawl_rocket_news_snapi():
         except Exception as e:
             print(f"  [{company}] SNAPI 查询失败: {e}")
 
+        # 请求间隔，避免触发限流
+        time.sleep(2)
+
     print(f"\n  [SNAPI] 共获取 {len(all_items)} 条新闻")
     for item in all_items[:5]:
         pub_time = item.get('publish_time') or ''
