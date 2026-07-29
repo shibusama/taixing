@@ -1,79 +1,168 @@
 # 钛星 · 前瞻科技新闻站
 
-> 纯静态科技新闻网站，数据与页面分离，支持脚本自动抓取 + AI 解读更新。
+> 科技新闻聚合站，支持爬虫自动抓取 + AI 结构化提取 + 管理后台审核。
+
+## 技术栈
+
+- **前端**：纯 HTML + CSS + JS（无框架）
+- **后端**：Python 3.12 + FastAPI + Uvicorn
+- **数据库**：Supabase（PostgreSQL）
+- **Web 服务**：Nginx（反向代理 + 静态文件服务）
+- **进程管理**：Supervisor
+- **部署**：Docker + docker-compose
+- **数据抓取**：requests, curl_cffi, beautifulsoup4
+- **AI 提取**：DeepSeek V4 Flash API
 
 ## 项目结构
 
 ```
-rocket-news/
-├── index.html              # 首页：Hero + 六大版块入口卡片 + 最新要闻
-├── rocket.html             # 可回收火箭（Tab：全球进展 / 技术对比 / 发射计划）
-├── moon.html               # 中美登月（嫦娥七号 / Artemis / 南极水冰）
-├── semiconductor.html      # 中国半导体（芯片制造 / EDA / 光刻机 / 国产替代）
-├── china-tech.html         # 中国科技AI（大模型对比表 / 量子 / 新能源 / 超算）
-├── mega-projects.html      # 中国大工程（川藏铁路 / 中吉乌 / 平陆运河 / 特高压）
-├── fusion.html             # 可控核聚变（EAST / ITER / CFS / 三列平行时间线）
-├── finance.html            # 科技资本（美联储利率 / 汇率 / SpaceX / AI巨头估值）
+/workspace/projects/
+├── pages/                  # HTML 页面
+│   ├── index.html          # 首页
+│   ├── rocket.html         # 可回收火箭
+│   ├── moon.html           # 中美登月
+│   ├── semiconductor.html  # 中国半导体
+│   ├── china-tech.html     # 中国科技AI
+│   ├── mega-projects.html  # 中国大工程
+│   ├── fusion.html         # 可控核聚变
+│   ├── finance.html        # 科技资本
+│   └── admin.html          # 管理后台
 │
 ├── css/
-│   └── style.css           # 全站样式（科技深色风，892行）
+│   └── style.css           # 全站样式（科技深色风）
 │
 ├── js/
-│   ├── app.js              # 通用交互（Tab切换 / 移动端汉堡菜单 / 回到顶部 / 阅读进度条）
-│   └── data-loader.js      # JSON 数据加载器（卡片渲染 / 表格渲染 / 时间线渲染）
+│   ├── app.js              # 通用交互（Tab切换/菜单/回到顶部/进度条）
+│   └── data-loader.js      # 数据加载器（卡片/表格/时间线渲染）
 │
-├── data/                   # 数据层（脚本只改这里，不动 HTML）
-│   ├── rocket.json         # 可回收火箭数据
-│   ├── moon.json           # 登月计划数据
-│   ├── fusion.json         # 核聚变数据
-│   ├── semiconductor.json  # 半导体数据
-│   ├── china-tech.json     # 中国科技AI数据（含大模型对比表）
-│   ├── mega-projects.json  # 大工程数据
-│   ├── finance.json        # 科技资本数据（含汇率/美联储）
-│   ├── _snapshots/         # 爬虫抓取的原始网页快照（调试用）
-│   └── _reports/           # 每次爬取的执行报告
+├── data/                   # JSON 数据文件（前端 fallback）
+│   ├── rocket.json
+│   ├── moon.json
+│   ├── fusion.json
+│   ├── semiconductor.json
+│   ├── china-tech.json
+│   ├── mega-projects.json
+│   └── finance.json
 │
-├── fetch_data.py           # 数据抓取脚本（1199行，13个源头）
-├── ai_update.py            # AI自动解读脚本（481行，调DeepSeek API）
-├── .env.example            # API Key 配置模板（实际key已硬编码在ai_update.py中）
-├── .gitignore              # Git忽略规则
+├── backend/                # FastAPI 后端
+│   ├── app/
+│   │   ├── main.py         # FastAPI 入口
+│   │   ├── database.py     # 数据库操作
+│   │   ├── ai_extractor.py # AI 新闻提取（DeepSeek V4）
+│   │   └── routers/
+│   │       └── api.py      # API 路由
+│   └── requirements.txt
+│
+├── crawlers/               # 爬虫模块
+│   ├── utils.py            # 公共工具（HTTP/HTML/日期）
+│   ├── rocket.py           # 航空航天（SNAPI + Launch Library 2）
+│   ├── moon.py             # 中美登月
+│   ├── semiconductor.py    # 半导体
+│   ├── china_tech.py       # 中国科技AI
+│   ├── mega_projects.py    # 中国大工程
+│   ├── controlled_fusion.py# 可控核聚变
+│   └── finance.py          # 科技资本
+│
+├── scripts/                # 部署/预览脚本
+│   ├── preview_server.py   # 预览服务器
+│   ├── coze-preview-build.sh
+│   ├── coze-preview-run.sh
+│   ├── deploy-build.sh
+│   └── deploy-run.sh
+│
+├── src/storage/database/   # 数据库 schema
+│   └── shared/schema.ts
+│
+├── fetch_data.py           # 爬虫调度入口
+├── ai_update.py            # AI 解读脚本（JSON 更新）
+├── data_sources.json       # 数据源配置
+├── AGENTS.md               # Agent 记忆文件
 └── README.md               # 本文件
 ```
 
-## 页面说明
+## 数据流程
 
-| 页面 | 内容 | 数据文件 |
-|------|------|----------|
-| `index.html` | 首页，六大版块入口卡片 + 最新要闻聚合 | 无（静态） |
-| `rocket.html` | 可回收火箭：9家公司进展 / 9款火箭参数对比 / 发射计划时间线 | `rocket.json` |
-| `moon.html` | 中美登月竞赛：嫦娥七号 / 长征十号 / 梦舟 vs Artemis II/III/IV | `moon.json` |
-| `semiconductor.html` | 中国半导体：芯片制造 / EDA / 光刻机 / 国产替代 | `semiconductor.json` |
-| `china-tech.html` | 中国科技AI：大模型对比表 / 量子计算 / 新能源 / 超算 | `china-tech.json` |
-| `mega-projects.html` | 中国大工程：川藏铁路 / 中吉乌 / 平陆运河 / 特高压 | `mega-projects.json` |
-| `fusion.html` | 可控核聚变：EAST / ITER / CFS / 全球三列平行时间线 | `fusion.json` |
-| `finance.html` | 科技资本：美联储利率 / 汇率市场 / SpaceX / AI巨头估值 | `finance.json` |
+```
+数据源（SNAPI/Launch Library 2/各官网）
+        ↓
+    爬虫抓取（crawlers/）
+        ↓
+    raw_articles 表（原始新闻，status=pending）
+        ↓
+    AI 提取（DeepSeek V4 Flash）
+        ↓
+    ┌───────┴───────┐
+    ↓               ↓
+置信度≥0.7      置信度<0.7
+    ↓               ↓
+自动入库        待人工审核
+（rocket_launch_timeline）  （管理后台确认）
+        ↓
+    前端展示（API → 页面）
+```
 
-## 脚本说明
+## 数据库表
 
-### fetch_data.py — 数据抓取
+| 表名 | 用途 |
+|------|------|
+| `raw_articles` | 统一新闻池（所有爬虫数据入库） |
+| `rocket_launch_timeline` | 火箭发射时间线（AI 提取） |
+| `rocket_companies` | 火箭公司档案 |
+| `board_meta` | 版块元信息 |
 
-从 13 个一手源头抓取最新数据：
+### raw_articles 字段
 
-| 源头 | 板块 | 方式 |
-|------|------|------|
-| SpaceX 官网 | 火箭 | requests |
-| Blue Origin 官网 | 火箭 | requests |
-| Rocket Lab 官网 | 火箭 | requests |
-| ITER 官网 | 核聚变 | requests |
-| CFS 官网 | 核聚变 | requests |
-| ASIPP（中科院等离子体所） | 核聚变 | requests |
-| Anthropic 官网 | 科技资本 | requests |
-| DeepSeek 官网 | 中国科技 | requests |
-| Moonshot 官网 | 中国科技 | requests |
-| 中芯国际官网 | 半导体 | curl_cffi（绕Apache TLS指纹） |
-| Frankfurter API（ECB数据） | 汇率 | requests → 直接写入 finance.json |
-| Launch Library 2 API | 发射日历 | requests |
-| NASA 官网 | 登月 | requests（常超时） |
+| 字段 | 说明 |
+|------|------|
+| news_id | 主键（URL 哈希） |
+| source_name | 来源媒体 |
+| source_url | 原文链接（去重依据） |
+| title | 标题 |
+| summary | 摘要 |
+| raw_content | 原始正文 |
+| cover_image | 封面图 |
+| tags | AI 标签（JSON） |
+| category | 分类（航空航天/半导体/...） |
+| hot_score | 热度分值 |
+| sentiment | 情感倾向 |
+| status | pending/online/block |
+
+## 爬虫数据源
+
+| 板块 | 数据源 | 方式 |
+|------|--------|------|
+| 航空航天 | SNAPI（Spaceflight News API） | API，聚合 20+ 权威媒体 |
+| 航空航天 | Launch Library 2 | API，全球发射日历 |
+| 中美登月 | NASA/CNSA 等 | HTML 爬取 |
+| 半导体 | 各半导体媒体 | HTML 爬取 |
+| 中国科技AI | 科技媒体 | HTML 爬取 |
+| 中国大工程 | 基建新闻 | HTML 爬取 |
+| 可控核聚变 | 核聚变新闻 | HTML 爬取 |
+| 科技资本 | 金融数据 | HTML 爬取 |
+
+## 管理后台
+
+访问 `/admin.html` 进入管理后台：
+
+- **爬虫控制台**：触发爬虫，查看实时日志
+- **AI 提取控制台**：触发 AI 处理，查看提取结果
+- **文章列表**：筛选/排序/发布/屏蔽
+- **统计信息**：待处理/已入库数量
+
+## API 端点
+
+| 端点 | 说明 |
+|------|------|
+| `GET /api/boards/{board_id}/full` | 获取版块完整数据 |
+| `GET /api/rocket-timeline` | 获取火箭发射时间线 |
+| `GET /api/admin/articles` | 获取原始文章列表 |
+| `POST /api/admin/articles/{id}/publish` | 发布文章 |
+| `POST /api/crawl/{board_id}/start` | 触发爬虫 |
+| `GET /api/crawl/{board_id}/logs` | 获取爬虫日志 |
+| `POST /api/ai/extract` | 触发 AI 提取 |
+| `GET /api/ai/stats` | 获取 AI 统计 |
+
+## 运行命令
 
 ```bash
 # 全量抓取
@@ -82,69 +171,23 @@ python fetch_data.py
 # 只抓某个板块
 python fetch_data.py --rocket
 python fetch_data.py --fusion
-python fetch_data.py --semicon
-python fetch_data.py --finance
-python fetch_data.py --ai
 
-# 抓取结果：
-#   - 汇率直接写入 finance.json
-#   - 其他数据存入 data/_snapshots/ 和 data/_reports/
+# AI 解读（JSON 更新）
+python ai_update.py --dry-run  # 预览
+python ai_update.py            # 正式写入
 ```
 
-### ai_update.py — AI自动解读
+## 部署
 
-调用 DeepSeek API 读取快照数据，自动更新 7 个 JSON 文件：
-
-```bash
-# 先看变更（不写入）
-python ai_update.py --dry-run
-
-# 指定板块
-python ai_update.py rocket --dry-run
-python ai_update.py finance --dry-run
-
-# 确认无误后正式写入
-python ai_update.py
-
-# 写入后自动备份到 data/_backups/
-```
-
-**安全机制：**
-- 只允许 value 变化，key/结构变化直接拒绝写入
-- 写入前自动备份到 `data/_backups/`
-- 支持 `--dry-run` 只看不写
-
-## 完整更新流程
-
-```bash
-# 1. 抓取数据
-python fetch_data.py
-
-# 2. AI解读（先看变更）
-python ai_update.py --dry-run
-
-# 3. 确认后正式写入
-python ai_update.py
-
-# 4. 推送到 GitHub
-git add -A
-git commit -m "update: 数据刷新"
-git push
-
-# 5. Coze 自动从 GitHub 拉取部署
-```
-
-## 部署方式
-
-- **GitHub 仓库**：https://github.com/shibusama/taixing
-- **部署平台**：Coze（从 GitHub 拉取，无需域名备案）
-- **技术栈**：纯静态 HTML + CSS + JS + JSON，无后端
+- **部署平台**：Coze Deploy
+- **预览端口**：5000
+- **生产架构**：Nginx + FastAPI + Supervisor（Docker 容器内）
 
 ## 技术特点
 
-- **数据层分离**：所有动态数据在 `data/*.json`，HTML 通过 JS fetch 渲染
-- **一键更新**：`fetch_data.py` 抓取 → `ai_update.py` 解读 → `git push` 部署
-- **反爬处理**：curl_cffi 伪装 Chrome TLS 指纹绕过 Apache 403
-- **AI 解读**：DeepSeek API 自动分析快照数据，结构校验确保安全
+- **数据库驱动**：数据从 JSON 迁移到 PostgreSQL，支持 AI 提取和管理后台
+- **统一新闻池**：所有爬虫数据统一写入 raw_articles，按 category 分类处理
+- **AI 结构化**：DeepSeek V4 自动提取发射任务信息，置信度过滤
+- **管理后台**：可视化触发爬虫、AI 提取、文章审核
 - **深色科技风**：深蓝背景 + 青/橙/紫霓虹点缀 + 星空背景
 - **移动端适配**：480px/768px/1024px 三断点响应式
