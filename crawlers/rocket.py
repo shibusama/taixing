@@ -159,7 +159,7 @@ def crawl_rocket_news_snapi():
                     "cover_image": cover_image,
                     "images": "[]",  # JSON 数组
                     "tags": f'["航天", "{company}"]',  # JSON 数组
-                    "category": "航天",
+                    "category": "航空航天",
                     "hot_score": 0,  # 待 AI 评分
                     "sentiment": "neutral",
                     "event_group_id": None,
