@@ -201,9 +201,40 @@ def upsert_launch_timeline(item: Dict) -> bool:
 
 
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
-    """获取发射时间线"""
+    """获取发射时间线（动态计算 color/badge/done）"""
     sb = get_supabase()
     result = sb.table("rocket_launch_timeline").select("*").order("launch_time", desc=False).limit(limit).execute()
+    
+    # 动态计算字段
+    for item in result.data:
+        # color: 根据 outcome 计算
+        outcome = item.get("outcome", "")
+        if outcome in ("成功", "部分成功"):
+            item["color"] = "green"
+        elif outcome == "失败":
+            item["color"] = "red"
+        elif outcome == "计划中":
+            item["color"] = "blue"
+        else:
+            item["color"] = "gray"
+        
+        # badge: 根据 rocket_id 计算
+        rocket_id = item.get("rocket_id", "")
+        if rocket_id in ("falcon9", "starship", "newglenn", "electron", "terran_r", "nova"):
+            item["badge"] = "民营"
+        elif rocket_id and (rocket_id.startswith("longmarch") or rocket_id.startswith("cz-")):
+            item["badge"] = "国家队"
+        else:
+            item["badge"] = "国际"
+        
+        # done: 根据 outcome 计算
+        item["done"] = outcome in ("成功", "部分成功")
+        
+        # 兼容前端字段名
+        item["date"] = item.get("launch_time", "")
+        item["title"] = item.get("mission_name", "")
+        item["desc"] = item.get("brief_desc", "")
+    
     return result.data
 
 

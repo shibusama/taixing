@@ -478,12 +478,16 @@
 <script src="js/app.js"></script>
 <script>
 (async function(){
-  /* ===== 从 JSON 渲染数据 ===== */
+  /* ===== 从 API 和 JSON 渲染数据 ===== */
   let rocketData, timelineData;
   try {
+    // 从 JSON 获取对比表格数据
     const d = await fetch('data/rocket.json').then(r => r.json());
     rocketData = d.comparison_table;
-    timelineData = d;
+    
+    // 从 API 获取时间线数据
+    const timelineResp = await fetch('/api/rocket-timeline').then(r => r.json());
+    timelineData = timelineResp.timeline || [];
 
     // 对比表格
     const clsMap = {'星舰 V3':'hi','猎鹰9号':'hi','长征十号乙':'hi'};
@@ -500,17 +504,30 @@
       }).join('');
     }
     function isUS(item) {
-      const usKeys = ['SpaceX', 'Blue Origin', 'Rocket Lab', 'NASA', 'Relativity', 'Stoke', 'ULA'];
-      return usKeys.some(k => item.title.includes(k));
+      const usKeys = ['SpaceX', 'Blue Origin', 'Rocket Lab', 'NASA', 'Relativity', 'Stoke', 'ULA', 'falcon', 'starship', 'newglenn', 'electron'];
+      const title = (item.title || '').toLowerCase();
+      const desc = (item.desc || '').toLowerCase();
+      return usKeys.some(k => title.includes(k) || desc.includes(k));
     }
-    const h2Items = d.timeline_h2;
+    // 按时间分组
+    const now = new Date();
+    const h2Items = timelineData.filter(it => {
+      if (!it.date) return true;
+      const d = new Date(it.date);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() >= 6;
+    });
+    const items2027 = timelineData.filter(it => {
+      if (!it.date) return false;
+      const d = new Date(it.date);
+      return d.getFullYear() === 2027;
+    });
     // 已完成
     document.getElementById('rocket-timeline-cn-done').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && it.done));
     document.getElementById('rocket-timeline-us-done').innerHTML = renderTL(h2Items.filter(it => isUS(it) && it.done));
     // 即将发射
     document.getElementById('rocket-timeline-cn-upcoming').innerHTML = renderTL(h2Items.filter(it => !isUS(it) && !it.done));
     document.getElementById('rocket-timeline-us-upcoming').innerHTML = renderTL(h2Items.filter(it => isUS(it) && !it.done));
-    document.getElementById('rocket-timeline-2027').innerHTML = renderTL(d.timeline_2027);
+    document.getElementById('rocket-timeline-2027').innerHTML = renderTL(items2027);
   } catch(e) { console.error('Rocket data load failed:', e); }
 
   /* ===== Tab 切换 ===== */

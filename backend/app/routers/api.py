@@ -109,6 +109,13 @@ def api_get_rocket_intro():
     return {"intro": get_rocket_intro()}
 
 
+@router.get("/rocket-timeline")
+def api_get_rocket_timeline():
+    """返回火箭发射时间线（动态计算 color/badge/done）"""
+    from app.database import get_launch_timeline
+    return {"timeline": get_launch_timeline(limit=100)}
+
+
 @router.get("/status/{board_id}")
 def api_get_board_status(board_id: str):
     """查询某个板块的爬取状态（最近一次爬取时间、新增数量等）"""
