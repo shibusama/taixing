@@ -47,13 +47,15 @@ init_db()
 app.include_router(router)
 
 # 静态文件服务（生产环境）
-# 项目根目录（包含 index.html 等静态文件）
+# 项目根目录
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# HTML 页面目录
+PAGES_DIR = os.path.join(PROJECT_ROOT, "pages")
 
 @app.get("/")
 async def serve_index():
     """服务首页"""
-    return FileResponse(os.path.join(PROJECT_ROOT, "index.html"))
+    return FileResponse(os.path.join(PAGES_DIR, "index.html"))
 
 # 挂载静态文件目录（CSS, JS, data 等）
 app.mount("/css", StaticFiles(directory=os.path.join(PROJECT_ROOT, "css")), name="css")
@@ -65,11 +67,11 @@ app.mount("/data", StaticFiles(directory=os.path.join(PROJECT_ROOT, "data")), na
 async def serve_page(page: str):
     """服务其他 HTML 页面"""
     if page.endswith(".html"):
-        file_path = os.path.join(PROJECT_ROOT, page)
+        file_path = os.path.join(PAGES_DIR, page)
         if os.path.exists(file_path):
             return FileResponse(file_path)
     # 尝试添加 .html 后缀
-    file_path = os.path.join(PROJECT_ROOT, f"{page}.html")
+    file_path = os.path.join(PAGES_DIR, f"{page}.html")
     if os.path.exists(file_path):
         return FileResponse(file_path)
     return {"error": "Page not found"}, 404
