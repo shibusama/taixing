@@ -185,24 +185,26 @@
                     <span id="ai-status-text">就绪</span>
                 </span>
             </div>
-            <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
-                从原始新闻（raw_articles）中提取发射任务信息，写入时间线表。置信度 ≥ 0.7 自动入库，&lt; 0.7 待人工审核。
-            </p>
-            <div class="controls">
-                <select id="ai-category" style="margin-right: 0.5rem;">
-                    <option value="航空航天">航空航天</option>
-                    <option value="可控核聚变">可控核聚变</option>
-                    <option value="半导体">半导体</option>
-                    <option value="中美登月">中美登月</option>
-                    <option value="中国大工程">中国大工程</option>
-                    <option value="科技资本">科技资本</option>
-                </select>
-                <button onclick="startAiExtract()">开始提取</button>
-                <button onclick="loadAiStats()" class="secondary">刷新统计</button>
-                <span id="ai-stats" style="margin-left: 1rem; color: #888;"></span>
-            </div>
-            <div class="log-container" id="ai-log-container" style="max-height: 200px;">
-                <div class="log-line"><span class="log-info">点击"开始提取"处理待审核新闻...</span></div>
+            <div class="card-body">
+                <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
+                    从原始新闻（raw_articles）中提取发射任务信息，写入时间线表。置信度 ≥ 0.7 自动入库，&lt; 0.7 待人工审核。
+                </p>
+                <div class="controls">
+                    <select id="ai-category" style="margin-right: 0.5rem;">
+                        <option value="航空航天">航空航天</option>
+                        <option value="可控核聚变">可控核聚变</option>
+                        <option value="半导体">半导体</option>
+                        <option value="中美登月">中美登月</option>
+                        <option value="中国大工程">中国大工程</option>
+                        <option value="科技资本">科技资本</option>
+                    </select>
+                    <button onclick="startAiExtract()">开始提取</button>
+                    <button onclick="loadAiStats()" class="secondary">刷新统计</button>
+                    <span id="ai-stats" style="margin-left: 1rem; color: #888;"></span>
+                </div>
+                <div class="log-container" id="ai-log-container" style="max-height: 200px;">
+                    <div class="log-line"><span class="log-info">点击"开始提取"处理待审核新闻...</span></div>
+                </div>
             </div>
         </div>
     </div>
