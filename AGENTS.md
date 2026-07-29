@@ -97,3 +97,10 @@
 - **NASA 官网**：经常超时，需做好容错
 - **汇率数据**：来自 Frankfurter API（ECB 数据），直接写入 `finance.json`
 - **AI 解读**：DeepSeek API 调用，需配置 `DEEPSEEK_API_KEY` 环境变量
+- **API 调用必须用正确的 Accept 头**：调用 JSON API 时必须用 `fetch_json_api()`（Accept: application/json），不能用 `fetch_json()`（Accept: text/html）。否则 API 会返回 HTML 而不是 JSON，导致解析失败。教训：Launch Library 2 API 因 Accept 头错误导致爬虫失败。
+
+## 用户交互原则
+
+- **只回答用户问的问题**：用户问什么就答什么，不要主动建议修复方案
+- **用户说修才修**：除非用户明确要求修复，否则只解释原因，不主动提出"要修吗？"
+- **简洁直接**：回答问题要简洁，不要啰嗦，不要重复解释
