@@ -85,7 +85,8 @@ BOARDS = {
 
 def get_api_key():
     """获取 DeepSeek API Key"""
-    return "sk-REMOVED"
+    import os
+    return os.environ.get("DEEPSEEK_API_KEY", "")
 
 
 def load_json(filename, data_dir=None):

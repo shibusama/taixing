@@ -8,6 +8,9 @@
 # AI backups (ai_update.py自动备份，可再生，不传)
 data/_backups/
 
+# Environment variables (敏感信息，不传)
+.env
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -5,13 +5,14 @@ AI 新闻提取模块
 
 import json
 import hashlib
+import os
 import requests
 from datetime import datetime
 from typing import List, Dict, Optional
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 DEEPSEEK_MODEL = "deepseek-v4-flash"
-DEEPSEEK_API_KEY = "sk-REMOVED"
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 
 EXTRACTION_PROMPT = """你是航天新闻结构化提取专家。根据以下新闻内容，提取发射任务信息。
