@@ -1,18 +1,19 @@
 """
-APScheduler — 定时爬虫调度
+APScheduler - 定时爬虫调度
 每小时自动全量爬一次（7个板块）
 """
 from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.routers.api import run_crawler, CRAWLER_MODULES
+from app.services.crawler_service import run_crawler
+from crawlers.crawler_registry import CRAWLER_MODULES
 from app.database import log_crawl
 
 scheduler = BackgroundScheduler(timezone="Asia/Shanghai")
 
 
 def crawl_all_job():
-    """定时任务：抓取全部7个板块"""
+    """定时任务：抓取全部板块"""
     for bid in CRAWLER_MODULES:
         try:
             run_crawler(bid)
