@@ -232,44 +232,6 @@ def run_crawler(board_id: str) -> dict:
 BOARD_IDS = list(CRAWLER_MODULES.keys())
 
 
-# ============================================================
-#  AI 解读 + SQLite 同步（手动触发）
-# ============================================================
-
-@router.post("/ai-update")
-def api_ai_update_all():
-    """手动触发全量 AI 解读并同步到 SQLite"""
-    import sys, os
-    from pathlib import Path
-    project_root = Path(__file__).resolve().parent.parent.parent.parent  # taixing/
-    sys.path.insert(0, str(project_root))
-    import ai_update
-    from app.database import re_sync_all_from_json
-
-    result = ai_update.run_ai_update(base_dir=str(project_root))
-    re_sync_all_from_json()
-    return {"status": "ok", "ai_result": result}
-
-
-@router.post("/ai-update/{board_id}")
-def api_ai_update_board(board_id: str):
-    """手动触发单个板块 AI 解读并同步到 SQLite"""
-    import sys, os
-    from pathlib import Path
-    project_root = Path(__file__).resolve().parent.parent.parent.parent  # taixing/
-    sys.path.insert(0, str(project_root))
-    import ai_update
-    from app.database import re_sync_board_from_json
-
-    if board_id not in ai_update.BOARDS:
-        raise HTTPException(404, f"Unknown board: {board_id}")
-
-    result = ai_update.run_ai_update(board_ids=[board_id], base_dir=str(project_root))
-    if result["success"]:
-        re_sync_board_from_json(board_id)
-    return {"status": "ok", "ai_result": result}
-
-
 # ---- 内容管理 API ----
 
 @router.get("/admin/articles")
@@ -353,48 +315,93 @@ def api_get_crawl_logs(board_id: str):
     return _crawl_logs[board_id]
 
 
-# ===== AI 提取 =====
+# ===== AI 提取 → latest_news =====
 
 @router.post("/ai/extract")
-def api_ai_extract(category: str = "航空航天", limit: int = 10):
-    """AI 提取：从 raw_articles 提取结构化数据到时间线表"""
-    from app.ai_extractor import process_pending_articles
-    
-    result = process_pending_articles(category=category, limit=limit, auto_insert=True)
-    return result
+def api_ai_extract(category: str = None, limit: int = 10):
+    """AI 提取：从 raw_articles 提取结构化要闻写入 latest_news 表"""
+    try:
+        from app.ai_extractor import process_pending_articles
+        result = process_pending_articles(category=category, limit=limit, auto_insert=True)
+        return result
+    except Exception as e:
+        return {"status": "error", "message": str(e), "total": 0, "results": []}
 
 
 @router.get("/ai/stats")
-def api_ai_stats(category: str = "航空航天"):
-    """AI 提取统计：待处理文章数（按分类）、时间线条数"""
+def api_ai_stats():
+    """AI 提取统计：待处理文章数、latest_news 条目数"""
     from app.database import get_supabase
-    
+
     sb = get_supabase()
-    
-    # 分类到时间线表的映射
-    timeline_table_map = {
-        "航空航天": "rocket_launch_timeline",
-        "可控核聚变": "fusion_timeline",
-        "中国科技AI": "china_tech_timeline",
-        "半导体": "semiconductor_timeline",
-    }
-    
-    # 待处理文章数（按分类）
-    pending = sb.table("raw_articles").select("news_id", count="exact").eq("status", "pending").eq("category", category).execute()
-    pending_count = pending.count if hasattr(pending, 'count') and pending.count else len(pending.data)
-    
-    # 时间线条数（根据分类查询对应表）
-    timeline_table = timeline_table_map.get(category)
-    timeline_count = 0
-    if timeline_table:
-        try:
-            timeline = sb.table(timeline_table).select("timeline_id", count="exact").execute()
-            timeline_count = timeline.count if hasattr(timeline, 'count') and timeline.count else len(timeline.data)
-        except Exception:
-            timeline_count = 0
-    
+
+    # 待处理文章（表可能不存在，容错）
+    pending_count = 0
+    board_pending = {}
+    try:
+        pending_all = sb.table("raw_articles").select("news_id", count="exact").eq("status", "pending").execute()
+        pending_count = pending_all.count if hasattr(pending_all, 'count') and pending_all.count else len(pending_all.data)
+
+        boards = sb.table("raw_articles").select("category").eq("status", "pending").execute()
+        for row in boards.data or []:
+            c = row.get("category", "unknown")
+            board_pending[c] = board_pending.get(c, 0) + 1
+    except Exception:
+        pass
+
+    # latest_news 条目数
+    news_total = 0
+    try:
+        news_count = sb.table("latest_news").select("id", count="exact").execute()
+        news_total = news_count.count if hasattr(news_count, 'count') and news_count.count else len(news_count.data)
+    except Exception:
+        pass
+
     return {
         "pending_articles": pending_count,
-        "timeline_entries": timeline_count,
-        "category": category
+        "pending_by_board": board_pending,
+        "latest_news_total": news_total,
+        "status": "ok",
     }
+
+
+# ===== 最新要闻 =====
+
+@router.get("/latest-news")
+def api_get_latest_news(limit: int = 10):
+    """获取首页最新要闻列表（仅展示 active 的）"""
+    from app.database import get_latest_news
+    return {"items": get_latest_news(limit)}
+
+
+@router.get("/admin/latest-news")
+def api_get_all_latest_news():
+    """获取全部最新要闻（含 inactive，管理后台用）"""
+    from app.database import get_all_latest_news
+    return {"items": get_all_latest_news()}
+
+
+@router.post("/admin/latest-news")
+def api_create_latest_news(item: dict):
+    """新增一条最新要闻"""
+    from app.database import create_latest_news
+    data = create_latest_news(item)
+    return {"status": "ok", "data": data}
+
+
+@router.put("/admin/latest-news/{news_id}")
+def api_update_latest_news(news_id: int, updates: dict):
+    """更新一条最新要闻"""
+    from app.database import update_latest_news
+    data = update_latest_news(news_id, updates)
+    if data:
+        return {"status": "ok", "data": data}
+    raise HTTPException(status_code=404, detail="未找到该要闻")
+
+
+@router.delete("/admin/latest-news/{news_id}")
+def api_delete_latest_news(news_id: int):
+    """删除一条最新要闻"""
+    from app.database import delete_latest_news
+    delete_latest_news(news_id)
+    return {"status": "ok"}

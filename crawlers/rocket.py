@@ -6,10 +6,9 @@
 """
 
 import hashlib
-import requests
 from datetime import datetime
 
-from .utils import fetch_json
+from .utils import fetch_json, fetch_ai_fallback
 
 
 # SNAPI 搜索关键词 → 公司映射
@@ -28,34 +27,20 @@ API_HEADERS = {
 }
 
 
-def fetch_json_api(url, params=None, timeout=15, retries=3):
-    """专为 JSON API 设计的请求函数，确保返回 JSON，支持重试"""
-    import time
-    for attempt in range(retries):
-        try:
-            resp = requests.get(url, params=params, timeout=timeout, headers=API_HEADERS, verify=False)
-            resp.raise_for_status()
-            return resp.json()
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 429 and attempt < retries - 1:
-                wait_time = (attempt + 1) * 10  # 10s, 20s, 30s
-                print(f"    限流，等待 {wait_time}s 后重试...")
-                time.sleep(wait_time)
-            else:
-                raise
-
-
 def generate_news_id(url):
     """根据 URL 生成唯一哈希 ID"""
     return hashlib.sha256(url.encode()).hexdigest()[:16]
 
 
 def crawl_rocket_launches():
-    """火箭发射日历 → rocket_launch_timeline 表（Launch Library 2 API）"""
+    """火箭发射日历（Launch Library 2 API）"""
     print("\n[火箭发射] 抓取 Launch Library 2 API...")
     try:
-        data = fetch_json_api("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
-                              params={"limit": 50, "ordering": "net"})
+        data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
+                          params={"limit": 50, "ordering": "net"}, headers=API_HEADERS)
+        if data is None:
+            print("  LL2 API 被限流，跳过")
+            return []
         launches = data.get("results", [])
         WATCH = ["SpaceX", "Blue Origin", "Rocket Lab", "CASC",
                  "LandSpace", "Galactic Energy", "Space Pioneer", "iSpace",
@@ -90,13 +75,13 @@ def crawl_rocket_launches():
             
             items.append({
                 "timeline_id": timeline_id,
-                "rocket_id": None,  # 后续关联 rocket_companies 表
+                "rocket_id": None,
                 "mission_name": l.get("name", ""),
                 "launch_time": l.get("net", "")[:10],
                 "launch_site": l.get("pad", {}).get("location", {}).get("name", "") if l.get("pad") else "",
                 "payload": mission_name,
                 "outcome": outcome,
-                "reuse_status": "",  # LL2 API 不直接提供回收状态
+                "reuse_status": "",
                 "brief_desc": brief_desc,
                 "related_news_ids": [],
                 "create_time": datetime.now().isoformat(),
@@ -109,28 +94,8 @@ def crawl_rocket_launches():
         return items
     except Exception as e:
         print(f"  [火箭发射] API失败: {e}")
-        print(f"  [火箭发射] 尝试备用源 (SpaceLaunchNow)...")
-        try:
-            data = fetch_json("https://spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com/launch/upcoming.json")
-            launches = data.get("results", data if isinstance(data, list) else [])
-            items = []
-            for l in (launches[:50] if isinstance(launches, list) else []):
-                agency = l.get("launch_service_provider", {}).get("name", "") if isinstance(l, dict) else ""
-                items.append({
-                    "source": "launch_library_2",
-                    "board": "rocket",
-                    "title": l.get("name", "") if isinstance(l, dict) else str(l),
-                    "date": (l.get("net", "")[:10] if isinstance(l, dict) else ""),
-                    "agency": agency,
-                    "status": (l.get("status", {}).get("name", "") if isinstance(l, dict) and l.get("status") else ""),
-                    "summary": "",
-                    "url": "",
-                })
-            print(f"  备用源获取 {len(items)} 条")
-            return items
-        except Exception as e2:
-            print(f"  [火箭发射] 备用源也失败: {e2}")
-            return []
+        print("  [AI兜底] 尝试用 DeepSeek 补充数据...")
+        return fetch_ai_fallback("可回收火箭和商业航天发射", count=15)
 
 
 def crawl_rocket_news_snapi():
@@ -146,10 +111,13 @@ def crawl_rocket_news_snapi():
     for company, source_id in ROCKET_COMPANIES.items():
         try:
             # SNAPI v4: 搜索关键词，按时间倒序，取最新 20 条
-            data = fetch_json_api(
+            data = fetch_json(
                 "https://api.spaceflightnewsapi.net/v4/articles/",
                 params={"search": company, "limit": 20, "ordering": "-published_at"}
             )
+            if data is None:
+                print(f"  [{company}] SNAPI 被限流，跳过")
+                continue
             articles = data.get("results", [])
             count = data.get("count", 0)
             print(f"  [{company}] 共 {count} 篇，获取最新 {len(articles)} 篇")
@@ -204,17 +172,13 @@ def crawl_rocket_news_snapi():
                     "_author": author_str,
                 })
 
-            # 避免触发 SNAPI 速率限制
-            import time
-            time.sleep(1)
-
         except Exception as e:
             print(f"  [{company}] SNAPI 查询失败: {e}")
 
-        # 请求间隔，避免触发限流
-        time.sleep(2)
-
     print(f"\n  [SNAPI] 共获取 {len(all_items)} 条新闻")
+    if not all_items:
+        print("  [AI兜底] SNAPI 无数据，尝试用 DeepSeek 补充...")
+        return fetch_ai_fallback("可回收火箭和商业航天", count=20)
     for item in all_items[:5]:
         pub_time = item.get('publish_time') or ''
         print(f"    {pub_time[:10] if pub_time else '?':<12} | {item['_company']:<16} | [{item['source_name']}] {item['title'][:50]}")

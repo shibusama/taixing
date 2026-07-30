@@ -19,6 +19,8 @@ def crawl_smic():
             print("  [SMIC] 需要 curl_cffi，回退到普通 requests（可能403）")
             html = fetch_html("https://www.smics.com/site/news", timeout=30)
 
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
         seen = set()
@@ -73,6 +75,8 @@ def crawl_smee():
     print("\n[SMEE] 抓取上海微电子新闻...")
     try:
         html = fetch_html("https://www.smee.com.cn/")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 

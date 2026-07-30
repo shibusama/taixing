@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, integer, timestamp, date } from "drizzle-orm/pg-core"
+import { pgTable, serial, text, varchar, integer, timestamp, date, boolean } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 // ============ 系统表 ============
@@ -276,4 +276,22 @@ export const crawlLogs = pgTable("crawl_logs", {
   startedAt: timestamp("started_at", { mode: 'string' }),
   finishedAt: timestamp("finished_at", { mode: 'string' }),
   createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+});
+
+
+// ============ 最新要闻（首页）============
+
+export const latestNews = pgTable("latest_news", {
+  id: serial().primaryKey(),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  source: text("source"),
+  board: text("board").notNull(),
+  boardLabel: text("board_label"),
+  link: text("link"),
+  publishDate: date("publish_date"),
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 });

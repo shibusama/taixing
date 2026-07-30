@@ -18,6 +18,8 @@ def crawl_exchange_rates():
     try:
         latest = fetch_json("https://api.frankfurter.app/latest",
                             params={"from": "USD", "to": "JPY,CNY,EUR,GBP,CHF"})
+        if latest is None:
+            return []
         rates = latest.get("rates", {})
         date = latest.get("date", "")
         jpy = rates.get("JPY")
@@ -51,10 +53,13 @@ def crawl_exchange_rates():
             monthly = fetch_json(
                 f"https://api.frankfurter.app/{start_date.strftime('%Y-%m-%d')}..{date}",
                 params={"from": "USD", "to": "JPY"})
-            vals = [v["JPY"] for v in monthly.get("rates", {}).values() if "JPY" in v]
-            if vals:
-                finance["fx_highlights"][1]["num"] = f"{max(vals):.2f}"
-                finance["fx_highlights"][2]["num"] = f"{min(vals):.2f}"
+            if monthly is None:
+                print("  汇率API不可用，跳过月高低计算")
+            else:
+                vals = [v["JPY"] for v in monthly.get("rates", {}).values() if "JPY" in v]
+                if vals:
+                    finance["fx_highlights"][1]["num"] = f"{max(vals):.2f}"
+                    finance["fx_highlights"][2]["num"] = f"{min(vals):.2f}"
         except:
             pass
 
@@ -90,6 +95,8 @@ def crawl_fed_rate():
             data = fetch_json("https://api.stlouisfed.org/fred/series/observations",
                               params={"series_id": "FEDFUNDS", "api_key": fred_key,
                                       "file_type": "json", "limit": 1, "sort_order": "desc"})
+            if data is None:
+                return {}
             obs = data.get("observations", [{}])[0]
             rate = obs.get("value", "")
             date = obs.get("date", "")
@@ -97,6 +104,8 @@ def crawl_fed_rate():
             return {"rate": rate, "date": date}
         else:
             html = fetch_html("https://fred.stlouisfed.org/series/FEDFUNDS")
+            if html is None:
+                return {}
             soup = BeautifulSoup(html, "lxml")
             value_elem = soup.find(class_=lambda c: c and "value" in str(c).lower())
             if value_elem:

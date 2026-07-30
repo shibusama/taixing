@@ -577,3 +577,55 @@ def get_board_full(board_id: str) -> Optional[Dict]:
 # ============ 内容管理 ============
 # get_raw_articles, get_raw_article_stats, update_article_status, update_article, delete_raw_article
 # 已在上方 raw_articles 区域定义
+
+
+# ============ 最新要闻 (latest_news) ============
+
+def get_latest_news(limit: int = 10) -> List[Dict]:
+    """获取最新要闻列表（仅 active，按 sort_order + publish_date 排序）"""
+    sb = get_supabase()
+    result = (
+        sb.table("latest_news")
+        .select("*")
+        .eq("is_active", True)
+        .order("sort_order", desc=False)
+        .order("publish_date", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return result.data
+
+
+def get_all_latest_news() -> List[Dict]:
+    """获取全部最新要闻（含 inactive，管理后台用）"""
+    sb = get_supabase()
+    result = (
+        sb.table("latest_news")
+        .select("*")
+        .order("sort_order", desc=False)
+        .order("publish_date", desc=True)
+        .execute()
+    )
+    return result.data
+
+
+def create_latest_news(item: Dict) -> Dict:
+    """新增一条最新要闻"""
+    sb = get_supabase()
+    result = sb.table("latest_news").insert(item).execute()
+    return result.data[0] if result.data else {}
+
+
+def update_latest_news(news_id: int, updates: Dict) -> Dict:
+    """更新一条最新要闻"""
+    sb = get_supabase()
+    updates["updated_at"] = datetime.now().isoformat()
+    result = sb.table("latest_news").update(updates).eq("id", news_id).execute()
+    return result.data[0] if result.data else {}
+
+
+def delete_latest_news(news_id: int) -> bool:
+    """删除一条最新要闻"""
+    sb = get_supabase()
+    sb.table("latest_news").delete().eq("id", news_id).execute()
+    return True

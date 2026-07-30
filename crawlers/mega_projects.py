@@ -14,6 +14,8 @@ def crawl_china_railway():
     print("\n[国铁] 抓取国铁集团新闻...")
     try:
         html = fetch_html("https://www.china-railway.com.cn/")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 

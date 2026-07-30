@@ -1,6 +1,7 @@
 """
-AI 新闻提取模块
-从 raw_articles 中提取结构化数据，写入 rocket_launch_timeline
+AI 新闻结构化提取模块
+从 raw_articles 中提取结构化要闻，写入 latest_news 表
+支持所有板块
 """
 
 import json
@@ -14,33 +15,49 @@ DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 DEEPSEEK_MODEL = "deepseek-v4-flash"
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
+# 板块映射
+BOARD_MAP = {
+    "rocket": "可回收火箭",
+    "moon": "中美登月",
+    "controlled-fusion": "可控核聚变",
+    "semiconductor": "中国半导体",
+    "china-tech": "中国科技AI",
+    "mega-projects": "中国大工程",
+    "finance": "科技资本",
+}
 
-EXTRACTION_PROMPT = """你是航天新闻结构化提取专家。根据以下新闻内容，提取发射任务信息。
+
+def get_board_label(category: str) -> str:
+    """将板块标识转为中文名"""
+    return BOARD_MAP.get(category, category)
+
+
+EXTRACTION_PROMPT = """你是科技新闻编辑助手。根据以下新闻内容，提取结构化信息：
 
 新闻标题：{title}
 新闻摘要：{summary}
 新闻正文：{raw_content}
-来源媒体：{source_name}
+来源：{source_name}
 发布时间：{publish_time}
+所属板块：{category}
 
 请输出 JSON 格式（只输出 JSON，不要其他内容）：
 {{
-  "rocket_id": "火箭型号标识（如 falcon9、starship、newglenn、electron、terranr、nova 等，无法判断则为 null）",
-  "mission_name": "任务名称（如 Starlink Group 12-3、Artemis II 等）",
-  "launch_time": "发射时间（YYYY-MM-DD 或 YYYY-MM 或 YYYY，无法判断则为 null）",
-  "launch_site": "发射场（如 卡纳维拉尔角、肯尼迪航天中心、酒泉、文昌 等）",
-  "payload": "载荷描述（如 Starlink 卫星、载人飞船 等）",
-  "outcome": "发射结果，只能是以下之一：成功、失败、部分成功、计划中、未知",
-  "reuse_status": "一级回收状态，只能是以下之一：回收成功、回收失败、无回收、未知",
-  "brief_desc": "一句话描述，50字以内，中文",
-  "confidence": 0.0到1.0之间的数字，表示你对提取结果的把握程度
+  "title": "精炼后的标题（保留核心信息，不超过40字）",
+  "summary": "一句话摘要（突出关键数字和进展，不超过80字）",
+  "source": "来源名称（如 SpaceX、NASA、中芯国际、ITER 等，无法判断则为 null）",
+  "publish_date": "发布日期（YYYY-MM-DD 格式，无法判断则为 null）",
+  "link": "原文链接",
+  "board_label": "板块中文名（如 可回收火箭、可控核聚变 等）",
+  "confidence": 0.0到1.0之间的数字，表示本条新闻是否属于有效科技新闻
 }}
 
 注意：
-1. 如果新闻不包含发射任务信息（如纯评论、政策分析），confidence 设为 0
-2. 如果信息不完整，对应字段设为 null
-3. brief_desc 用中文，简洁明了
-4. 只输出 JSON，不要 markdown 代码块标记"""
+1. 如果新闻内容与科技无关（如纯广告、活动通知、招聘信息），confidence 设为 0
+2. title 要简洁精准，保留关键数字和实体名
+3. summary 用中文，一句话说清核心进展
+4. 日期格式统一为 YYYY-MM-DD，无法判断则返回 null
+5. 只输出 JSON，不要 markdown 代码块标记"""
 
 
 def call_deepseek(prompt: str) -> Optional[Dict]:
@@ -73,142 +90,148 @@ def call_deepseek(prompt: str) -> Optional[Dict]:
         return None
 
 
-def extract_timeline_from_article(article: Dict) -> Optional[Dict]:
-    """从单条新闻中提取时间线数据"""
+def extract_news_from_article(article: Dict) -> Optional[Dict]:
+    """从单条新闻中提取结构化要闻"""
+    category = article.get("category", "")
     prompt = EXTRACTION_PROMPT.format(
         title=article.get("title", ""),
         summary=article.get("summary", ""),
         raw_content=article.get("raw_content", "") or "",
         source_name=article.get("source_name", ""),
-        publish_time=article.get("publish_time", "")
+        publish_time=article.get("publish_time", ""),
+        category=category,
     )
-    
+
     result = call_deepseek(prompt)
     if not result:
         return None
-    
+
     confidence = result.get("confidence", 0)
     if confidence < 0.1:
-        # AI 判断这不是发射任务新闻
         return None
-    
-    # 生成 timeline_id
-    news_id = article.get("news_id", "")
-    timeline_id = hashlib.md5(f"timeline_{news_id}".encode()).hexdigest()[:16]
-    
+
     now = datetime.now().isoformat()
-    
+    board_label = result.get("board_label") or get_board_label(category)
+
     return {
-        "timeline_id": timeline_id,
-        "rocket_id": result.get("rocket_id"),
-        "mission_name": result.get("mission_name"),
-        "launch_time": result.get("launch_time"),
-        "launch_site": result.get("launch_site"),
-        "payload": result.get("payload"),
-        "outcome": result.get("outcome"),
-        "reuse_status": result.get("reuse_status"),
-        "brief_desc": result.get("brief_desc"),
-        "related_news_ids": json.dumps([news_id]),
-        "create_time": now,
-        "update_time": now,
+        "title": (result.get("title") or article.get("title", ""))[:100],
+        "summary": (result.get("summary") or article.get("summary", ""))[:200],
+        "source": result.get("source") or article.get("source_name", ""),
+        "board": category,
+        "board_label": board_label,
+        "link": result.get("link") or article.get("source_url", ""),
+        "publish_date": result.get("publish_date"),
+        "is_active": True,
+        "sort_order": 0,
+        "created_at": now,
+        "updated_at": now,
         "_confidence": confidence,
-        "_source_news_id": news_id
+        "_article_news_id": article.get("news_id", ""),
     }
 
 
 def process_pending_articles(
-    category: str = "航空航天",
+    category: str = None,
     limit: int = 20,
     auto_insert: bool = True,
-    confidence_threshold: float = 0.7
+    confidence_threshold: float = 0.6
 ) -> Dict:
     """
-    处理待审核文章，提取时间线数据
-    
+    处理待审核文章，提取结构化要闻写入 latest_news
+
     Args:
-        category: 要处理的分类
+        category: 要处理的分类，None 表示所有板块
         limit: 每次处理的最大文章数
         auto_insert: 是否自动插入高置信度结果
         confidence_threshold: 自动插入的置信度阈值
-    
+
     Returns:
         处理结果统计
     """
-    from app.database import get_supabase, upsert_launch_timeline, update_article_status
-    
+    from app.database import get_supabase, update_article_status
+
     sb = get_supabase()
-    
-    # 获取待处理文章
-    result = sb.table("raw_articles").select("*").eq("category", category).eq("status", "pending").order("publish_time", desc=True).limit(limit).execute()
+
+    # 构建查询
+    query = sb.table("raw_articles").select("*").eq("status", "pending").order("publish_time", desc=True).limit(limit)
+    if category:
+        query = query.eq("category", category)
+    result = query.execute()
     articles = result.data
-    
+
     if not articles:
         return {"processed": 0, "message": "没有待处理的文章"}
-    
+
     stats = {
         "total": len(articles),
         "extracted": 0,
         "auto_inserted": 0,
         "pending_review": 0,
         "failed": 0,
+        "skipped_duplicate": 0,
         "results": []
     }
-    
+
     for article in articles:
         news_id = article.get("news_id", "")
         print(f"  [AI] 处理: {article.get('title', '')[:50]}...")
-        
+
         # AI 提取
-        timeline_data = extract_timeline_from_article(article)
-        
-        if not timeline_data:
-            print(f"  [AI] → 非发射任务新闻，跳过")
-            # 标记为已处理（online）
+        news_data = extract_news_from_article(article)
+
+        if not news_data:
+            print(f"  [AI] → 非科技新闻，跳过")
             update_article_status(news_id, "online")
             stats["extracted"] += 0
             continue
-        
-        confidence = timeline_data.pop("_confidence", 0)
-        source_news_id = timeline_data.pop("_source_news_id", "")
-        
-        print(f"  [AI] → 置信度: {confidence:.2f} | 任务: {timeline_data.get('mission_name', 'N/A')}")
-        
+
+        confidence = news_data.pop("_confidence", 0)
+        article_news_id = news_data.pop("_article_news_id", "")
+
+        print(f"  [AI] → 置信度: {confidence:.2f} | {news_data.get('title', 'N/A')}")
+
         if auto_insert and confidence >= confidence_threshold:
-            # 高置信度，自动插入
-            success = upsert_launch_timeline(timeline_data)
-            if success:
-                update_article_status(news_id, "online")
-                stats["auto_inserted"] += 1
-                print(f"  [AI] → 自动入库 ✓")
+            # 高置信度，检查是否已存在（按 title + board 去重）
+            existing = sb.table("latest_news").select("id").eq("title", news_data["title"]).eq("board", news_data["board"]).limit(1).execute()
+            if existing.data:
+                print(f"  [AI] → 已存在，跳过")
+                stats["skipped_duplicate"] += 1
             else:
-                stats["failed"] += 1
-                print(f"  [AI] → 入库失败 ✗")
+                # 插入 latest_news
+                try:
+                    sb.table("latest_news").insert(news_data).execute()
+                    update_article_status(news_id, "online")
+                    stats["auto_inserted"] += 1
+                    print(f"  [AI] → 入库 ✓")
+                except Exception as e:
+                    stats["failed"] += 1
+                    print(f"  [AI] → 入库失败: {e}")
         else:
-            # 低置信度，标记待审核
-            # TODO: 可以加一个 pending_review 状态
             stats["pending_review"] += 1
-            print(f"  [AI] → 待人工审核")
-        
+            print(f"  [AI] → 置信度不足，待审核")
+
         stats["extracted"] += 1
         stats["results"].append({
             "news_id": news_id,
             "title": article.get("title", "")[:60],
             "confidence": confidence,
-            "mission_name": timeline_data.get("mission_name"),
+            "summary": news_data.get("summary", "")[:60],
             "auto_inserted": auto_insert and confidence >= confidence_threshold
         })
-    
+
     return stats
 
 
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent))
-    
-    print("=== AI 新闻提取 ===\n")
-    result = process_pending_articles(limit=5)
+
+    print("=== AI 新闻提取 → latest_news ===\n")
+    result = process_pending_articles(limit=10)
     print(f"\n=== 完成 ===")
     print(f"总计: {result['total']} 条")
     print(f"提取成功: {result['extracted']} 条")
     print(f"自动入库: {result['auto_inserted']} 条")
+    print(f"跳过重复: {result.get('skipped_duplicate', 0)} 条")
     print(f"待审核: {result['pending_review']} 条")
+    print(f"失败: {result['failed']} 条")

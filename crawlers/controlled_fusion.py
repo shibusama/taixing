@@ -14,6 +14,8 @@ def crawl_iter():
     print("\n[ITER] 抓取 Newsline...")
     try:
         html = fetch_html("https://www.iter.org/newsline")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 
@@ -61,6 +63,8 @@ def crawl_cfs():
     print("\n[CFS] 抓取官网新闻...")
     try:
         html = fetch_html("https://cfs.energy/news-and-media")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 
@@ -102,6 +106,8 @@ def crawl_asipp():
     print("\n[ASIPP] 抓取中科院等离子体所...")
     try:
         html = fetch_html("http://www.ipp.cas.cn/xwdt/")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 

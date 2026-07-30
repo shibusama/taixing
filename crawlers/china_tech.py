@@ -14,6 +14,8 @@ def crawl_anthropic():
     print("\n[Anthropic] 抓取 Newsroom...")
     try:
         html = fetch_html("https://www.anthropic.com/news")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 
@@ -131,6 +133,8 @@ def crawl_deepseek():
         if len(items) < 3:
             try:
                 html2 = fetch_html("https://www.deepseek.com/")
+                if html2 is None:
+                    html2 = ""
                 soup2 = BeautifulSoup(html2, "lxml")
                 for a in soup2.find_all("a", href=True):
                     title = a.get_text(strip=True)
@@ -167,6 +171,8 @@ def crawl_moonshot():
     print("\n[Moonshot] 抓取官网动态...")
     try:
         html = fetch_html("https://www.moonshot.cn/")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 
@@ -209,6 +215,8 @@ def crawl_openai():
             html = fetch_html_cffi("https://openai.com/blog/", timeout=30)
         else:
             html = fetch_html("https://openai.com/blog/", timeout=20)
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 

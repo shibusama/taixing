@@ -14,6 +14,8 @@ def crawl_nasa_artemis():
     print("\n[NASA] 抓取 Artemis 新闻...")
     try:
         html = fetch_html("https://www.nasa.gov/missions/artemis/")
+        if html is None:
+            return []
         soup = BeautifulSoup(html, "lxml")
         items = []
 
