@@ -14,12 +14,32 @@ from typing import List, Dict, Any, Optional
 from supabase import create_client, Client
 
 _supabase: Optional[Client] = None
+_env_loaded = False
+
+
+def _load_env() -> None:
+    """通过 workload identity 加载 Supabase 环境变量（如尚未设置）"""
+    global _env_loaded
+    if _env_loaded or (os.environ.get("COZE_SUPABASE_URL") and os.environ.get("COZE_SUPABASE_ANON_KEY")):
+        return
+    try:
+        from coze_workload_identity import Client as WorkloadClient
+        client = WorkloadClient()
+        env_vars = client.get_project_env_vars()
+        client.close()
+        for v in env_vars:
+            if not os.environ.get(v.key):
+                os.environ[v.key] = v.value
+        _env_loaded = True
+    except Exception:
+        pass
 
 
 def get_supabase() -> Client:
     """获取 Supabase 客户端"""
     global _supabase
     if _supabase is None:
+        _load_env()
         supabase_url = os.environ.get("COZE_SUPABASE_URL")
         supabase_key = os.environ.get("COZE_SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("COZE_SUPABASE_ANON_KEY")
 
