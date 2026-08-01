@@ -6,7 +6,11 @@
 <title>钛星 · 中国大工程项目追踪</title>
  <link rel="stylesheet" href="css/style.css">
 <style>
-/* V2 卡片样式 — 仅大工程页面 */
+/* ===== 大工程页面 V2 样式（仅本页，重设计） ===== */
+.page-lead{color:var(--txt-2);font-size:14px;line-height:1.8;margin:0 0 20px}
+.tab-lead{color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0}
+
+/* Tab 胶囊导航 */
 .tab-nav{border-bottom:none;gap:6px;flex-wrap:wrap}
 .tab-nav button{
   padding:7px 18px;border-radius:20px;font-size:13px;font-weight:600;
@@ -15,23 +19,41 @@
 }
 .tab-nav button:hover{border-color:var(--cyan);color:var(--txt-1)}
 .tab-nav button.active{background:var(--cyan);color:var(--bg-0);border-color:var(--cyan)}
+
+/* 工程档案编号徽标 */
+.proj-no{
+  display:inline-grid;place-items:center;width:26px;height:26px;flex-shrink:0;
+  border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:700;
+  background:rgba(0,224,255,.1);border:1px solid rgba(0,224,255,.28);color:var(--cyan);
+}
+
+/* 关键数据卡 */
 .company-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .kv{
   background:var(--bg-1);border:none;border-radius:10px;padding:12px 16px;
   border-left:3px solid var(--accent);transition:var(--trans);
 }
 .kv:hover{background:var(--bg-2)}
-
 .kv:nth-child(6n+1){--accent:var(--cyan)}
 .kv:nth-child(6n+2){--accent:var(--gold)}
 .kv:nth-child(6n+3){--accent:var(--green)}
 .kv:nth-child(6n+4){--accent:var(--amber)}
 .kv:nth-child(6n+5){--accent:var(--purple)}
 .kv:nth-child(6n){--accent:var(--red)}
-
 .kv .k{font-size:10px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
 .kv .v{font-size:13px;color:var(--txt-0);line-height:1.55;font-weight:500}
 .kv .v em,.kv .v strong{color:var(--accent);font-style:normal;font-weight:700}
+
+/* 时间线图例 */
+.pt-legend{
+  display:flex;flex-wrap:wrap;gap:14px;margin:4px 0 18px;padding:10px 14px;
+  background:var(--bg-1);border:1px solid var(--line);border-radius:10px;
+}
+.pt-lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-1)}
+.pt-lg i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pt-lg .d-green{background:var(--green);box-shadow:0 0 6px rgba(61,220,132,.55)}
+.pt-lg .d-gold{background:var(--gold);box-shadow:0 0 6px rgba(240,192,96,.55)}
+.pt-lg .d-cyan{background:var(--cyan);box-shadow:0 0 6px rgba(0,224,255,.55)}
 </style>
  </head>
 <body>
@@ -45,16 +67,24 @@
     <div class="article-head">
       <div class="kicker">MEGA PROJECTS &#183; 2026</div>
       <h1>中国大工程追踪：十大在建与规划中的超级项目</h1>
-      <div class="meta"><span>数据来源：国铁集团、水利部、国家发改委、国家电网</span><span>更新时间：2026-07-26</span></div>
+      <div class="meta"><span>数据来源：国铁集团、水利部、国家发改委、国家电网</span><span id="update-time">更新时间：--</span></div>
     </div>
 
-    <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:0 0 20px">
+    <p class="page-lead">
       从横断山脉的钢铁天路到中亚腹地的跨境铁路，从改写长江航道格局的新通道到横贯六省的特高压走廊——本期聚焦十大在建及规划中的中国超级工程，追踪最新进度与关键节点。
     </p>
 
+    <div class="sec-head">
+      <h2><span class="bar"></span>核心数据速览</h2>
+      <p class="desc">十大工程的标志性数字，一眼看清规模与进度。</p>
+    </div>
     <div class="highlight-row" id="mp-highlights"></div>
 
-    <!-- ===== Tab 导航 ===== -->
+    <!-- ===== 工程档案：Tab 导航 ===== -->
+    <div class="sec-head">
+      <h2><span class="bar"></span>工程档案</h2>
+      <p class="desc">按交通基建、水利航运、能源动脉、大科学装置四条主线，逐项追踪在建与规划中的超级工程。</p>
+    </div>
     <div class="tab-nav mp-tabs" id="mp-tabs">
       <button class="active" data-tab="tab-transport">&#128646; 交通基建</button>
       <button data-tab="tab-water">&#127754; 水利航运</button>
@@ -64,12 +94,12 @@
 
     <!-- ===== Tab 1: 交通基建 ===== -->
     <div class="tab-panel active" id="tab-transport">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
+      <p class="tab-lead">
         交通基建是中国大工程的核心板块。川藏铁路穿越横断山脉，中吉乌铁路打通中亚陆路新动脉，湛海高铁实现火车跨海，渤海海峡通道则承载着世界最长海底隧道的梦想。
       </p>
 
       <div class="company" id="proj-sichuan-tibet">
-        <h3>川藏铁路雅林段 — 世界最难超级工程 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">01</span>川藏铁路雅林段 — 世界最难超级工程 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">全长1035公里 · 桥隧比94.8% · 2020年11月开工 · 工期10年</div>
         <p>横穿横断山脉，跨越7条大江大河，穿越数十个地震断裂带。施工全程面对高地热、强岩爆、冻土坍塌、高压涌水四大世界级难题。</p>
         <p><strong>2026年7月里程碑：</strong>色季拉山、伯舒拉岭、易贡三座控制性超长隧道全部全断面贯通。全线隧道完成78.3%。</p>
@@ -82,7 +112,7 @@
       </div>
 
       <div class="company" id="proj-china-kyrgyz-uzbek">
-        <h3>中吉乌铁路 — 中亚陆路新动脉 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">02</span>中吉乌铁路 — 中亚陆路新动脉 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">全长约542公里 · 中方持股51% · 目标2030年通车</div>
         <p>1997年首次提出，历经27年博弈，2024年三国政府间协定签署。2024年12月吉国段开工，2026年2月全线进入实体攻坚。</p>
         <div class="company-grid">
@@ -94,7 +124,7 @@
       </div>
 
       <div class="company" id="proj-zhanhai">
-        <h3>湛海高铁 — 火车跨海的务实方案 <span class="tl-badge badge-private">即将开工</span></h3>
+        <h3><span class="proj-no">03</span>湛海高铁 — 火车跨海的务实方案 <span class="tl-badge badge-private">即将开工</span></h3>
         <div class="en">陆上正线132.3km · 设计时速350km/h · 总投402.1亿元 · 工期4年</div>
         <p>琼州海峡跨海通道争论50余年后落地：高铁+跨海轮渡。旅客乘高铁到徐闻，换专用客滚船跨越海峡，海口继续高铁。南北各6个3万吨级客滚泊位。</p>
         <div class="company-grid">
@@ -106,7 +136,7 @@
       </div>
 
       <div class="company" id="proj-bohai">
-        <h3>渤海海峡跨海通道 — 123km深海长隧之梦 <span class="tl-badge badge-private">规划中</span></h3>
+        <h3><span class="proj-no">04</span>渤海海峡跨海通道 — 123km深海长隧之梦 <span class="tl-badge badge-private">规划中</span></h3>
         <div class="en">设计长度约123km（世界最长海底隧道）· 预估投资约3000亿元</div>
         <p>烟台蓬莱到辽宁旅顺直线仅170km，陆路绕行需1270km。自1992年提出，已入《国家综合立体交通网规划纲要》，鲁辽两省均预留两端引线。</p>
         <div class="company-grid">
@@ -120,12 +150,12 @@
 
     <!-- ===== Tab 2: 水利航运 ===== -->
     <div class="tab-panel" id="tab-water">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
+      <p class="tab-lead">
         水利航运板块关系着长江黄金水道的咽喉再造、西南出海通道的开辟，以及南水北调这一世纪工程的延续。四大项目合计投资超2000亿元。
       </p>
 
       <div class="company" id="proj-three-gorges">
-        <h3>三峡水运新通道 — 再造长江黄金水道咽喉 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">05</span>三峡水运新通道 — 再造长江黄金水道咽喉 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">总投资约772亿元 · 2026年6月8日破土动工 · 工期约9年</div>
         <p>"十五五"首个国家重大标志性工程。三峡枢纽新通道新建双线连续五级船闸，葛洲坝拆除三号船闸后新建两线单级船闸。土石方开挖约1.6亿m³，超越三峡工程。建成后三峡年通过能力从1.73亿吨跃升至3.36亿吨。</p>
         <div class="company-grid">
@@ -137,7 +167,7 @@
       </div>
 
       <div class="company" id="proj-pinglu">
-        <h3>平陆运河 — 新中国首条通江达海大运河 <span class="tl-badge badge-cn">即将通航</span></h3>
+        <h3><span class="proj-no">06</span>平陆运河 — 新中国首条通江达海大运河 <span class="tl-badge badge-cn">即将通航</span></h3>
         <div class="en">全长134.2km · I级航道 · 通航5000吨级 · 2026年9月正式通航</div>
         <p>始于南宁西津库区，经钦州入北部湾。三大枢纽主体全部完成，全面进入有水调试阶段。截至2026年6月30日累计完成投资705.54亿元，占总投97%。</p>
         <div class="company-grid">
@@ -149,7 +179,7 @@
       </div>
 
       <div class="company" id="proj-yinjiang">
-        <h3>引江补汉 — 南水北调中线"续命"工程 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">07</span>引江补汉 — 南水北调中线"续命"工程 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">输水线路194.7km · 国内最长/洞径最大/引流量最大引调水隧洞</div>
         <p>从长江三峡库区引水补汉江，保障南水北调中线供水能力。全线9台TBM投入施工，主隧洞累计掘进超29km，支洞超42km。出口段主隧洞提前4个月贯通。</p>
         <div class="company-grid">
@@ -161,7 +191,7 @@
       </div>
 
       <div class="company" id="proj-snd-west">
-        <h3>南水北调西线 — 改写西北水格局 <span class="tl-badge badge-private">规划中</span></h3>
+        <h3><span class="proj-no">08</span>南水北调西线 — 改写西北水格局 <span class="tl-badge badge-private">规划中</span></h3>
         <div class="en">年调水170亿m³ · 惠及青甘宁蒙陕晋6省区 · 力争"十五五"开工</div>
         <p>从1952年毛泽东提出构想至今70余年。调水量约相当于黄河年径流量的1/3，直接补水上游遏制断流。</p>
         <div class="company-grid">
@@ -175,12 +205,12 @@
 
     <!-- ===== Tab 3: 能源动脉 ===== -->
     <div class="tab-panel" id="tab-energy">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
+      <p class="tab-lead">
         能源动脉板块承载着西电东送的战略使命。陇电入浙是全球首条双端柔性直流特高压，浙江特高压环网则是国内投资最高的交流特高压工程。
       </p>
 
       <div class="company" id="proj-longdian">
-        <h3>陇电入浙 ±800kV — 世界首条双端柔性直流特高压 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">09</span>陇电入浙 ±800kV — 世界首条双端柔性直流特高压 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">全长2370km · 途经6省区 · 投资约353亿 · 2026年底带电 · 2027年投运</div>
         <p>从甘肃武威到浙江绍兴，送受两端均采用柔性直流技术，全球首次。联调试验全部完成，浙江段已全线贯通，受端越州换流站交流系统5月投运。年送电超360亿kWh，新能源占比超50%。</p>
         <div class="company-grid">
@@ -192,7 +222,7 @@
       </div>
 
       <div class="company" id="proj-zhejiang-ring">
-        <h3>浙江特高压交流环网 — 国内投资最高特高压交流工程 <span class="tl-badge badge-cn">在建</span></h3>
+        <h3><span class="proj-no">10</span>浙江特高压交流环网 — 国内投资最高特高压交流工程 <span class="tl-badge badge-cn">在建</span></h3>
         <div class="en">总投资293亿元 · 2026年4月七地同步开工 · 2029年投运</div>
         <p>全国首个省内特高压交流环网。新建嘉兴、宁绍、温州三座1000kV变电站，新增变电容量1800万千伏安，新建双回线路508km。将浙江电网从"T"字升级为"O"形环线，南北输送能力翻倍至2000万kW。</p>
         <div class="company-grid">
@@ -206,12 +236,12 @@
 
     <!-- ===== Tab 4: 大科学装置 ===== -->
     <div class="tab-panel" id="tab-science">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
+      <p class="tab-lead">
         从天眼探宇到散裂探物质，从同步辐射到宇宙线观测——中国大科学装置已跻身世界前列，在天文、材料、生命科学等多个前沿领域提供了世界级实验平台。
       </p>
 
       <div class="company" id="proj-fast">
-        <h3>FAST 天眼 — 500米口径球面射电望远镜 <span class="tl-badge badge-cn">正常运行</span></h3>
+        <h3><span class="proj-no">11</span>FAST 天眼 — 500米口径球面射电望远镜 <span class="tl-badge badge-cn">正常运行</span></h3>
         <div class="en">贵州省平塘县 · 世界最大单口径射电望远镜 · 2016年落成</div>
         <p>中国天文领域的标志性大科学装置，口径达500米，接收面积相当于30个足球场。自开放运营以来，已发现超过900颗新脉冲星。开放竞争制度，每年向全球天文学家公开申请观测时间，是世界天文研究的重要公共平台。</p>
         <div class="company-grid">
@@ -223,7 +253,7 @@
       </div>
 
       <div class="company" id="proj-csns">
-        <h3>中国散裂中子源 (CSNS) — 探物质微观结构的先进平台 <span class="tl-badge badge-cn">运行</span></h3>
+        <h3><span class="proj-no">12</span>中国散裂中子源 (CSNS) — 探物质微观结构的先进平台 <span class="tl-badge badge-cn">运行</span></h3>
         <div class="en">广东东莞 · 世界第四座装置 · 2018年通过验收</div>
         <p>中国首座数据类大科学装置，为材料科学、生命科学、化学、纯物理等领域提供先进的中子散裂实验手段。加速器主要参数达国际先进水平，年运行超过5000小时，对外开放试验课题超过500项。</p>
         <div class="company-grid">
@@ -235,7 +265,7 @@
       </div>
 
       <div class="company" id="proj-ssrf">
-        <h3>上海同步辐射光源 (SSRF) <span class="tl-badge badge-cn">运行</span></h3>
+        <h3><span class="proj-no">13</span>上海同步辐射光源 (SSRF) <span class="tl-badge badge-cn">运行</span></h3>
         <div class="en">上海张江 · 第三代同步辐射光源 · 每年服务超过3万科研人次</div>
         <p>中国最大的同步辐射光源装置，为微固物理、结构生物学、化学识别、材料科学等领域提供高亮度 X 射线。具有多条干线站和座特立实验站点，是亚洲最强同步辐射装置之一。</p>
         <div class="company-grid">
@@ -247,7 +277,7 @@
       </div>
 
       <div class="company" id="proj-lhaaso">
-        <h3>高海拔宇宙线观测站 (LHAASO) <span class="tl-badge badge-cn">运行</span></h3>
+        <h3><span class="proj-no">14</span>高海拔宇宙线观测站 (LHAASO) <span class="tl-badge badge-cn">运行</span></h3>
         <div class="en">四川稻城 · 4410m 海拔 · 2021年全线运行</div>
         <p>世界最高效率的宇宙线观测站，位于川西稻城4410米高海拔地区。致力于探索高能宇宙线起源、宇宙线加速机制、暗物质等前沿科学问题。已探测到多个 PeV 级别的宇宙线加速源，打破了传统理论界限。</p>
         <div class="company-grid">
@@ -259,7 +289,7 @@
       </div>
 
       <div class="company" id="proj-heps">
-        <h3>高能同步辐射光源 (HEPS) <span class="tl-badge badge-private">建设中</span></h3>
+        <h3><span class="proj-no">15</span>高能同步辐射光源 (HEPS) <span class="tl-badge badge-private">建设中</span></h3>
         <div class="en">北京怀柔 · 第四代同步辐射光源 · 世界最低发散度</div>
         <p>中国正在建设的第四代同步辐射光源，也是世界上发散度最低的同步辐射装置。主体结构已封顶，加速器按计划进行安装。将为材料科学、能源环境、生命科学等提供先进的 X 射线实验手段。</p>
         <div class="company-grid">
@@ -272,10 +302,15 @@
     </div>
 
     <!-- ===== 公共时间线（始终可见） ===== -->
-    <h2>&#9203; 工程节点时间线</h2>
-    <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:10px 0 20px">
-      工程节点的时间线全景。从已开工的硬骨头到规划中的远景蓝图，每一个节点都标志着中国基建能力的又一次跃升。无论切换上方哪个Tab，此时间线始终可见。
-    </p>
+    <div class="sec-head">
+      <h2><span class="bar"></span>工程节点时间线</h2>
+      <p class="desc">从已开工的硬骨头到规划中的远景蓝图，每一个节点都标志着中国基建能力的又一次跃升。无论切换上方哪个 Tab，此时间线始终可见；点击工程名称可跳转到对应档案。</p>
+    </div>
+    <div class="pt-legend">
+      <span class="pt-lg"><i class="d-green"></i>建设中</span>
+      <span class="pt-lg"><i class="d-gold"></i>临近完成</span>
+      <span class="pt-lg"><i class="d-cyan"></i>规划中</span>
+    </div>
 
     <div class="pt-groups" id="mp-timeline"></div>
 
@@ -285,6 +320,7 @@
 <button class="back-to-top" aria-label="回到顶部" title="回到顶部">&#8593;</button>
 <div id="footer-placeholder"></div>
 <script src="js/app.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
 // Tab 切换 + 数据动态渲染 + 时间线点击跳转
 (async function(){
@@ -295,6 +331,11 @@
   } catch(e) { console.error('Mega-projects data load failed:', e); d = null; }
 
   if (d) {
+    // 更新时间（数据驱动）
+    if (d.meta && d.meta.updated) {
+      const ut = document.getElementById('update-time');
+      if (ut) ut.textContent = '更新时间：' + String(d.meta.updated).slice(0, 10);
+    }
     // 渲染全局关键数据
     document.getElementById('mp-highlights').innerHTML = d.highlights.map(h =>
       `<div class="hl-card ${h.color}"><div class="hl-num">${h.num}</div><div class="hl-lbl">${h.lbl}</div></div>`

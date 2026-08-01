@@ -53,45 +53,88 @@ def upsert_article(board_id: str, source: str, title: str, url: str, summary: st
     return True
 
 
-def get_raw_articles(category: str = None, status: str = None, limit: int = 50, offset: int = 0) -> List[Dict]:
-    """获取新闻列表（用于管理后台）"""
+def get_raw_articles(
+    category: str = None,
+    status: str = None,
+    keyword: str = None,
+    limit: int = 50,
+    offset: int = 0,
+    sort_by: str = "crawl_time",
+    sort_order: str = "desc",
+    page: int = None,
+    page_size: int = None,
+) -> List[Dict]:
+    """获取新闻列表（管理后台）
+
+    支持：分类/状态/关键字过滤、排序、分页。
+    keyword 使用 ilike 匹配 title / summary / source_name。
+    """
     sb = get_supabase()
-    query = sb.table("raw_articles").select("*").order("crawl_time", desc=True)
+    if page is not None and page_size:
+        offset = (page - 1) * page_size
+        limit = page_size
+
+    query = sb.table("raw_articles").select("*")
     if category:
         query = query.eq("category", category)
     if status:
         query = query.eq("status", status)
+    if keyword:
+        kw = f"%{keyword}%"
+        query = query.or_(f"title.ilike.{kw},summary.ilike.{kw},source_name.ilike.{kw}")
+    query = query.order(sort_by, desc=(str(sort_order).lower() != "asc"))
     result = query.range(offset, offset + limit - 1).execute()
     return result.data
 
 
-def get_raw_article_stats(category: str = None) -> Dict:
-    """获取新闻统计"""
+def count_raw_articles(category: str = None, status: str = None, keyword: str = None) -> int:
+    """统计符合条件的新闻总数（与 get_raw_articles 过滤条件一致）"""
     sb = get_supabase()
+    query = sb.table("raw_articles").select("news_id", count="exact")
+    if category:
+        query = query.eq("category", category)
+    if status:
+        query = query.eq("status", status)
+    if keyword:
+        kw = f"%{keyword}%"
+        query = query.or_(f"title.ilike.{kw},summary.ilike.{kw},source_name.ilike.{kw}")
+    result = query.execute()
+    return result.count if hasattr(result, "count") and result.count else len(result.data or [])
+
+
+def get_raw_article(news_id: str) -> Optional[Dict]:
+    """获取单条新闻详情"""
+    sb = get_supabase()
+    result = sb.table("raw_articles").select("*").eq("news_id", news_id).limit(1).execute()
+    return result.data[0] if result.data else None
+
+
+def get_raw_article_stats(category: str = None, keyword: str = None) -> Dict:
+    """获取新闻统计（支持分类/关键字过滤）"""
+    sb = get_supabase()
+
+    def _count(status: str = None) -> int:
+        q = sb.table("raw_articles").select("news_id")
+        if category:
+            q = q.eq("category", category)
+        if status:
+            q = q.eq("status", status)
+        if keyword:
+            kw = f"%{keyword}%"
+            q = q.or_(f"title.ilike.{kw},summary.ilike.{kw},source_name.ilike.{kw}")
+        r = q.execute()
+        return len(r.data or [])
+
     try:
-        query = sb.table("raw_articles").select("news_id")
-        if category:
-            query = query.eq("category", category)
-        result = query.execute()
-        total = len(result.data) if result.data else 0
-
-        # 统计各状态数量
-        pending_query = sb.table("raw_articles").select("news_id").eq("status", "pending")
-        online_query = sb.table("raw_articles").select("news_id").eq("status", "online")
-        if category:
-            pending_query = pending_query.eq("category", category)
-            online_query = online_query.eq("category", category)
-        pending_result = pending_query.execute()
-        online_result = online_query.execute()
-
         return {
-            "total": total,
-            "pending": len(pending_result.data) if pending_result.data else 0,
-            "online": len(online_result.data) if online_result.data else 0,
+            "total": _count(),
+            "pending": _count("pending"),
+            "online": _count("online"),
+            "block": _count("block"),
         }
     except Exception as e:
         print(f"[stats error] {e}")
-        return {"total": 0, "pending": 0, "online": 0}
+        return {"total": 0, "pending": 0, "online": 0, "block": 0}
 
 
 def update_article_status(news_id: str, status: str) -> bool:
@@ -107,6 +150,16 @@ def update_article(news_id: str, **kwargs) -> bool:
     result = sb.table("raw_articles").update(kwargs).eq("news_id", news_id).execute()
     return len(result.data) > 0 if result.data else False
 
+
+
+
+def batch_update_article_status(news_ids: List[str], status: str) -> int:
+    """批量更新文章状态（online/block/pending）。返回更新的条数"""
+    sb = get_supabase()
+    if not news_ids:
+        return 0
+    result = sb.table("raw_articles").update({"status": status}).in_("news_id", news_ids).execute()
+    return len(result.data) if result.data else 0
 
 def delete_raw_article(news_id: str) -> bool:
     """删除新闻"""

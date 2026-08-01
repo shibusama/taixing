@@ -6,102 +6,153 @@
 <title>钛星 · 中国半导体突围战</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-/* ===== 半导体 Tab 专属样式 ===== */
-.semi-tabs{margin:16px 0 0}
+/* 页面级样式：半导体（accent = 绿色） */
+.bd-page{--accent:var(--green);--accent-soft:rgba(61,220,132,.14)}
+/* 分类图标配色 */
+.bd-icon.mfg{background:rgba(61,220,132,.16)}
+.bd-icon.eda{background:rgba(155,123,255,.16)}
+.bd-icon.litho{background:rgba(0,224,255,.16)}
+.bd-icon.subst{background:rgba(255,138,61,.16)}
 
-/* 新闻拆解卡片 */
-.breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin:20px 0}
-.breakdown-card{
-  background:var(--bg-card);border:1px solid var(--line);
-  border-radius:var(--radius);overflow:hidden;
-  transition:var(--trans);
-}
-.breakdown-card:hover{border-color:rgba(61,220,132,.35);box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateY(-2px)}
-.bd-head{
-  padding:18px 20px 0;display:flex;align-items:flex-start;gap:10px;
-}
-.bd-icon{
-  width:40px;height:40px;border-radius:10px;flex-shrink:0;
-  display:grid;place-items:center;font-size:20px;
-}
-.bd-icon.mfg{background:rgba(61,220,132,.15)}
-.bd-icon.eda{background:rgba(155,123,255,.15)}
-.bd-icon.litho{background:rgba(0,224,255,.15)}
-.bd-icon.subst{background:rgba(255,138,61,.15)}
+/* =========================================================
+   版块页重设计 · 共享样式（semiconductor / china-tech 两页同步维护）
+   说明：页面级样式，正式上线时由协调者统一收敛至 css/
+   ========================================================= */
+.bd-page{--accent:var(--green);--accent-soft:rgba(61,220,132,.14)}
+
+/* ---- 版块 Hero ---- */
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
+.bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
+.bd-hero>*{position:relative;z-index:1}
+.bd-hero .breadcrumb{padding:0;margin-bottom:16px}
+.bd-hero .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:16px;border-radius:999px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
+.bd-hero h1 .glow{background:linear-gradient(120deg,var(--accent),var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
+.bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
+.bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.bd-hero .meta span:first-child::before{display:none}
+
+/* ---- 区块标题 ---- */
+.bd-sec{margin:42px 0 0}
+.bd-sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.bd-sec-idx{flex-shrink:0;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--accent-soft)}
+.bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
+.bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin-top:-4px}
+
+/* ---- Tab 导航 ---- */
+.bd-tabs{gap:4px;margin:28px 0 4px;border-bottom:2px solid var(--line);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tabs button{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;font-size:14px;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.bd-tabs button .tb-ico{font-size:15px;line-height:1}
+.bd-tabs button:hover{color:var(--txt-1)}
+.bd-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ---- Tab 引言 ---- */
+.bd-intro{font-size:14px;line-height:1.9;color:var(--txt-1);background:var(--bg-1);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:22px 0 4px}
+
+/* ---- 新闻拆解卡片 ---- */
+.breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin:0 0 8px}
+.breakdown-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:var(--trans)}
+.breakdown-card:hover{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.42);transform:translateY(-3px)}
+.bd-head{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 0}
+.bd-icon{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;font-size:20px;background:var(--accent-soft)}
 .bd-meta{flex:1;min-width:0}
-.bd-meta .bd-tag{
-  display:inline-block;padding:2px 8px;border-radius:4px;
-  font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;
-}
-.tag-green{background:rgba(61,220,132,.18);color:var(--green)}
-.tag-cyan{background:rgba(0,224,255,.18);color:var(--cyan)}
-.tag-purple{background:rgba(155,123,255,.18);color:var(--purple)}
-.tag-amber{background:rgba(255,138,61,.18);color:var(--amber)}
-.tag-red{background:rgba(255,84,112,.18);color:var(--red)}
-.bd-meta .bd-date{font-size:11px;color:var(--txt-2)}
-.bd-title{font-size:17px;font-weight:800;line-height:1.35;margin-bottom:6px}
-.bd-body{padding:0 20px 18px}
-.bd-body p{font-size:13px;color:var(--txt-1);line-height:1.75;margin-top:12px}
-.bd-body .bd-highlight{
-  margin-top:12px;padding:12px 14px;
-  background:var(--bg-1);border-radius:8px;
-  font-size:13px;color:var(--txt-0);line-height:1.7;
-  border-left:3px solid var(--green);
-}
-.bd-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
-.bd-stat{
-  background:var(--bg-1);border:1px solid var(--line);
-  border-radius:8px;padding:8px 12px;text-align:center;min-width:80px;
-}
-.bd-stat .v{font-size:15px;font-weight:800;font-family:var(--mono);color:var(--green)}
-.bd-stat .l{font-size:10px;color:var(--txt-2);margin-top:1px}
+.bd-tag{display:inline-block;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:5px;background:var(--accent-soft);color:var(--accent)}
+.bd-tag.green{background:rgba(61,220,132,.16);color:var(--green)}
+.bd-tag.cyan{background:rgba(0,224,255,.16);color:var(--cyan)}
+.bd-tag.purple{background:rgba(155,123,255,.16);color:var(--purple)}
+.bd-tag.amber{background:rgba(255,138,61,.16);color:var(--amber)}
+.bd-tag.red{background:rgba(255,84,112,.16);color:var(--red)}
+.bd-tag.pink{background:rgba(255,77,119,.16);color:#ff4d77}
+/* 兼容旧命名：tag-green / tag-cyan / ... */
+.bd-tag.tag-green{background:rgba(61,220,132,.16);color:var(--green)}
+.bd-tag.tag-cyan{background:rgba(0,224,255,.16);color:var(--cyan)}
+.bd-tag.tag-purple{background:rgba(155,123,255,.16);color:var(--purple)}
+.bd-tag.tag-amber{background:rgba(255,138,61,.16);color:var(--amber)}
+.bd-tag.tag-red{background:rgba(255,84,112,.16);color:var(--red)}
+.bd-date{font-size:11px;color:var(--txt-2)}
+.bd-body{padding:12px 20px 18px;flex:1;display:flex;flex-direction:column}
+.bd-title{font-size:16.5px;font-weight:800;line-height:1.4;margin-bottom:8px}
+.bd-body p{font-size:13px;color:var(--txt-1);line-height:1.8;margin:0 0 12px}
+.bd-stats{display:flex;gap:10px;flex-wrap:wrap;margin:auto 0 0}
+.bd-stat{flex:1;min-width:82px;background:var(--bg-1);border:1px solid var(--line);border-radius:9px;padding:8px 10px;text-align:center}
+.bd-stat .v{display:block;font-size:15px;font-weight:800;font-family:var(--mono);color:var(--accent)}
+.bd-stat .l{display:block;font-size:10px;color:var(--txt-2);margin-top:2px}
+.bd-chip{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(155,123,255,.12);color:var(--purple)}
+.bd-chip.green{background:rgba(61,220,132,.12);color:var(--green)}
+.bd-chip.cyan{background:rgba(0,224,255,.12);color:var(--cyan)}
+.bd-chip.amber{background:rgba(255,138,61,.12);color:var(--amber)}
+.bd-chip.pink{background:rgba(255,77,119,.12);color:#ff4d77}
+.bd-highlight{margin-top:12px;padding:12px 14px;background:var(--bg-1);border-left:3px solid var(--accent);border-radius:8px;font-size:13px;color:var(--txt-0);line-height:1.75}
+.bd-src{font-size:11px;color:var(--txt-2);margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 
-/* 进程卡片 */
-.progress-strip{
-  display:flex;gap:0;border-radius:10px;overflow:hidden;
-  background:var(--bg-1);margin:16px 0;border:1px solid var(--line);
-}
-.progress-step{
-  flex:1;padding:14px 12px;text-align:center;position:relative;
-  border-right:1px solid var(--line);
-}
+/* ---- 公司档案卡片 ---- */
+.compare-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin:0 0 8px}
+.company-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px;position:relative;transition:var(--trans);display:flex;flex-direction:column}
+.company-card:hover{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.42);transform:translateY(-3px)}
+.company-card .cc-flag{position:static;display:inline-block;width:fit-content;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;margin:0 0 8px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);letter-spacing:.3px}
+.company-card .cc-flag.cn{background:rgba(255,84,112,.14);color:var(--red)}
+.company-card .cc-flag.private{background:rgba(155,123,255,.14);color:var(--purple)}
+.company-card h3{font-size:17px;font-weight:800;color:var(--txt-0);margin:0 0 6px;letter-spacing:-.2px}
+.company-card .cc-desc{font-size:13px;color:var(--txt-1);line-height:1.8;margin:0}
+.cc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.cc-grid .kv{text-align:center;padding:9px 6px}
+.cc-grid .k{font-size:10px;color:var(--txt-2);margin-bottom:3px;text-transform:none;letter-spacing:.3px}
+.cc-grid .v{font-size:16px;font-weight:800;color:var(--cyan);line-height:1.3}
+
+/* ---- 进程条 ---- */
+.progress-strip{display:flex;gap:0;border-radius:12px;overflow:hidden;background:var(--bg-1);margin:22px 0 6px;border:1px solid var(--line)}
+.progress-step{flex:1;padding:14px 12px;text-align:center;position:relative;border-right:1px solid var(--line)}
 .progress-step:last-child{border-right:none}
-.progress-step .yr{font-size:11px;color:var(--txt-2);margin-bottom:4px}
+.progress-step::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:transparent}
+.progress-step.done::before{background:var(--green)}
+.progress-step.cur::before{background:var(--cyan)}
+.progress-step.next::before{background:var(--amber)}
+.progress-step .yr{font-size:11px;color:var(--txt-2);margin-bottom:4px;font-family:var(--mono)}
 .progress-step .val{font-size:18px;font-weight:800;font-family:var(--mono)}
 .progress-step .lbl{font-size:11px;color:var(--txt-1);margin-top:2px}
 .progress-step.done .val{color:var(--green)}
 .progress-step.cur .val{color:var(--cyan)}
 .progress-step.next .val{color:var(--amber)}
 
-/* 对比小表 */
-.mini-cmp{
-  width:100%;border-collapse:collapse;font-size:12px;
-  margin:12px 0;
-}
-.mini-cmp td{
-  padding:8px 10px;border-bottom:1px solid var(--line);
-  color:var(--txt-1);
-}
-.mini-cmp td:first-child{color:var(--txt-2);font-weight:600;width:40%}
+/* ---- 对比小表 ---- */
+.mini-cmp{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.mini-cmp td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--txt-1);line-height:1.6}
+.mini-cmp tr:last-child td{border-bottom:none}
+.mini-cmp td:first-child{color:var(--txt-2);font-weight:600;width:38%;white-space:nowrap}
 .mini-cmp td:last-child{color:var(--txt-0);font-weight:600}
 
-/* 来源链接 */
-.bd-src{font-size:11px;color:var(--txt-2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
-.bd-src a{color:var(--cyan);transition:var(--trans)}
-.bd-src a:hover{text-decoration:underline}
-
+/* ---- 响应式 ---- */
 @media(max-width:768px){
-  .breakdown{grid-template-columns:1fr}
+  .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
+  .bd-hero .meta{gap:10px;font-size:11px}
+  .bd-hero .sub{font-size:13.5px}
+  .breakdown,.compare-2col{grid-template-columns:1fr}
+  .bd-sec{margin:32px 0 0}
+  .bd-sec-head{flex-wrap:wrap;gap:8px}
+  .cc-grid{grid-template-columns:repeat(2,1fr)}
   .progress-strip{flex-wrap:wrap}
   .progress-step{flex:1 1 50%;border-bottom:1px solid var(--line)}
+  .progress-step:nth-child(2n){border-right:none}
+  .bd-tabs button{padding:10px 14px;font-size:13px}
   .bd-stats{gap:8px}
-  .bd-stat{min-width:70px;padding:6px 10px}
+  .bd-stat{min-width:70px;padding:6px 8px}
   .bd-stat .v{font-size:13px}
 }
 @media(max-width:480px){
-  .progress-step{flex:1 1 100%}
+  .bd-hero h1{font-size:23px}
+  .progress-step{flex:1 1 100%;border-right:none}
   .bd-title{font-size:15px}
+  .bd-head{padding:16px 16px 0}
+  .bd-body{padding:10px 16px 16px}
+  .company-card{padding:16px 14px 14px}
 }
+
 </style>
 </head>
 <body>
@@ -109,116 +160,126 @@
 <div class="progress-bar"></div>
 
 <div id="header-placeholder"></div>
-<article class="article">
+<article class="article bd-page">
   <div class="wrap">
-    <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>半导体</span></div>
-    <div class="article-head">
+
+    <!-- ===== 版块 Hero ===== -->
+    <div class="bd-hero">
+      <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>半导体</span></div>
       <div class="kicker">SEMICONDUCTOR · 中国半导体</div>
-      <h1>卡脖子二十年后，中国半导体开启历史性逆袭</h1>
-      <div class="meta"><span>数据来源：华为、华大九天、上海微电子、中芯国际、各大券商研报</span><span>更新时间：2026-07-26</span></div>
+      <h1>卡脖子二十年后，<span class="glow">中国半导体开启历史性逆袭</span></h1>
+      <p class="sub">从韬(τ)定律重构芯片演进逻辑，到 28nm 浸没式 DUV 光刻机全面量产，再到设备材料全链条国产替代——中国半导体正以「架构创新 + 全链协同」双引擎突破卡脖子困局。</p>
+      <div class="meta">
+        <span>数据来源：华为、华大九天、上海微电子、中芯国际、各大券商研报</span>
+        <span>更新时间：2026-07-26</span>
+      </div>
     </div>
 
-    <!-- 全局关键数据 -->
+    <!-- 全局关键数据（API 动态渲染） -->
     <div class="highlight-row" id="semi-highlights"></div>
 
     <!-- ===== Tab 导航 ===== -->
-    <div class="tab-nav semi-tabs" id="semi-tabs">
-      <button class="active" data-tab="tab-mfg">芯片制造</button>
-      <button data-tab="tab-eda">EDA</button>
-      <button data-tab="tab-litho">光刻机</button>
-      <button data-tab="tab-subst">国产替代</button>
+    <div class="tab-nav bd-tabs semi-tabs" id="semi-tabs">
+      <button class="active" data-tab="tab-mfg"><span class="tb-ico">🏭</span>芯片制造</button>
+      <button data-tab="tab-eda"><span class="tb-ico">🧩</span>EDA</button>
+      <button data-tab="tab-litho"><span class="tb-ico">🔬</span>光刻机</button>
+      <button data-tab="tab-subst"><span class="tb-ico">📈</span>国产替代</button>
     </div>
 
     <!-- ===== Tab 1: 芯片制造 ===== -->
     <div class="tab-panel active" id="tab-mfg">
       <div class="article-body">
-        <!-- 核心突破时间线 -->
+        <p class="bd-intro">2026年是中国芯片制造的关键转折年：华为发布韬(τ)定律提出芯片演进新原则，麒麟 2026 将首秀逻辑折叠；中芯国际 12 英寸成熟制程月产能突破百万片，先进制程持续逼近。</p>
         <div class="progress-strip" id="semi-progress-mfg"></div>
 
-        <h2>华为"韬(τ)定律"：重构芯片演进逻辑</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon mfg">🧠</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-green">理论突破</span></div>
-                <div class="bd-date">2026年5月 · ISCAS 2026</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>华为「韬(τ)定律」：重构芯片演进逻辑</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon mfg">🧠</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-green">理论突破</span></div>
+                  <div class="bd-date">2026年5月 · ISCAS 2026</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">何庭波发布韬(τ)定律：以「时间缩微」替代「几何缩微」</div>
+                <p>华为半导体业务部总裁何庭波在IEEE ISCAS 2026正式发布韬定律——通过逻辑折叠 (Logic Folding) 将平面电路在三维空间重新布局，按「最短动线」分配晶体管位置，让原本横向走100米的信号路径垂直走10微米即可到达。不依赖EUV光刻机、不升级制程工艺，仅靠架构创新实现顶级芯片性能。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">+53.5%</div><div class="l">晶体管密度提升</div></div>
+                  <div class="bd-stat"><div class="v">+41%</div><div class="l">P核能效提升</div></div>
+                  <div class="bd-stat"><div class="v">+12.7%</div><div class="l">主频提升至3.1GHz</div></div>
+                  <div class="bd-stat"><div class="v">238M</div><div class="l">Tr/mm²密度</div></div>
+                </div>
+                <div class="bd-highlight">
+                  <strong>行业影响：</strong>当天中芯国际A股涨停，单日成交额超370亿元，市值突破1.25万亿。华大九天直线拉升20cm涨停。韬定律发布标志着中国首次在全球提出芯片演进新原则。
+                </div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">何庭波发布韬(τ)定律：以"时间缩微"替代"几何缩微"</div>
-              <p>华为半导体业务部总裁何庭波在IEEE ISCAS 2026正式发布韬定律——通过逻辑折叠 (Logic Folding) 将平面电路在三维空间重新布局，按"最短动线"分配晶体管位置，让原本横向走100米的信号路径垂直走10微米即可到达。不依赖EUV光刻机、不升级制程工艺，仅靠架构创新实现顶级芯片性能。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">+53.5%</div><div class="l">晶体管密度提升</div></div>
-                <div class="bd-stat"><div class="v">+41%</div><div class="l">P核能效提升</div></div>
-                <div class="bd-stat"><div class="v">+12.7%</div><div class="l">主频提升至3.1GHz</div></div>
-                <div class="bd-stat"><div class="v">238M</div><div class="l">Tr/mm²密度</div></div>
-              </div>
-              <div class="bd-highlight">
-                <strong>行业影响：</strong>当天中芯国际A股涨停，单日成交额超370亿元，市值突破1.25万亿。华大九天直线拉升20cm涨停。韬定律发布标志着中国首次在全球提出芯片演进新原则。
-              </div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon mfg">📱</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-cyan">量产验证</span></div>
-                <div class="bd-date">2026年秋季 · 麒麟2026</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon mfg">📱</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-cyan">量产验证</span></div>
+                  <div class="bd-date">2026年秋季 · 麒麟2026</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">麒麟2026：全球首款逻辑折叠芯片，晶体管密度超三星3nm</div>
-              <p>即将发布的麒麟2026将首次完整采用逻辑折叠技术，晶体管密度从155MTr/mm²跃升至238MTr/mm²（单代+55%）。SemiAnalysis拆解华为麒麟9030发现：最小金属间距达32.5nm，比Intel 18A的36nm更紧凑；晶体管密度1.134亿/mm²，超越台积电N6。</p>
-              <div class="bd-highlight">
-                <strong>远期路线图：</strong>2029年麒麟超4GHz，2031年晶体管密度400+MTr/mm²、主频5.0GHz，与台积电1.4nm工艺持平。过去六年基于韬定律已量产381款芯片，覆盖手机、AI计算、服务器、汽车电子。
+              <div class="bd-body">
+                <div class="bd-title">麒麟2026：全球首款逻辑折叠芯片，晶体管密度超三星3nm</div>
+                <p>即将发布的麒麟2026将首次完整采用逻辑折叠技术，晶体管密度从155MTr/mm²跃升至238MTr/mm²（单代+55%）。SemiAnalysis拆解华为麒麟9030发现：最小金属间距达32.5nm，比Intel 18A的36nm更紧凑；晶体管密度1.134亿/mm²，超越台积电N6。</p>
+                <div class="bd-highlight">
+                  <strong>远期路线图：</strong>2029年麒麟超4GHz，2031年晶体管密度400+MTr/mm²、主频5.0GHz，与台积电1.4nm工艺持平。过去六年基于韬定律已量产381款芯片，覆盖手机、AI计算、服务器、汽车电子。
+                </div>
+                <div class="bd-src"><span>来源：华为ISCAS 2026 / ChinaXiv论文 / SemiAnalysis拆解报告</span></div>
               </div>
-              <div class="bd-src">来源：华为ISCAS 2026 / ChinaXiv论文 / SemiAnalysis拆解报告</div>
             </div>
           </div>
         </div>
 
-        <h2>中芯国际：成熟制程称王，先进制程紧追</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon mfg">🏭</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-green">产能规模</span></div>
-                <div class="bd-date">全球第三大代工厂</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>中芯国际：成熟制程称王，先进制程紧追</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon mfg">🏭</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-green">产能规模</span></div>
+                  <div class="bd-date">全球第三大代工厂</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">12英寸月产能超100万片，28nm国产化率超八成</div>
+                <p>收购中芯北方49%股权后，中芯国际12英寸成熟制程月产能突破100万片，国内28nm及以上制程产能占全球约52%。N+2工艺（等效7nm）稳定量产，良率突破九成；N+3工艺（等效5nm）已进入小规模试产，2026下半年放量。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">100万+</div><div class="l">月产能(片)</div></div>
+                  <div class="bd-stat"><div class="v">52%</div><div class="l">全球成熟制程份额</div></div>
+                  <div class="bd-stat"><div class="v">36%</div><div class="l">营收同比增速</div></div>
+                  <div class="bd-stat"><div class="v">1.25万亿</div><div class="l">A股市值</div></div>
+                </div>
+                <div class="bd-highlight">
+                  <strong>涨价潮：</strong>2026年Q1三大代工厂收入齐涨——中芯国际+16.49%、华虹宏力+18.22%、晶合集成+13.41%。在供不应求品类已启动涨价，叠加客户恐慌性备货，在手订单充足。
+                </div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">12英寸月产能超100万片，28nm国产化率超八成</div>
-              <p>收购中芯北方49%股权后，中芯国际12英寸成熟制程月产能突破100万片，国内28nm及以上制程产能占全球约52%。N+2工艺（等效7nm）稳定量产，良率突破九成；N+3工艺（等效5nm）已进入小规模试产，2026下半年放量。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">100万+</div><div class="l">月产能(片)</div></div>
-                <div class="bd-stat"><div class="v">52%</div><div class="l">全球成熟制程份额</div></div>
-                <div class="bd-stat"><div class="v">36%</div><div class="l">营收同比增速</div></div>
-                <div class="bd-stat"><div class="v">1.25万亿</div><div class="l">A股市值</div></div>
-              </div>
-              <div class="bd-highlight">
-                <strong>涨价潮：</strong>2026年Q1三大代工厂收入齐涨——中芯国际+16.49%、华虹宏力+18.22%、晶合集成+13.41%。在供不应求品类已启动涨价，叠加客户恐慌性备货，在手订单充足。
-              </div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon mfg">⚛️</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-purple">前沿探索</span></div>
-                <div class="bd-date">2026年1月 · Nature</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon mfg">⚛️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-purple">前沿探索</span></div>
+                  <div class="bd-date">2026年1月 · Nature</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">清华FLEXI：柔性芯片登上Nature，开辟全新赛道</div>
-              <p>清华大学集成电路学院任天令团队研发的柔性数字存内计算芯片FLEXI，在国际顶级学术期刊《自然》发表。这是继华为韬定律之后，中国学术界在芯片架构领域的又一重大突破。</p>
-              <div class="bd-highlight">
-                <strong>产业链闭环：</strong>中微公司刻蚀设备覆盖3nm-45nm全制程；北方华创薄膜沉积、清洗设备国产化率分别达27%、40%；长电科技混合键合工艺大规模量产，承接华为逻辑折叠芯片封装验证订单。全产业链形成"设计-制造-封测-材料-设备"闭环。
+              <div class="bd-body">
+                <div class="bd-title">清华FLEXI：柔性芯片登上Nature，开辟全新赛道</div>
+                <p>清华大学集成电路学院任天令团队研发的柔性数字存内计算芯片FLEXI，在国际顶级学术期刊《自然》发表。这是继华为韬定律之后，中国学术界在芯片架构领域的又一重大突破。</p>
+                <div class="bd-highlight">
+                  <strong>产业链闭环：</strong>中微公司刻蚀设备覆盖3nm-45nm全制程；北方华创薄膜沉积、清洗设备国产化率分别达27%、40%；长电科技混合键合工艺大规模量产，承接华为逻辑折叠芯片封装验证订单。全产业链形成「设计-制造-封测-材料-设备」闭环。
+                </div>
+                <div class="bd-src"><span>来源：Nature / 半导体行业观察 / 中芯国际投资者关系</span></div>
               </div>
-              <div class="bd-src">来源：Nature / 半导体行业观察 / 中芯国际投资者关系</div>
             </div>
           </div>
         </div>
@@ -228,91 +289,96 @@
     <!-- ===== Tab 2: EDA ===== -->
     <div class="tab-panel" id="tab-eda">
       <div class="article-body">
+        <p class="bd-intro">国产 EDA 正从「点工具替代」走向「全流程底座」：Argus 3DIC 物理验证打破海外十年垄断，三大差异化路径并进，华为昇腾 + 麒麟双产品线实战检验。</p>
         <div class="highlight-row" id="semi-highlights-eda"></div>
 
-        <h2>华大九天：从"点工具替代"到"全流程底座"</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon eda">🏗️</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-purple">核心产品</span></div>
-                <div class="bd-date">2026年6月发布</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>华大九天：从「点工具替代」到「全流程底座」</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon eda">🏗️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-purple">核心产品</span></div>
+                  <div class="bd-date">2026年6月发布</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">Argus 3DIC 物理验证平台：打破海外十年垄断</div>
+                <p>华大九天推出业界首款Argus 3DIC物理验证平台，提供3DStack、3DLVS、3DDRC、3DPERC等全方位验证功能。此前国产Chiplet从设计到量产平均周期超过18个月，其中3DIC验证占研发时间15%以上。Argus将验证周期从2周压缩到1-2天，整体研发周期缩短20%以上。</p>
+                <div class="bd-highlight">
+                  <strong>Storm先进封装平台：</strong>支持硅基工艺、有机RDL及硅桥+RDL异构整合等新工艺，已导入国内头部企业试用。Argus+Storm组合形成国内首个完全自主的3DIC全流程解决方案，已通过多家头部芯片企业测试验证并有流片成功案例。
+                </div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">Argus 3DIC 物理验证平台：打破海外十年垄断</div>
-              <p>华大九天推出业界首款Argus 3DIC物理验证平台，提供3DStack、3DLVS、3DDRC、3DPERC等全方位验证功能。此前国产Chiplet从设计到量产平均周期超过18个月，其中3DIC验证占研发时间15%以上。Argus将验证周期从2周压缩到1-2天，整体研发周期缩短20%以上。</p>
-              <div class="bd-highlight">
-                <strong>Storm先进封装平台：</strong>支持硅基工艺、有机RDL及硅桥+RDL异构整合等新工艺，已导入国内头部企业试用。Argus+Storm组合形成国内首个完全自主的3DIC全流程解决方案，已通过多家头部芯片企业测试验证并有流片成功案例。
-              </div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon eda">🔗</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-cyan">生态协同</span></div>
-                <div class="bd-date">全产业链响应</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon eda">🔗</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-cyan">生态协同</span></div>
+                  <div class="bd-date">全产业链响应</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">韬定律驱动EDA全链条升级</div>
-              <p>华为韬定律发布后，EDA三剑客率先响应：华大九天3DIC全流程设计工具导入头部企业试用；概伦电子完成晶体管级时延仿真模块量产导入，并通过收购锐成芯微和纳能微成为国内首家"EDA+IP"双引擎平台；广立微3D堆叠晶圆测试系统对接国内多条先进封装产线。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">20%+</div><div class="l">研发周期缩短</div></div>
-                <div class="bd-stat"><div class="v">3DIC</div><div class="l">全流程覆盖</div></div>
-                <div class="bd-stat"><div class="v">AI驱动</div><div class="l">Vision/Aether Coder</div></div>
+              <div class="bd-body">
+                <div class="bd-title">韬定律驱动EDA全链条升级</div>
+                <p>华为韬定律发布后，EDA三剑客率先响应：华大九天3DIC全流程设计工具导入头部企业试用；概伦电子完成晶体管级时延仿真模块量产导入，并通过收购锐成芯微和纳能微成为国内首家「EDA+IP」双引擎平台；广立微3D堆叠晶圆测试系统对接国内多条先进封装产线。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">20%+</div><div class="l">研发周期缩短</div></div>
+                  <div class="bd-stat"><div class="v">3DIC</div><div class="l">全流程覆盖</div></div>
+                  <div class="bd-stat"><div class="v">AI驱动</div><div class="l">Vision/Aether Coder</div></div>
+                </div>
+                <div class="bd-src"><span>来源：华大九天互动平台 / 华创证券 / 国泰海通证券</span></div>
               </div>
-              <div class="bd-src">来源：华大九天互动平台 / 华创证券 / 国泰海通证券</div>
             </div>
           </div>
         </div>
 
-        <h2>国产EDA生态全景</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon eda">🎯</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-amber">赛道分化</span></div>
-                <div class="bd-date">三大差异化路径</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>国产EDA生态全景</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon eda">🎯</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-amber">赛道分化</span></div>
+                  <div class="bd-date">三大差异化路径</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">三条路径并存：全流程 vs EDA+IP vs 良率管理</div>
+                <table class="mini-cmp">
+                  <tr><td>华大九天</td><td>模拟+射频+存储+FPD+3DIC+数字+制造全流程</td></tr>
+                  <tr><td>概伦电子</td><td>电路仿真+半导体IP，国内首家「EDA+IP」双引擎</td></tr>
+                  <tr><td>东方晶源</td><td>电子束量检测+计算光刻，PanGen全球最早全芯片反演光刻工具之一</td></tr>
+                  <tr><td>芯华章</td><td>智能化EDA 2.0，打破国际巨头垄断</td></tr>
+                  <tr><td>安路科技</td><td>FPGA专用EDA+FPSoC芯片协同</td></tr>
+                </table>
+                <div class="bd-highlight">
+                  <strong>市场信号：</strong>新思科技2026年4-5月告知超10家芯片制造商，部分传统EDA将「停产」，资源向AI芯片、3DIC倾斜。这为国产EDA留出替代窗口——中国3DIC赛道生态尚未固化，国产工具在新赛道上首次实现局部反超。
+                </div>
+                <div class="bd-src"><span>来源：财联社 / 各公司互动平台 / 华创证券行业研报</span></div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">三条路径并存：全流程 vs EDA+IP vs 良率管理</div>
-              <table class="mini-cmp">
-                <tr><td>华大九天</td><td>模拟+射频+存储+FPD+3DIC+数字+制造全流程</td></tr>
-                <tr><td>概伦电子</td><td>电路仿真+半导体IP，国内首家"EDA+IP"双引擎</td></tr>
-                <tr><td>东方晶源</td><td>电子束量检测+计算光刻，PanGen全球最早全芯片反演光刻工具之一</td></tr>
-                <tr><td>芯华章</td><td>智能化EDA 2.0，打破国际巨头垄断</td></tr>
-                <tr><td>安路科技</td><td>FPGA专用EDA+FPSoC芯片协同</td></tr>
-              </table>
-              <div class="bd-highlight">
-                <strong>市场信号：</strong>新思科技2026年4-5月告知超10家芯片制造商，部分传统EDA将"停产"，资源向AI芯片、3DIC倾斜。这为国产EDA留出替代窗口——中国3DIC赛道生态尚未固化，国产工具在新赛道上首次实现局部反超。
-              </div>
-              <div class="bd-src">来源：财联社 / 各公司互动平台 / 华创证券行业研报</div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon eda">🚀</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-green">AI赋能</span></div>
-                <div class="bd-date">昇腾+麒麟双线验证</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon eda">🚀</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-green">AI赋能</span></div>
+                  <div class="bd-date">昇腾+麒麟双线验证</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">华为双产品线实战检验国产EDA</div>
-              <p>华大九天工具链在华为两条核心产品线上验证：消费电子端麒麟2026率先采用逻辑折叠，AI算力端昇腾910C完成1.6万亿参数大模型全参数后训练。摩根士丹利报告显示2026年华为将占中国AI加速器市场62%份额，AI芯片收入预计达120亿美元。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">62%</div><div class="l">华为AI加速器份额</div></div>
-                <div class="bd-stat"><div class="v">$12B</div><div class="l">预估AI芯片年收入</div></div>
-                <div class="bd-stat"><div class="v">8192卡</div><div class="l">Atlas 950超节点</div></div>
+              <div class="bd-body">
+                <div class="bd-title">华为双产品线实战检验国产EDA</div>
+                <p>华大九天工具链在华为两条核心产品线上验证：消费电子端麒麟2026率先采用逻辑折叠，AI算力端昇腾910C完成1.6万亿参数大模型全参数后训练。摩根士丹利报告显示2026年华为将占中国AI加速器市场62%份额，AI芯片收入预计达120亿美元。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">62%</div><div class="l">华为AI加速器份额</div></div>
+                  <div class="bd-stat"><div class="v">$12B</div><div class="l">预估AI芯片年收入</div></div>
+                  <div class="bd-stat"><div class="v">8192卡</div><div class="l">Atlas 950超节点</div></div>
+                </div>
+                <div class="bd-src"><span>来源：摩根士丹利 / 2026华为云INSPIRE大会</span></div>
               </div>
-              <div class="bd-src">来源：摩根士丹利 / 2026华为云INSPIRE大会</div>
             </div>
           </div>
         </div>
@@ -322,90 +388,95 @@
     <!-- ===== Tab 3: 光刻机 ===== -->
     <div class="tab-panel" id="tab-litho">
       <div class="article-body">
+        <p class="bd-intro">从 28nm 浸没式 DUV 光刻机全面量产，到纳米压印开辟差异化赛道——中国光刻体系正从「能用」迈向「好用可量产」，全球光刻市场多极格局初现。</p>
         <div class="highlight-row" id="semi-highlights-litho"></div>
 
-        <h2>上海微电子 SSA800：28nm浸没式DUV光刻机全面量产</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon litho">🔬</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-cyan">里程碑</span></div>
-                <div class="bd-date">2026年批量交付</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>上海微电子 SSA800：28nm浸没式DUV光刻机全面量产</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon litho">🔬</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-cyan">里程碑</span></div>
+                  <div class="bd-date">2026年批量交付</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">从「能用」到「好用可量产」的历史性跨越</div>
+                <p>上海微电子SSA800系列28nm浸没式DUV光刻机完成首批批量交付，入驻中芯国际等国内头部晶圆厂。该机型2025年7月通过工信部验收，2026年1月官宣全面量产，3月SEMICON China首次公开展示。采用193nm ArF浸没式光刻技术，单次曝光原生支持28nm，多重曝光可实现14nm乃至更先进工艺。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">±2.3nm</div><div class="l">套刻精度</div></div>
+                  <div class="bd-stat"><div class="v">150片/h</div><div class="l">晶圆处理量</div></div>
+                  <div class="bd-stat"><div class="v">~⅓</div><div class="l">ASML同类价格</div></div>
+                  <div class="bd-stat"><div class="v">2027下</div><div class="l">订单排期</div></div>
+                </div>
+                <div class="bd-highlight">
+                  <strong>三大核心子系统全部国产自研：</strong>华卓精科双工件台（定位精度1.5nm）+ 国科精密投影物镜 + 国产光源系统。整机国产化率超90%，带动光源、光学镜头、精密运动控制、浸没系统全链条技术迭代。
+                </div>
+                <div class="bd-src"><span>来源：C114通信网 / SEMICON China 2026 / Yole Group</span></div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">从"能用"到"好用可量产"的历史性跨越</div>
-              <p>上海微电子SSA800系列28nm浸没式DUV光刻机完成首批批量交付，入驻中芯国际等国内头部晶圆厂。该机型2025年7月通过工信部验收，2026年1月官宣全面量产，3月SEMICON China首次公开展示。采用193nm ArF浸没式光刻技术，单次曝光原生支持28nm，多重曝光可实现14nm乃至更先进工艺。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">±2.3nm</div><div class="l">套刻精度</div></div>
-                <div class="bd-stat"><div class="v">150片/h</div><div class="l">晶圆处理量</div></div>
-                <div class="bd-stat"><div class="v">~⅓</div><div class="l">ASML同类价格</div></div>
-                <div class="bd-stat"><div class="v">2027下</div><div class="l">订单排期</div></div>
-              </div>
-              <div class="bd-highlight">
-                <strong>三大核心子系统全部国产自研：</strong>华卓精科双工件台（定位精度1.5nm）+ 国科精密投影物镜 + 国产光源系统。整机国产化率超90%，带动光源、光学镜头、精密运动控制、浸没系统全链条技术迭代。
-              </div>
-              <div class="bd-src">来源：C114通信网 / SEMICON China 2026 / Yole Group</div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon litho">🔄</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-red">断供应对</span></div>
-                <div class="bd-date">ASML维保断供</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon litho">🔄</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-red">断供应对</span></div>
+                  <div class="bd-date">ASML维保断供</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">ASML中端DUV断供，国产光刻机加速替代</div>
-              <p>2026年3月荷兰新规封禁28nm/45nm DUV对华出口，已签合同被单方面撕毁；5月维保服务被彻底拉下，大量存量ASML设备失去原厂核心备件和工程师驻场支持。ASML在华营收占比从2025年的34%骤降至19%。</p>
-              <div class="bd-highlight">
-                <strong>替代加速：</strong>2026年进口DUV预计同比降约50%，国产设备凭借约40%成本优势和更短交付周期快速填补。2026年Q1韩国反超中国成ASML最大市场。设备本土化比例从2021年8%提升至2025年23.2%，2026年预计突破30%。
+              <div class="bd-body">
+                <div class="bd-title">ASML中端DUV断供，国产光刻机加速替代</div>
+                <p>2026年3月荷兰新规封禁28nm/45nm DUV对华出口，已签合同被单方面撕毁；5月维保服务被彻底拉下，大量存量ASML设备失去原厂核心备件和工程师驻场支持。ASML在华营收占比从2025年的34%骤降至19%。</p>
+                <div class="bd-highlight">
+                  <strong>替代加速：</strong>2026年进口DUV预计同比降约50%，国产设备凭借约40%成本优势和更短交付周期快速填补。2026年Q1韩国反超中国成ASML最大市场。设备本土化比例从2021年8%提升至2025年23.2%，2026年预计突破30%。
+                </div>
+                <div class="bd-src"><span>来源：ASML财报 / Yole Group / 荷兰大使表态</span></div>
               </div>
-              <div class="bd-src">来源：ASML财报 / Yole Group / 荷兰大使表态</div>
             </div>
           </div>
         </div>
 
-        <h2>新路线：纳米压印光刻开辟差异化赛道</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon litho">🖨️</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-green">新路线</span></div>
-                <div class="bd-date">2026年6月商用交付</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>新路线：纳米压印光刻开辟差异化赛道</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon litho">🖨️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-green">新路线</span></div>
+                  <div class="bd-date">2026年6月商用交付</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">璞璘科技PL-AS纳米压印光刻机交付力策科技</div>
+                <p>国内首款专为光芯片打造的半导体级纳米压印光刻设备正式商用交付，攻克真空压印、精密对位、纳米级图形转移等核心技术。绕开传统DUV/EUV路线，大幅降低高端光电子芯片制造成本。</p>
+                <div class="bd-highlight">
+                  <strong>全球对标：</strong>日本佳能纳米压印技术在存储芯片量产上成本仅为DUV的十分之一，已获美光科技支持。中国在这一路线上同步布局，形成DUV+NIL双轨并行的光刻技术体系。
+                </div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">璞璘科技PL-AS纳米压印光刻机交付力策科技</div>
-              <p>国内首款专为光芯片打造的半导体级纳米压印光刻设备正式商用交付，攻克真空压印、精密对位、纳米级图形转移等核心技术。绕开传统DUV/EUV路线，大幅降低高端光电子芯片制造成本。</p>
-              <div class="bd-highlight">
-                <strong>全球对标：</strong>日本佳能纳米压印技术在存储芯片量产上成本仅为DUV的十分之一，已获美光科技支持。中国在这一路线上同步布局，形成DUV+NIL双轨并行的光刻技术体系。
-              </div>
-            </div>
-          </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon litho">📊</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-amber">竞争格局</span></div>
-                <div class="bd-date">全球光刻市场变动</div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon litho">📊</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-amber">竞争格局</span></div>
+                  <div class="bd-date">全球光刻市场变动</div>
+                </div>
               </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">ASML垄断松动，多极格局初现</div>
-              <table class="mini-cmp">
-                <tr><td>ASML</td><td>EUV 100%垄断，中端DUV被国产替代挤压</td></tr>
-                <tr><td>上海微电子</td><td>28nm DUV批量交付，订单排至2027下半年</td></tr>
-                <tr><td>尼康</td><td>ArF浸没式降价20-30%，2028推新平台</td></tr>
-                <tr><td>佳能</td><td>纳米压印获美光支持，成本为DUV 1/10</td></tr>
-                <tr><td>璞璘科技</td><td>国内首款光芯片专用纳米压印设备交付</td></tr>
-              </table>
-              <div class="bd-src">来源：公开行业信息 / 各公司公告</div>
+              <div class="bd-body">
+                <div class="bd-title">ASML垄断松动，多极格局初现</div>
+                <table class="mini-cmp">
+                  <tr><td>ASML</td><td>EUV 100%垄断，中端DUV被国产替代挤压</td></tr>
+                  <tr><td>上海微电子</td><td>28nm DUV批量交付，订单排至2027下半年</td></tr>
+                  <tr><td>尼康</td><td>ArF浸没式降价20-30%，2028推新平台</td></tr>
+                  <tr><td>佳能</td><td>纳米压印获美光支持，成本为DUV 1/10</td></tr>
+                  <tr><td>璞璘科技</td><td>国内首款光芯片专用纳米压印设备交付</td></tr>
+                </table>
+                <div class="bd-src"><span>来源：公开行业信息 / 各公司公告</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -415,146 +486,171 @@
     <!-- ===== Tab 4: 国产替代 ===== -->
     <div class="tab-panel" id="tab-subst">
       <div class="article-body">
+        <p class="bd-intro">大硅片、光刻胶、核心设备……国产化率全面跃升。2026 年进口芯片金额明显回落，国产替代从单点突破走向体系化替代。</p>
         <div class="highlight-row" id="semi-highlights-subst"></div>
-
-        <!-- 替代进程时间轴 -->
         <div class="progress-strip" id="semi-progress-subst"></div>
 
-        <h2>材料突破：补齐芯片制造最薄弱短板</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon subst">💎</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-green">大硅片</span></div>
-                <div class="bd-date">12英寸产能快速扩张</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>材料突破：补齐芯片制造最薄弱短板</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon subst">💎</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-green">大硅片</span></div>
+                  <div class="bd-date">12英寸产能快速扩张</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">沪硅产业月产80万片，奕斯伟目标月产120万片</div>
+                <p>沪硅产业12英寸大硅片月产能提升至80万片，占国内本土市场六成以上，订单排至2028年。西安奕斯伟计划2026年实现12英寸月产能120万片，覆盖国内约40%需求。国内12英寸晶圆本土自给率已达约50%，全球产能份额从2020年3%升至2025年28%，2026年有望达32%。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">50%</div><div class="l">12英寸自给率</div></div>
+                  <div class="bd-stat"><div class="v">28%</div><div class="l">全球产能份额</div></div>
+                  <div class="bd-stat"><div class="v">70%</div><div class="l">本土采购目标</div></div>
+                </div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">沪硅产业月产80万片，奕斯伟目标月产120万片</div>
-              <p>沪硅产业12英寸大硅片月产能提升至80万片，占国内本土市场六成以上，订单排至2028年。西安奕斯伟计划2026年实现12英寸月产能120万片，覆盖国内约40%需求。国内12英寸晶圆本土自给率已达约50%，全球产能份额从2020年3%升至2025年28%，2026年有望达32%。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">50%</div><div class="l">12英寸自给率</div></div>
-                <div class="bd-stat"><div class="v">28%</div><div class="l">全球产能份额</div></div>
-                <div class="bd-stat"><div class="v">70%</div><div class="l">本土采购目标</div></div>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon subst">🧪</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-purple">光刻胶</span></div>
+                  <div class="bd-date">从G线到ArF全面突破</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">南大光电ArF光刻胶量产，14nm浸没式在验证</div>
+                <p>G线、I线低端光刻胶已100%国产化；KrF中端光刻胶批量供货；南大光电完成28nm ArF高端光刻胶规模化量产，14nm浸没式光刻胶正在头部晶圆厂开展稳定性验证。江丰电子高端钛靶、铝靶国产化渗透率突破60%，华特气体高纯特种气体国内供货占比超53%。</p>
+                <div class="bd-highlight">
+                  <strong>6N级高纯氟化氢量产：</strong>近半年国内半导体材料实现多项里程碑式突破。2026年整体材料国产化率提升至29%，成熟制程适配材料自给率突破45%，相比2018年不足12%实现跨越式增长。
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon subst">🧪</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-purple">光刻胶</span></div>
-                <div class="bd-date">从G线到ArF全面突破</div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>设备国产化：从单点突破到体系替代</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon subst">⚙️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-amber">三大核心设备</span></div>
+                  <div class="bd-date">2026年国产化率数据</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">刻蚀31%、清洗40%、薄膜沉积27%，增速创十年最快</div>
+                <table class="mini-cmp">
+                  <tr><td>刻蚀设备</td><td>中微公司覆盖3nm-45nm全制程，进入海外供应链</td></tr>
+                  <tr><td>薄膜沉积</td><td>北方华创国产化率27%，成熟制程市占率持续走高</td></tr>
+                  <tr><td>清洗设备</td><td>国产化率40%，干法去胶设备超80%</td></tr>
+                  <tr><td>光刻设备</td><td>SSA800订单排至2027下半年，出货同比+217%</td></tr>
+                  <tr><td>量检测</td><td>东方晶源电子束量检测+计算光刻双核心</td></tr>
+                </table>
+                <div class="bd-highlight">
+                  <strong>关键转折：</strong>成熟制程设备新增采购中国产占比提升至26%，一年提升5个百分点，创近十年最快增速。国内半导体设备本土化比例2026年预计突破30%。
+                </div>
+                <div class="bd-src"><span>来源：Yole Group / 中半协 / 各公司财报</span></div>
               </div>
             </div>
-            <div class="bd-body">
-              <div class="bd-title">南大光电ArF光刻胶量产，14nm浸没式在验证</div>
-              <p>G线、I线低端光刻胶已100%国产化；KrF中端光刻胶批量供货；南大光电完成28nm ArF高端光刻胶规模化量产，14nm浸没式光刻胶正在头部晶圆厂开展稳定性验证。江丰电子高端钛靶、铝靶国产化渗透率突破60%，华特气体高纯特种气体国内供货占比超53%。</p>
-              <div class="bd-highlight">
-                <strong>6N级高纯氟化氢量产：</strong>近半年国内半导体材料实现多项里程碑式突破。2026年整体材料国产化率提升至29%，成熟制程适配材料自给率突破45%，相比2018年不足12%实现跨越式增长。
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon subst">📉</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag tag-red">进口替代</span></div>
+                  <div class="bd-date">真金白银的替代成效</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">芯片进口减少2610亿元，算力出口增长56.6%</div>
+                <p>2026年前5个月芯片进口额同比减少2610亿元，累计3500亿元产业订单从海外转移至国内。2026上半年，中国算力硬件进出口额达5.13万亿元，同比增长56.6%，其中光模块、自主封装算力产品贡献超60%份额。出口均价大幅提升52%，标志国产芯片已进入高附加值赛道。</p>
+                <div class="bd-stats">
+                  <div class="bd-stat"><div class="v">2610亿</div><div class="l">进口减少(前5月)</div></div>
+                  <div class="bd-stat"><div class="v">5.13万亿</div><div class="l">算力硬件进出口</div></div>
+                  <div class="bd-stat"><div class="v">+52%</div><div class="l">出口均价提升</div></div>
+                </div>
+                <div class="bd-highlight">
+                  <strong>结构性转折：</strong>成熟制程全域替代落地，功率半导体、封测、中低端设备材料国产化率超60%，部分特色赛道80%以上自主可控。14-28nm过渡制程国产化率突破30%，7nm及以下先进制程稳步提升至15%。
+                </div>
+                <div class="bd-src"><span>来源：中国海关总署 / 中商产业研究院 / 伯恩斯坦研究</span></div>
               </div>
             </div>
           </div>
         </div>
 
-        <h2>设备国产化：从单点突破到体系替代</h2>
-        <div class="breakdown">
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon subst">⚙️</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-amber">三大核心设备</span></div>
-                <div class="bd-date">2026年国产化率数据</div>
-              </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">刻蚀31%、清洗40%、薄膜沉积27%，增速创十年最快</div>
-              <table class="mini-cmp">
-                <tr><td>刻蚀设备</td><td>中微公司覆盖3nm-45nm全制程，进入海外供应链</td></tr>
-                <tr><td>薄膜沉积</td><td>北方华创国产化率27%，成熟制程市占率持续走高</td></tr>
-                <tr><td>清洗设备</td><td>国产化率40%，干法去胶设备超80%</td></tr>
-                <tr><td>光刻设备</td><td>SSA800订单排至2027下半年，出货同比+217%</td></tr>
-                <tr><td>量检测</td><td>东方晶源电子束量检测+计算光刻双核心</td></tr>
-              </table>
-              <div class="bd-highlight">
-                <strong>关键转折：</strong>成熟制程设备新增采购中国产占比提升至26%，一年提升5个百分点，创近十年最快增速。国内半导体设备本土化比例2026年预计突破30%。
-              </div>
-              <div class="bd-src">来源：Yole Group / 中半协 / 各公司财报</div>
-            </div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">03</span><h2>产业链全景：全链条协同的新格局</h2></div>
+          <div class="highlight-row">
+            <div class="hl-card green"><div class="hl-num">&gt;40%</div><div class="hl-lbl">成熟制程全球产能占比</div></div>
+            <div class="hl-card cyan"><div class="hl-num">+50%</div><div class="hl-lbl">2025年回国芯片人才增长</div></div>
+            <div class="hl-card amber"><div class="hl-num">3440亿</div><div class="hl-lbl">大基金三期规模</div></div>
+            <div class="hl-card purple"><div class="hl-num">&gt;40%</div><div class="hl-lbl">数字经济占GDP贡献</div></div>
           </div>
-
-          <div class="breakdown-card">
-            <div class="bd-head">
-              <div class="bd-icon subst">📉</div>
-              <div class="bd-meta">
-                <div><span class="bd-tag tag-red">进口替代</span></div>
-                <div class="bd-date">真金白银的替代成效</div>
-              </div>
-            </div>
-            <div class="bd-body">
-              <div class="bd-title">芯片进口减少2610亿元，算力出口增长56.6%</div>
-              <p>2026年前5个月芯片进口额同比减少2610亿元，累计3500亿元产业订单从海外转移至国内。2026上半年，中国算力硬件进出口额达5.13万亿元，同比增长56.6%，其中光模块、自主封装算力产品贡献超60%份额。出口均价大幅提升52%，标志国产芯片已进入高附加值赛道。</p>
-              <div class="bd-stats">
-                <div class="bd-stat"><div class="v">2610亿</div><div class="l">进口减少(前5月)</div></div>
-                <div class="bd-stat"><div class="v">5.13万亿</div><div class="l">算力硬件进出口</div></div>
-                <div class="bd-stat"><div class="v">+52%</div><div class="l">出口均价提升</div></div>
-              </div>
-              <div class="bd-highlight">
-                <strong>结构性转折：</strong>成熟制程全域替代落地，功率半导体、封测、中低端设备材料国产化率超60%，部分特色赛道80%以上自主可控。14-28nm过渡制程国产化率突破30%，7nm及以下先进制程稳步提升至15%。
-              </div>
-              <div class="bd-src">来源：中国海关总署 / 中商产业研究院 / 伯恩斯坦研究</div>
-            </div>
-          </div>
-        </div>
-
-        <h2>产业链全景：全链条协同的新格局</h2>
-        <div class="highlight-row">
-          <div class="hl-card green"><div class="hl-num">>40%</div><div class="hl-lbl">成熟制程全球产能占比</div></div>
-          <div class="hl-card cyan"><div class="hl-num">+50%</div><div class="hl-lbl">2025年回国芯片人才增长</div></div>
-          <div class="hl-card amber"><div class="hl-num">3440亿</div><div class="hl-lbl">大基金三期规模</div></div>
-          <div class="hl-card purple"><div class="hl-num">>40%</div><div class="hl-lbl">数字经济占GDP贡献</div></div>
         </div>
       </div>
     </div>
+
   </div>
 </article>
 
 <button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
 <div id="footer-placeholder"></div>
+
+<script src="js/data-loader.js"></script>
 <script src="js/app.js"></script>
 <script>
-// 数据渲染
-(async function(){
-  try {
-    const d = await fetch('data/semiconductor.json').then(r => r.json());
-    const h = (id, arr) => { const el=document.getElementById(id); if(el) el.innerHTML = arr.map(x =>
-      `<div class="hl-card ${x.color}"><div class="hl-num">${x.num}</div><div class="hl-lbl">${x.lbl}</div></div>`).join(''); };
-    const p = (id, arr) => { const el=document.getElementById(id); if(el) el.innerHTML = arr.map(x =>
-      `<div class="progress-step ${x.cls}"><div class="yr">${x.yr}</div><div class="val">${x.val}</div><div class="lbl">${x.lbl}</div></div>`).join(''); };
+// ===== 数据渲染（API 优先，静态 JSON 兜底） =====
+(async function () {
+  var d = null;
+  if (window.taixingData) {
+    d = await window.taixingData.loadData('semiconductor');
+  }
+  if (!d) {
+    try {
+      d = await fetch('data/semiconductor.json').then(function (r) { return r.json(); });
+    } catch (e) { d = null; }
+  }
+  if (!d) { console.warn('[钛星] 半导体数据加载失败，页面显示静态骨架'); return; }
 
-    h('semi-highlights', d.highlights);
-    p('semi-progress-mfg', d.tabs['tab-mfg'].progress);
-    h('semi-highlights-eda', d.tabs['tab-eda'].highlights);
-    h('semi-highlights-litho', d.tabs['tab-litho'].highlights);
-    h('semi-highlights-subst', d.tabs['tab-subst'].highlights);
-    p('semi-progress-subst', d.tabs['tab-subst'].progress);
-  } catch(e) { console.error('Semi data failed:', e); }
+  function fillHl(id, arr) {
+    var el = document.getElementById(id);
+    if (!el || !arr) return;
+    el.innerHTML = arr.map(function (x) {
+      return '<div class="hl-card ' + x.color + '"><div class="hl-num">' + x.num + '</div><div class="hl-lbl">' + x.lbl + '</div></div>';
+    }).join('');
+  }
+  function fillProg(id, arr) {
+    var el = document.getElementById(id);
+    if (!el || !arr) return;
+    el.innerHTML = arr.map(function (x) {
+      return '<div class="progress-step ' + (x.cls || '') + '"><div class="yr">' + x.yr + '</div><div class="val">' + x.val + '</div><div class="lbl">' + x.lbl + '</div></div>';
+    }).join('');
+  }
+
+  var tabs = d.tabs || {};
+  fillHl('semi-highlights', d.highlights);
+  fillProg('semi-progress-mfg', tabs['tab-mfg'] && tabs['tab-mfg'].progress);
+  fillHl('semi-highlights-eda', tabs['tab-eda'] && tabs['tab-eda'].highlights);
+  fillHl('semi-highlights-litho', tabs['tab-litho'] && tabs['tab-litho'].highlights);
+  fillHl('semi-highlights-subst', tabs['tab-subst'] && tabs['tab-subst'].highlights);
+  fillProg('semi-progress-subst', tabs['tab-subst'] && tabs['tab-subst'].progress);
 })();
 
-// Tab 切换逻辑
-(function(){
-  const tabs = document.querySelectorAll('#semi-tabs button');
-  const panels = document.querySelectorAll('.tab-panel');
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.getAttribute('data-tab');
-      tabs.forEach(b => b.classList.remove('active'));
+// ===== Tab 切换逻辑 =====
+(function () {
+  var tabs = document.querySelectorAll('#semi-tabs button');
+  var panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-tab');
+      tabs.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      panels.forEach(p => {
-        p.classList.toggle('active', p.id === target);
-      });
+      panels.forEach(function (p) { p.classList.toggle('active', p.id === target); });
     });
   });
 })();

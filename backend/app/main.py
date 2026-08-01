@@ -57,6 +57,7 @@ async def serve_index():
 app.mount("/css", StaticFiles(directory=os.path.join(PROJECT_ROOT, "css")), name="css")
 app.mount("/js", StaticFiles(directory=os.path.join(PROJECT_ROOT, "js")), name="js")
 app.mount("/data", StaticFiles(directory=os.path.join(PROJECT_ROOT, "data")), name="data")
+app.mount("/components", StaticFiles(directory=os.path.join(PROJECT_ROOT, "components")), name="components")
 
 # 鏈嶅姟鍏朵粬 HTML 椤甸潰
 @app.get("/{page}")

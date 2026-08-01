@@ -5,30 +5,82 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 可回收火箭</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* =========================================================
+   版块页重设计 · 可回收火箭（accent = 青色）
+   参照 semiconductor.html 页面级样式，仅作用于本页
+   ========================================================= */
+.bd-page{--accent:var(--cyan);--accent-soft:rgba(0,224,255,.14)}
+
+/* ---- 版块 Hero ---- */
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
+.bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
+.bd-hero>*{position:relative;z-index:1}
+.bd-hero .breadcrumb{padding:0;margin-bottom:16px}
+.bd-hero .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:16px;border-radius:999px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
+.bd-hero h1 .glow{background:linear-gradient(120deg,var(--accent),var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
+.bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
+.bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.bd-hero .meta span:first-child::before{display:none}
+
+/* ---- 区块标题（semiconductor 同款） ---- */
+.bd-sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.bd-sec-idx{flex-shrink:0;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--accent-soft)}
+.bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
+.bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin-top:-4px}
+
+/* ---- Tab 导航（semiconductor 同款） ---- */
+.bd-tabs{gap:4px;margin:28px 0 4px;border-bottom:2px solid var(--line);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tabs button{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;font-size:14px;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.bd-tabs button:hover{color:var(--txt-1)}
+.bd-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ---- 响应式 ---- */
+@media(max-width:768px){
+  .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
+  .bd-hero .meta{gap:10px;font-size:11px}
+  .bd-hero .sub{font-size:13.5px}
+  .bd-sec-head{flex-wrap:wrap;gap:8px}
+  .bd-tabs button{padding:10px 14px;font-size:13px}
+}
+@media(max-width:480px){
+  .bd-hero h1{font-size:23px}
+}
+</style>
 </head>
 <body>
 <div class="stars"></div>
 <div class="progress-bar" id="progressBar"></div>
 
 <div id="header-placeholder"></div>
-<article class="article">
+
+
+
+
+<article class="article bd-page">
   <div class="wrap">
-    <div class="breadcrumb">
-      <a href="index.html">首页</a> <span class="sep">›</span>
-      <span>可回收火箭</span>
-    </div>
-    <div class="article-head">
-      <div class="kicker">深度专题</div>
-      <h1>全球可回收火箭：谁在领跑，谁在追赶</h1>
+
+    <!-- ===== 版块 Hero（参照 semiconductor 风格） ===== -->
+    <div class="bd-hero">
+      <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>可回收火箭</span></div>
+      <div class="kicker">REUSABLE ROCKETS · 2026</div>
+      <h1>全球可回收火箭：<span class="glow">谁在领跑，谁在追赶</span></h1>
+      <p class="sub">一子级造价占全箭约 70%——复用正把“一次性筷子”变成可反复使用的“太空交通工具”。国家队与民营多线并进，中美 9 家重点企业、5 大回收路线全景拆解。</p>
       <div class="meta">
-        <span>2026年7月25日 更新</span>
-        <span>覆盖中美 9 家重点企业</span>
-        <span>5 大回收路线对比</span>
+        <span>数据来源：公开信源聚合 · AI 解读</span>
+        <span>更新时间：2026-07</span>
       </div>
     </div>
 
     <!-- Tab 子导航 -->
-    <nav class="tab-nav" id="tabNav">
+    <nav class="tab-nav bd-tabs" id="tabNav">
       <button class="active" data-tab="tab-progress">全球进展</button>
       <button data-tab="tab-comparison">技术对比</button>
       <button data-tab="tab-plan-h2">发射计划</button>
@@ -37,10 +89,10 @@
 
     <!-- ======== Tab 1: 全球进展 ======== -->
     <section class="tab-panel active" id="tab-progress">
-      <div class="article-body" style="padding-top:20px">
+
+      <div class="article-body" style="padding-top:0">
         <div id="rocket-intro">
-          <p>火箭一子级造价占全箭约 70%——过去打完就扔，相当于"用黄金造一次性筷子"。可回收火箭把消耗品变成可反复使用的"太空交通工具"，复用 10 次以上成本可直降 80%。这不仅是技术突破，更是航天经济学的底层重写。</p>
-          <p>截至 2026 年 7 月，全球已形成 <strong>美国领跑、中国国家突击、民营多线并进</strong> 的格局。下面逐家拆解最新进展。</p>
+          <p>火箭一子级造价占全箭约 70%，过去打完就扔如同"用黄金造一次性筷子"。可回收让成本直降 80%，截至 2026 年 7 月全球已是美国领跑、中国突击、民营并进的格局，逐家拆解最新进展。</p>
         </div>
 
         <h2>一、美国阵营</h2>
@@ -301,8 +353,8 @@
 
     <!-- ======== Tab 2: 技术对比 ======== -->
     <section class="tab-panel" id="tab-comparison">
-      <div class="article-body" style="padding-top:20px">
-        <p>火箭回收没有绝对优劣。最终选择取决于火箭尺寸、发射场位置、任务轨道和预期发射频率。目前全球主流方案有五条路，核心差异在于<strong>把复杂性放在火箭上、还是放在地面上</strong>。</p>
+      <div class="article-body" style="padding-top:0">
+        <p>火箭回收没有绝对优劣，最终选择取决于火箭尺寸、发射场位置、任务轨道与发射频率；主流方案有五条路，核心差异在把复杂性放在火箭上还是地面上。</p>
 
         <h2>一、五大回收技术路线对比</h2>
         <div class="route-grid">
@@ -345,7 +397,7 @@
             <div class="who">星舰早期验证 · 箭元科技元行者一号</div>
             <p style="font-size:14px;color:var(--txt-1);margin-bottom:12px">一子级不返回发射场，在预定海域发动机减速后软溅落海面，再由船只打捞回厂翻新。</p>
             <div class="pros">✓ 运力损耗最小（约 10%）</div>
-            <div class="pros">✓ ���去陆上回收场建设</div>
+            <div class="pros">✓ 省去陆上回收场建设</div>
             <div class="cons">✗ 海水腐蚀严重，翻新周期长</div>
             <div class="loss">运力折损：<b>约 10%</b></div>
           </div>
@@ -384,9 +436,8 @@
 
     <!-- ======== Tab 3: 2026下半年发射计划 ======== -->
     <section class="tab-panel" id="tab-plan-h2">
-      <div class="article-body" style="padding-top:20px">
-        <p>2026 年下半年是可回收火箭的"密集验证窗口"。中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准发射塔空中捕获，Rocket Lab Neutron 等待首飞。</p>
-        <blockquote>航天发射计划具有高度不确定性，以下时间均为公开报道的<strong>目标窗口</strong>。</blockquote>
+      <div class="article-body" style="padding-top:0">
+        <p>2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
 
         <h2>✓ 已完成</h2>
         <div class="rocket-compare-tl">
@@ -416,7 +467,8 @@
 
     <!-- ======== Tab 4: 未来展望 ======== -->
     <section class="tab-panel" id="tab-timeline">
-      <div class="article-body" style="padding-top:20px">
+      <div class="article-body" style="padding-top:0">
+        <p>从"回收成功"到"日常化复用"，真正的分水岭在复用经济性的拐点——2027 年谁能先完成"复用"而非仅"回收"，谁将定义可回收火箭的新格局。</p>
 
         <h2>2027 年展望</h2>
         <div class="tl" id="rocket-timeline-2027"></div>
@@ -426,7 +478,7 @@
           <li><strong>谁能先完成"复用"而非仅"回收"</strong>：长征十号乙和朱雀三号都瞄准2026年底复飞。</li>
           <li><strong>星舰能否实现飞船塔架捕获</strong>：全可重复使用的最后一块拼图。</li>
           <li><strong>Neutron 首飞表现</strong>：Hungry Hippo 整流罩方案若验证成功，将开创可回收火箭新范式。</li>
-          <li><strong>复用经济性拐点</strong>：从"回收��功"到"日常化复用"才是改变市场的真正分水岭。</li>
+          <li><strong>复用经济性拐点</strong>：从"回收成功"到"日常化复用"才是改变市场的真正分水岭。</li>
         </ul>
       </div>
     </section>
@@ -448,18 +500,32 @@
 
 <div id="footer-placeholder"></div>
 <script src="js/app.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
 (async function(){
   /* ===== 从 API 和 JSON 渲染数据 ===== */
   let rocketData, timelineData;
   try {
-    // 从 JSON 获取对比表格数据
-    const d = await fetch('data/rocket.json').then(r => r.json());
-    rocketData = d.comparison_table;
+    // 从 API（/api/boards/rocket/full，taixingData）获取对比表格数据，接口不可用时回退 data/rocket.json
+    let d = await taixingData.loadData('rocket');
+    if (!d || !Array.isArray(d.comparison_table) || !d.comparison_table.length || !d.comparison_table[0].rocket) {
+      d = await fetch('data/rocket.json').then(r => r.json());
+    }
+    rocketData = d.comparison_table || [];
     
-    // 从 API 获取时间线数据
-    const timelineResp = await fetch('/api/rocket-timeline').then(r => r.json());
-    timelineData = timelineResp.timeline || [];
+    // 从 API 获取时间线数据（接口不可用或返回空时回退 data/rocket.json，避免时间线空白）
+    try {
+      const timelineResp = await fetch('/api/rocket-timeline').then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)));
+      timelineData = (timelineResp && timelineResp.timeline) || [];
+      if (!timelineData.length) throw new Error('empty timeline');
+    } catch (e) {
+      try {
+        const fj = await fetch('data/rocket.json').then(r => r.json());
+        timelineData = [].concat(fj.timeline_h2 || [], fj.timeline_2027 || []);
+      } catch (e2) {
+        timelineData = [];
+      }
+    }
 
     // 对比表格
     const clsMap = {'星舰 V3':'hi','猎鹰9号':'hi','长征十号乙':'hi'};

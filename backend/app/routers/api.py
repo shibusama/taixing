@@ -76,7 +76,12 @@ def api_last_updated():
 @router.get("/rocket-intro")
 def api_get_rocket_intro():
     from app.database import get_rocket_intro
-    return {"intro": get_rocket_intro()}
+    raw = get_rocket_intro() or {}
+    if isinstance(raw, dict):
+        intro = raw.get("intro", "")
+    else:
+        intro = raw
+    return {"intro": intro if isinstance(intro, str) else ""}
 
 @router.get("/rocket-timeline")
 def api_get_rocket_timeline():
@@ -91,18 +96,139 @@ def api_get_board_status(board_id: str):
         return {"board_id": board_id, "status": "never_crawled"}
     return {"board_id": board_id, **s}
 
-# ---- admin articles ----
+# ---- admin v3：仪表盘 / 文章审核 / 历史 / 数据同步 ----
+
+@router.get("/admin/stats")
+def api_admin_stats():
+    """仪表盘总览：文章统计 + 版块状态 + 最近爬取/AI 记录"""
+    from app.database import get_admin_stats
+    try:
+        return get_admin_stats()
+    except Exception as e:
+        print(f"[admin stats error] {e}")
+        return {
+            "articles": {"total": 0, "pending": 0, "online": 0, "block": 0},
+            "boards": [],
+            "recent_crawl_logs": [],
+            "recent_ai_logs": [],
+            "latest_news_total": 0,
+        }
+
+
+@router.get("/admin/boards/status")
+def api_admin_boards_status():
+    """版块状态面板"""
+    from app.database import get_all_board_status
+    try:
+        return {"items": get_all_board_status()}
+    except Exception as e:
+        print(f"[admin boards status error] {e}")
+        return {"items": []}
+
+
+@router.get("/admin/crawl-logs")
+def api_admin_crawl_logs(board_id: str = None, limit: int = 20):
+    """历史爬虫日志"""
+    from app.database import get_crawl_logs
+    limit = min(max(1, limit), 200)
+    try:
+        return {"items": get_crawl_logs(board_id, limit)}
+    except Exception as e:
+        print(f"[admin crawl-logs error] {e}")
+        return {"items": []}
+
 
 @router.get("/admin/articles")
-def api_get_raw_articles(category: str = None, status: str = None, limit: int = 50, offset: int = 0):
-    from app.database import get_raw_articles, get_raw_article_stats
+def api_get_raw_articles(
+    category: str = None,
+    status: str = None,
+    keyword: str = None,
+    sort_by: str = "crawl_time",
+    sort_order: str = "desc",
+    page: int = 1,
+    page_size: int = 20,
+):
+    """文章列表：分页 + keyword 搜索 + 分类/状态筛选 + 排序。返回 {stats, items, total, page, page_size}"""
+    from app.database import get_raw_articles, count_raw_articles, get_raw_article_stats
+    if sort_by not in ("crawl_time", "publish_time", "source_name", "hot_score"):
+        sort_by = "crawl_time"
+    if sort_order not in ("asc", "desc"):
+        sort_order = "desc"
+    page = max(1, page)
+    page_size = min(max(1, page_size), 200)
     try:
-        articles = get_raw_articles(category, status, limit, offset)
-        stats = get_raw_article_stats(category)
-        return {"stats": stats, "articles": articles}
+        items = get_raw_articles(category, status, keyword, sort_by=sort_by, sort_order=sort_order, page=page, page_size=page_size)
+        stats = get_raw_article_stats(category, keyword)
+        total = count_raw_articles(category, status, keyword)
+        return {"stats": stats, "items": items, "total": total, "page": page, "page_size": page_size}
     except Exception as e:
         print(f"[admin articles error] {e}")
-        return {"stats": {"total": 0, "pending": 0, "online": 0}, "articles": []}
+        return {"stats": {"total": 0, "pending": 0, "online": 0, "block": 0}, "items": [], "total": 0, "page": page, "page_size": page_size}
+
+
+@router.get("/admin/articles/{news_id}")
+def api_get_raw_article(news_id: str):
+    """单条文章详情"""
+    from app.database import get_raw_article
+    item = get_raw_article(news_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail=f"Article {news_id!r} not found")
+    return {"item": item}
+
+
+@router.post("/admin/articles/batch-status")
+def api_batch_update_article_status(body: dict):
+    """批量审核：body = {"news_ids": [...], "status": "online"|"block"|"pending"}"""
+    from app.database import batch_update_article_status
+    news_ids = body.get("news_ids") or []
+    status = body.get("status")
+    if not isinstance(news_ids, list) or not news_ids:
+        raise HTTPException(status_code=400, detail="news_ids 不能为空")
+    if status not in ("online", "block", "pending"):
+        raise HTTPException(status_code=400, detail="status 必须是 online/block/pending")
+    try:
+        updated = batch_update_article_status(news_ids, status)
+        return {"status": "ok", "updated": updated, "total": len(news_ids)}
+    except Exception as e:
+        print(f"[admin batch-status error] {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/admin/ai/logs")
+def api_admin_ai_logs(limit: int = 20):
+    """AI 提取历史记录（ai_extract_logs）"""
+    from app.database import get_ai_extract_logs
+    limit = min(max(1, limit), 200)
+    try:
+        return {"items": get_ai_extract_logs(limit)}
+    except Exception as e:
+        print(f"[admin ai logs error] {e}")
+        return {"items": []}
+
+
+@router.post("/admin/sync/{board_id}")
+def api_admin_sync_board(board_id: str):
+    """从 data/*.json 同步指定版块到数据库"""
+    from app.database import re_sync_board_from_json
+    try:
+        result = re_sync_board_from_json(board_id)
+        return {"status": "ok", "board_id": board_id, "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/sync")
+def api_admin_sync_all():
+    """从 data/*.json 同步全部版块到数据库"""
+    from app.database import re_sync_all_from_json
+    try:
+        result = re_sync_all_from_json()
+        return {"status": "ok", "result": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---- admin articles（原有操作端点保留） ----
 
 @router.post("/admin/articles/{news_id}/status")
 def api_update_article_status(news_id: str, status: str):
@@ -172,6 +298,12 @@ def api_ai_extract(category: str = None, limit: int = 10):
         result = process_pending_articles(category=category, limit=limit, auto_insert=True)
         return result
     except Exception as e:
+        # 失败也写入提取历史（容错：表不存在时忽略）
+        try:
+            from app.database import log_ai_extract
+            log_ai_extract(category=category, limit=limit, total=0, inserted=0, failed=0, status="failed", message=str(e))
+        except Exception:
+            pass
         return {"status": "error", "message": str(e), "total": 0, "results": []}
 
 @router.get("/ai/stats")

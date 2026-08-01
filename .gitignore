@@ -30,3 +30,9 @@ __pycache__/
 .preview
 .cozeproj/reduction
 .codegraph
+
+# Local SQLite database (双模式本地库，自动创建)
+.local/
+*.db
+*.sqlite3
+*.sqlite

@@ -8,25 +8,48 @@
 </head>
 <body>
 <div class="stars"></div>
-<div class="progress-bar"></div>
+<div class="progress-bar" id="progressBar"></div>
 
 <div id="header-placeholder"></div>
-<article class="article">
+<nav class="quick-nav top-quick-nav" aria-label="版块导航">
+  <a href="rocket.html">可回收火箭</a>
+  <a href="moon.html" class="moon" style="color:var(--gold);border-color:var(--gold)">中美登月</a>
+  <a href="semiconductor.html" class="semi">半导体</a>
+  <a href="china-tech.html" class="tech">中国科技</a>
+  <a href="mega-projects.html" class="mega">大工程</a>
+  <a href="fusion.html" class="fusion">可控核聚变</a>
+  <a href="finance.html" class="finance">科技资本</a>
+</nav>
+
+<section class="hero">
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>中美登月</span></div>
-    <div class="article-head">
-      <div class="kicker">MOON RACE · 2026</div>
-      <h1>中美登月竞速：从南极水冰到载人登月</h1>
-      <div class="meta"><span>数据来源：中国载人航天工程办公室、NASA、虎嗅</span><span>更新时间：2026-07-26</span></div>
+    <span class="badge" style="background:rgba(240,192,96,.1);border-color:rgba(240,192,96,.3);color:var(--gold)"><span class="dot" style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></span> MOON RACE · 2026</span>
+    <h1>中美登月竞速：<span style="color:var(--gold)">从南极水冰到载人登月</span></h1>
+    <p class="sub">2026 年是中美月球探索的关键之年：中国嫦娥七号 8 月出征南极，载人登月工程全面转入工程验证阶段；美国 Artemis II 刚刚完成历史性载人绕月飞行。两国在月球南极的战略博弈日益白热化。</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" style="color:var(--gold)">2030前</div><div class="lbl">中国载人登月目标</div></div>
+      <div class="hero-stat"><div class="num" style="color:var(--gold)">2028</div><div class="lbl">美国重返月面目标</div></div>
+      <div class="hero-stat"><div class="num" style="color:var(--gold)">2026.08</div><div class="lbl">嫦娥七号出征南极</div></div>
+      <div class="hero-stat"><div class="num" style="color:var(--gold)">2026.04</div><div class="lbl">Artemis II 载人绕月</div></div>
     </div>
+  </div>
+</section>
 
+<article class="article">
+  <div class="wrap">
+
+    <div class="sec-head" style="margin-bottom:14px">
+      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>关键时间节点</h2>
+      <p class="desc">数据来源：中国载人航天工程办公室、NASA、虎嗅 · 更新于 2026-07-26</p>
+    </div>
+    <div class="highlight-row" id="moon-highlights"></div>
+
+    <div class="sec-head">
+      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>中国 · 稳步推进，2030 年前载人登月</h2>
+      <p class="desc">载人登月工程与嫦娥探月双线并进，任务、资源、队伍三方面整合为统一的“月球探测工程”。</p>
+    </div>
     <div class="article-body">
-      <p>2026年是中美月球探索的关键之年。中国嫦娥七号即将8月出征南极，载人登月工程全面转入工程验证阶段；美国Artemis II刚刚完成历史性载人绕月飞行。两国在月球南极的战略博弈日益白热化。</p>
-
-      <div class="highlight-row" id="moon-highlights"></div>
-
-      <h2>中国：稳步推进，2030年前载人登月</h2>
-
       <div class="company">
         <span class="company-flag flag-cn-g">国家队</span>
         <h3>🌙 载人登月工程系统</h3>
@@ -53,10 +76,14 @@
         </div>
       </div>
 
-      <p><strong>战略整合：</strong>2026年，中国对载人登月和无人探月从任务、资源、队伍三方面进行整合，统称为"月球探测工程"。</p>
+      <p><strong>战略整合：</strong>2026年，中国对载人登月和无人探月从任务、资源、队伍三方面进行整合，统称为“月球探测工程”。</p>
+    </div>
 
-      <h2>美国：Artemis加速，但不确定性犹存</h2>
-
+    <div class="sec-head">
+      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>美国 · Artemis 加速，但不确定性犹存</h2>
+      <p class="desc">Artemis II 载人绕月已落地，Artemis III / IV 接力推进——SLS、猎户座与商业着陆器并行。</p>
+    </div>
+    <div class="article-body">
       <div class="company">
         <span class="company-flag flag-us">NASA</span>
         <h3>Artemis II — 历史性载人绕月（已完成）</h3>
@@ -83,15 +110,24 @@
         <div class="en">First Lunar Landing Target</div>
         <p>NASA持续瞄准2028年初实现载人登月。NASA同时评估SpaceX星舰HLS和蓝色起源蓝月Mark 2两个着陆方案，哪个先准备好就用哪个。关键不确定性：猎户座飞船隔热瓶颈、星舰在轨推进剂转移技术。</p>
       </div>
-
-      <h2>🔬 南极水冰：为何成为战略焦点？</h2>
-      <blockquote>月球南极部分陨石坑深处终年不见阳光，温度极低。水冰既是宇航员的生命保障资源（饮用水、氧气），也可分解为氢氧用作火箭燃料——谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</blockquote>
-
-      <h2>⚖️ 中美登月路线对比</h2>
-      <div class="cmp-wrap" id="moon-compare">
-        <table class="cmp"><thead><tr><th>维度</th><th>中国</th><th>美国</th></tr></thead><tbody></tbody></table>
-      </div>
     </div>
+
+    <div class="sec-head">
+      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>🔬 南极水冰：为何成为战略焦点？</h2>
+      <p class="desc">谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</p>
+    </div>
+    <div class="article-body">
+      <blockquote style="border-left-color:var(--gold);background:rgba(240,192,96,.07)">月球南极部分陨石坑深处终年不见阳光，温度极低。水冰既是宇航员的生命保障资源（饮用水、氧气），也可分解为氢氧用作火箭燃料——谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</blockquote>
+    </div>
+
+    <div class="sec-head">
+      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>⚖️ 中美登月路线对比</h2>
+      <p class="desc">维度、节奏与组织模式的全景对照，数据由 API（/api/boards/moon/full）动态加载。</p>
+    </div>
+    <div class="cmp-wrap" id="moon-compare">
+      <table class="cmp"><thead><tr><th>维度</th><th>中国</th><th>美国</th></tr></thead><tbody></tbody></table>
+    </div>
+
   </div>
 </article>
 
@@ -99,15 +135,22 @@
 
 <div id="footer-placeholder"></div>
 <script src="js/app.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
 (async function(){
   try {
-    const d = await fetch('data/moon.json').then(r => r.json());
-    document.getElementById('moon-highlights').innerHTML = d.highlights.map(h =>
-      `<div class="hl-card ${h.color}"><div class="hl-num">${h.num}</div><div class="hl-lbl">${h.lbl}</div></div>`
+    // 优先从 API（/api/boards/moon/full，taixingData）加载，接口不可用时回退 data/moon.json
+    let d = await taixingData.loadData('moon');
+    if (!d || !Array.isArray(d.highlights) || !Array.isArray(d.comparison) || !d.highlights.length) {
+      d = await fetch('data/moon.json').then(r => r.json());
+    }
+    const hls = d.highlights || [];
+    document.getElementById('moon-highlights').innerHTML = hls.map(h =>
+      `<div class="hl-card ${h.color || 'cyan'}"><div class="hl-num">${h.num || ''}</div><div class="hl-lbl">${h.lbl || h.label || ''}</div></div>`
     ).join('');
-    document.querySelector('#moon-compare tbody').innerHTML = d.comparison.map(r =>
-      `<tr><td>${r.dim}</td><td${r.highlight==='china'?' class="hi"':''}>${r.china}</td><td>${r.us}</td></tr>`
+    const cmp = d.comparison || [];
+    document.querySelector('#moon-compare tbody').innerHTML = cmp.map(r =>
+      `<tr><td>${r.dim || r.aspect || ''}</td><td${r.highlight === 'china' ? ' class="hi"' : ''}>${r.china || r.china_value || ''}</td><td>${r.us || r.usa_value || ''}</td></tr>`
     ).join('');
   } catch(e) { console.error('Moon data load failed:', e); }
 })();

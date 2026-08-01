@@ -1,7 +1,10 @@
 <header class="topbar" id="topbar">
   <div class="topbar-in">
-    <a href="index.html" class="logo"><span class="rk">🔭</span>钛星</a>
-    <nav class="nav">
+    <a href="index.html" class="logo" aria-label="钛星首页">
+      <span class="rk">🔭</span>
+      <span class="logo-txt">钛星<span class="logo-sub">AI 聚合前沿科技新闻</span></span>
+    </a>
+    <nav class="nav" aria-label="主导航">
       <a href="index.html">首页</a>
       <a href="rocket.html">可回收火箭</a>
       <a href="moon.html">中美登月</a>
@@ -11,12 +14,13 @@
       <a href="fusion.html">可控核聚变</a>
       <a href="finance.html">科技资本</a>
     </nav>
-    <button class="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+    <button class="hamburger" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-<div class="mobile-nav-overlay"></div>
-<nav class="mobile-nav">
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<nav class="mobile-nav" id="mobile-nav" aria-label="移动端导航">
+  <div class="mn-brand">🔭 <b>钛星</b> · AI 聚合前沿科技</div>
   <a href="index.html">首页</a>
   <a href="rocket.html">可回收火箭</a>
   <a href="moon.html">中美登月</a>

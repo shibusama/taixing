@@ -1,26 +1,79 @@
-/* ===== 前瞻科技 v2 — 科技深色风新闻站 ===== */
+/* ===== 钛星 · 设计令牌与基础层 =====
+   深色星空科技风主题基底：所有设计变量在此统一定义，模块样式引用。
+   引入顺序：style-base -> style-nav -> style-pages -> style-admin */
+
 :root{
+  /* ---- 背景 ---- */
   --bg-0:#070b14;
   --bg-1:#0c1322;
   --bg-2:#141d33;
   --bg-card:#101828;
+
+  /* ---- 线条 ---- */
   --line:#1e2a45;
+  --line-hover:#2a3a60;
+  --border:var(--line);
+
+  /* ---- 文本 ---- */
   --txt-0:#eaf2ff;
   --txt-1:#a9b8d4;
   --txt-2:#6b7c9e;
+  --txt-3:#55668c;
+
+  /* ---- 强调色（七大版块色板） ---- */
   --cyan:#00e0ff;
   --gold:#f0c060;
+  --gold-2:#ffd740;
   --green:#3ddc84;
   --purple:#9b7bff;
   --amber:#ff8a3d;
   --red:#ff5470;
+  --cyan-20:rgba(0,224,255,.15);
+
+  /* ---- 渐变 ---- */
+  --grad-brand:linear-gradient(135deg,var(--cyan),var(--purple));
+  --grad-glow:linear-gradient(120deg,var(--cyan),var(--purple),var(--amber));
+  --grad-line:linear-gradient(var(--cyan),var(--purple),var(--amber));
+
+  /* ---- 圆角 ---- */
+  --radius-sm:8px;
   --radius:14px;
-  --shadow:0 8px 32px rgba(0,0,0,.45);
+  --radius-lg:20px;
+  --radius-full:999px;
+
+  /* ---- 间距 ---- */
+  --sp-1:4px;
+  --sp-2:8px;
+  --sp-3:12px;
+  --sp-4:16px;
+  --sp-5:24px;
+  --sp-6:32px;
+  --sp-7:48px;
+
+  /* ---- 阴影 ---- */
   --shadow-sm:0 2px 8px rgba(0,0,0,.25);
+  --shadow:0 8px 32px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 80px rgba(0,0,0,.55);
+
+  /* ---- 字体 ---- */
   --mono:"SF Mono","JetBrains Mono","Fira Code",Consolas,monospace;
   --sans:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+
+  /* ---- 动效 ---- */
   --trans:0.25s cubic-bezier(0.4,0,0.2,1);
+
+  /* ---- 布局 ---- */
+  --container:1200px;
+  --container-wide:1280px;
+  --topbar-h:60px;
+  --topbar-h-sm:56px;
+
+  /* ---- 层级 ---- */
+  --z-fab:98;
+  --z-nav:100;
+  --z-modal:9999;
 }
+
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 body{
@@ -35,8 +88,18 @@ a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
+/* 选中与焦点 */
+::selection{background:rgba(0,224,255,.28);color:var(--txt-0)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+/* 滚动条（WebKit / Firefox） */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg-0)}
+::-webkit-scrollbar-thumb{background:var(--bg-2);border-radius:8px;border:2px solid var(--bg-0)}
+::-webkit-scrollbar-thumb:hover{background:var(--line-hover)}
+*{scrollbar-width:thin;scrollbar-color:var(--bg-2) var(--bg-0)}
+
+.wrap{max-width:var(--container);margin:0 auto;padding:0 24px;position:relative;z-index:1}
 
 /* ========== 星空背景 ========== */
 .stars{
@@ -50,10 +113,54 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
     radial-gradient(1.5px 1.5px at 10% 60%,rgba(0,224,255,.3),transparent);
 }
 
-
 /* ========== 通用动画 ========== */
 @keyframes fadeInUp{
   from{opacity:0;transform:translateY(20px)}
   to{opacity:1;transform:translateY(0)}
 }
 .anim-in{animation:fadeInUp .5s ease both}
+
+/* ========== 共享组件原语 ========== */
+/* ---- 按钮体系 ---- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 20px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:600;line-height:1.4;white-space:nowrap;
+  background:var(--bg-card);border:1px solid var(--line);color:var(--txt-1);
+  transition:var(--trans);user-select:none;
+}
+.btn:hover{color:var(--cyan);border-color:var(--cyan)}
+.btn-primary{background:var(--cyan);border-color:var(--cyan);color:#04121a;font-weight:700}
+.btn-primary:hover{background:#33e8ff;color:#04121a;box-shadow:0 0 18px rgba(0,224,255,.35)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--txt-1)}
+.btn-ghost:hover{color:var(--cyan);background:rgba(0,224,255,.06)}
+.btn-danger{background:rgba(255,84,112,.12);border-color:rgba(255,84,112,.4);color:var(--red)}
+.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
+
+/* ---- 输入控件 ---- */
+.input,.select,.textarea{
+  width:100%;padding:10px 14px;
+  background:var(--bg-1);border:1px solid var(--line);border-radius:var(--radius-sm);
+  color:var(--txt-0);font-family:var(--sans);font-size:14px;
+  transition:var(--trans);
+}
+.input::placeholder,.textarea::placeholder{color:var(--txt-3)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--cyan);outline:none;box-shadow:0 0 0 3px rgba(0,224,255,.15)}
+.select{
+  appearance:none;-webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--txt-2) 50%),linear-gradient(135deg,var(--txt-2) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+  background-size:5px 5px;background-repeat:no-repeat;
+  padding-right:34px;
+}
+
+/* ---- 无障碍：减弱动效 ---- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}

@@ -1,4 +1,4 @@
-
+﻿
 /* ========== Hero ========== */
 .hero{
   position:relative;padding:80px 0 60px;overflow:hidden;
@@ -32,7 +32,7 @@
   font-weight:900;letter-spacing:-1px;margin-bottom:16px;
 }
 .hero h1 .glow{
-  background:linear-gradient(120deg,var(--cyan),var(--purple),var(--amber));
+  background:var(--grad-glow);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .hero p.sub{
@@ -47,7 +47,7 @@
 .hero-stat .lbl{font-size:12px;color:var(--txt-2);margin-top:2px}
 
 /* ========== 区块标题 ========== */
-.sec{padding:50px 0}
+.sec{padding:var(--sp-7) 0}
 .sec-head{
   display:flex;flex-direction:column;align-items:flex-start;
   margin-bottom:28px;gap:8px;
@@ -65,7 +65,37 @@
   transition:var(--trans);white-space:nowrap;
 }
 .sec-head .more:hover{color:var(--txt-0)}
-
+/* ========== 首页版块快捷按钮 ========== */
+.quick-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.quick-nav a{
+  --accent:var(--cyan);
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:9px;
+  background:var(--bg-card);border:1px solid var(--line);
+  color:var(--txt-1);font-size:13px;font-weight:600;
+  transition:var(--trans);
+}
+.quick-nav a::before{
+  content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 6px var(--accent);
+}
+.quick-nav a:hover{
+  color:var(--txt-0);border-color:var(--accent);
+  background:rgba(0,224,255,.05);transform:translateY(-2px);
+}
+.quick-nav .moon{--accent:var(--gold)}
+.quick-nav .semi{--accent:var(--green)}
+.quick-nav .tech{--accent:var(--purple)}
+.quick-nav .mega{--accent:var(--amber)}
+.quick-nav .fusion{--accent:var(--red)}
+.quick-nav .finance{--accent:var(--gold-2)}
+.top-quick-nav{
+  justify-content:center;
+  padding:16px 0 18px;
+  margin:0;
+  border-bottom:1px solid var(--line);
+  background:rgba(7,11,20,.55);
+}
 /* ========== 版块卡片 ========== */
 .section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
 .section-card{
@@ -88,6 +118,7 @@
 .section-card.tech{--accent:var(--purple)}.section-card.tech::after{background:var(--purple)}
 .section-card.mega{--accent:var(--amber)}.section-card.mega::after{background:var(--amber)}
 .section-card.fusion{--accent:var(--red)}.section-card.fusion::after{background:var(--red)}
+.section-card.finance{--accent:#ffd740}.section-card.finance::after{background:#ffd740}
 .section-card .sc-icon{width:48px;height:48px;margin-bottom:12px}
 .section-card .sc-icon svg{width:100%;height:100%;display:block}
 .card-cover svg{width:100%;height:100%;display:block}
@@ -122,6 +153,7 @@
 .tag-tech{background:rgba(155,123,255,.16);color:var(--purple)}
 .tag-mega{background:rgba(255,138,61,.16);color:var(--amber)}
 .tag-fusion{background:rgba(255,84,112,.16);color:var(--red)}
+.tag-finance{background:rgba(255,215,64,.16);color:#ffd740}
 .tag-break{background:rgba(255,84,112,.18);color:var(--red)}
 .tag-cn{background:rgba(61,220,132,.16);color:var(--green)}
 .tag-us{background:rgba(155,123,255,.16);color:var(--purple)}
@@ -144,6 +176,11 @@
 .card-body p{font-size:13px;color:var(--txt-1);margin-bottom:10px;line-height:1.6}
 .card-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--txt-2)}
 .card-meta .src{color:var(--cyan)}
+/* 首页「最新要闻」卡片正文两栏布局（对齐线上版视觉；仅首页 news-grid 生效） */
+#headlines-grid .card-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:600px){
+  #headlines-grid .card-body{grid-template-columns:1fr}
+}
 
 /* ========== 文章页 ========== */
 .article{padding:40px 0 60px}
@@ -166,14 +203,16 @@
 .article-body{font-size:16px;color:var(--txt-0)}
 .article-body h2{
   font-size:clamp(20px,3vw,24px);font-weight:800;
-  margin:44px 0 16px;padding-left:14px;
+  margin:20px 0 16px;padding-left:14px;
   border-left:4px solid var(--cyan);
 }
 .article-body h3{
   font-size:19px;font-weight:700;margin:28px 0 12px;color:var(--cyan);
 }
 .article-body p{margin-bottom:16px;color:var(--txt-1);line-height:1.8}
+.article-body #rocket-intro p{margin-top:16px}
 .article-body strong{color:var(--txt-0)}
+.tab-panel .article-body > p:first-child{margin-top:16px}
 .article-body ul{margin:0 0 18px 4px;list-style:none}
 .article-body li{
   margin-bottom:8px;padding-left:22px;
@@ -208,6 +247,12 @@
 }
 .tab-panel{display:none}
 .tab-panel.active{display:block}
+
+/* ===== 移动端 Tab 子导航：允许换行，避免横向溢出 ===== */
+@media (max-width: 600px){
+  .tab-nav{flex-wrap:wrap;row-gap:2px}
+  .tab-nav button{padding:8px 14px;font-size:13px}
+}
 
 .breadcrumb{
   display:flex;align-items:center;gap:6px;flex-wrap:wrap;
@@ -396,8 +441,8 @@
 }
 .card-desc em{font-style:normal;font-weight:600;color:var(--cyan)}
 
-/* 卡片正文：两栏网格 */
-.card-body{
+/* 卡片正文：两栏网格（仅含 .col 列的数据看板卡片启用，避免误伤新闻卡片/后台卡片） */
+.card-body:has(.col){
   display:grid;grid-template-columns:1fr 1fr;gap:0;
 }
 .card-body .col{
@@ -432,7 +477,7 @@
 .card-hl .hl-unit{font-size:12px;color:var(--txt-2);margin-left:2px}
 
 @media(max-width:600px){
-  .card-body{grid-template-columns:1fr}
+  .card-body:has(.col){grid-template-columns:1fr}
   .card-body .col{border-right:none;border-bottom:1px solid var(--line)}
   .card-body .col:last-child{border-bottom:none}
 }
@@ -491,7 +536,7 @@ table.cmp .hi{color:var(--amber);font-weight:700}
 .tl{position:relative;padding-left:32px}
 .tl::before{
   content:"";position:absolute;left:10px;top:6px;bottom:6px;width:2px;
-  background:linear-gradient(var(--cyan),var(--purple),var(--amber));
+  background:var(--grad-line);
 }
 .tl-item{position:relative;margin-bottom:28px;transition:var(--trans)}
 .tl-item:hover{transform:translateX(4px)}
@@ -655,7 +700,7 @@ table.cmp .hi{color:var(--amber);font-weight:700}
   .back-to-top{bottom:20px;right:20px;width:40px;height:40px;font-size:16px}
 
   /* 进度条 */
-  .progress-bar{top:56px}
+  .progress-bar{top:var(--topbar-h-sm)}
 }
 
 @media(max-width:480px){
@@ -861,3 +906,72 @@ table.cmp .hi{color:var(--amber);font-weight:700}
 /* 时间线标题点击跳转 */
 .pt-link{cursor:pointer;color:var(--cyan);transition:opacity var(--trans)}
 .pt-link:hover{opacity:.8;text-decoration:underline}
+/* ========== 数据表格（data-loader renderTable 输出） ========== */
+.data-table-wrap{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--line);border-radius:var(--radius);
+}
+table.data-table{
+  width:100%;border-collapse:collapse;font-size:13px;min-width:640px;
+}
+table.data-table th,table.data-table td{
+  padding:11px 14px;text-align:left;
+  border-bottom:1px solid var(--line);white-space:nowrap;
+}
+table.data-table thead th{
+  background:var(--bg-2);color:var(--cyan);font-weight:700;
+  font-size:12px;letter-spacing:.5px;
+}
+table.data-table tbody tr{transition:background var(--trans)}
+table.data-table tbody tr:hover{background:rgba(0,224,255,.04)}
+table.data-table tbody tr:last-child td{border-bottom:none}
+/* ========== 通用列表（data-loader renderList 输出） ========== */
+.news-list{display:flex;flex-direction:column}
+.news-item{
+  display:flex;align-items:baseline;gap:10px;
+  padding:10px 14px;border-radius:8px;
+  border-bottom:1px solid var(--line);transition:background var(--trans);
+}
+.news-item:hover{background:rgba(0,224,255,.04)}
+.news-tag{
+  flex-shrink:0;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:var(--radius-full);
+  background:rgba(0,224,255,.14);color:var(--cyan);
+}
+.news-date{
+  flex-shrink:0;font-size:11px;color:var(--txt-2);
+  font-family:var(--mono);white-space:nowrap;
+}
+.news-title{font-size:13px;color:var(--txt-1);line-height:1.5;min-width:0}
+.news-title a{color:var(--cyan);transition:var(--trans)}
+.news-title a:hover{color:var(--gold);text-decoration:underline}
+/* ========== 高亮数字卡片补充（finance 页 .hl-label / .hl-sub） ========== */
+.hl-card .hl-label{font-size:12px;color:var(--txt-2);margin-bottom:4px;line-height:1.4}
+.hl-card .hl-sub{font-size:11px;color:var(--txt-2);margin-top:4px;line-height:1.4}
+/* ========== 加载占位 ========== */
+.loading{
+  padding:40px 20px;text-align:center;
+  color:var(--txt-2);font-size:14px;
+}
+.loading::after{
+  content:"";display:inline-block;width:16px;height:16px;
+  margin-left:8px;vertical-align:-3px;
+  border:2px solid var(--line-hover);border-top-color:var(--cyan);
+  border-radius:50%;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ========== 响应式补充 ========== */
+@media(max-width:768px){
+  /* 首页顶部版块条：窄屏改为横向滚动 */
+  .top-quick-nav{
+    flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding:12px 16px 14px;
+    scrollbar-width:none;
+  }
+  .top-quick-nav::-webkit-scrollbar{display:none}
+  .top-quick-nav a{flex-shrink:0}
+  table.data-table{min-width:560px;font-size:12px}
+  .news-item{flex-wrap:wrap;gap:4px 10px}
+  .news-title{width:100%}
+}

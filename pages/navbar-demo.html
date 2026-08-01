@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>导航栏改动 Demo（Hero 右上角叠入版）</title>
+<style>
+:root{
+  --bg:#070b14; --bg-card:#0d1522; --line:rgba(255,255,255,.08);
+  --txt-0:#f2f6fc; --txt-1:#aab4c5; --txt-2:#6b7689;
+  --cyan:#00e0ff; --purple:#9b7bff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt-1);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.7;padding-bottom:60px}
+.demo-head{max-width:1080px;margin:0 auto;padding:48px 24px 10px}
+.demo-head .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--cyan);
+  border:1px solid rgba(0,224,255,.4);border-radius:99px;padding:4px 12px;margin-bottom:14px;
+  background:rgba(0,224,255,.06)}
+.demo-head h1{color:var(--txt-0);font-size:26px;font-weight:800}
+.demo-head p{color:var(--txt-2);font-size:14px;margin-top:8px}
+.note{max-width:1080px;margin:0 auto;padding:10px 24px 0;font-size:13px;color:var(--txt-2)}
+.note b{color:var(--txt-1)}
+/* ---- 对比区块标题 ---- */
+.section{max-width:1080px;margin:48px auto 0;padding:0 24px}
+.section h2{display:flex;align-items:center;gap:10px;color:var(--txt-0);font-size:18px;font-weight:800;margin-bottom:4px}
+.section h2 .badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;letter-spacing:1px}
+.badge-cur{color:var(--txt-1);background:rgba(255,255,255,.08);border:1px solid var(--line)}
+.badge-new{color:#04121a;background:var(--cyan);box-shadow:0 0 14px rgba(0,224,255,.45)}
+.section .desc{font-size:13px;color:var(--txt-2);margin-bottom:16px}
+.section .desc code{color:var(--cyan);background:rgba(0,224,255,.08);padding:1px 6px;border-radius:4px;font-size:12px}
+/* ---- 导航条通用 ---- */
+.nav{display:flex;flex-wrap:wrap;gap:10px}
+.nav a{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;
+  background:var(--bg-card);border:1px solid var(--line);color:var(--txt-1);
+  font-size:13px;font-weight:600;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav a::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--dot);box-shadow:0 0 6px var(--dot)}
+.nav a:hover{color:var(--txt-0);border-color:var(--dot);background:rgba(0,224,255,.05);transform:translateY(-2px)}
+/* ---- 当前效果：居中、不吸顶 ---- */
+.nav-cur{justify-content:center;padding:16px 0 18px;border-bottom:1px solid var(--line);background:rgba(7,11,20,.55)}
+/* ---- Hero（模拟真实站点主视觉区，自包含） ---- */
+.hero{position:relative;height:400px;padding:132px 0 0;overflow:hidden;
+  background:linear-gradient(180deg,rgba(0,224,255,.05) 0%,rgba(155,123,255,.04) 55%,transparent 100%);
+  border-radius:14px;border:1px solid var(--line)}
+.hero::before{content:"";position:absolute;top:-30%;right:-10%;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,224,255,.14),transparent 70%);filter:blur(40px)}
+.hero::after{content:"";position:absolute;bottom:-25%;left:-8%;width:360px;height:360px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,61,.10),transparent 70%);filter:blur(40px)}
+.hero .inner{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 28px}
+.crumb{font-size:12px;color:var(--txt-2);letter-spacing:.5px;margin-bottom:18px}
+.crumb b{color:var(--cyan);font-weight:700}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
+  background:rgba(0,224,255,.1);border:1px solid rgba(0,224,255,.3);
+  color:var(--cyan);font-size:13px;font-weight:600;margin-bottom:18px}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(26px,4.5vw,42px);line-height:1.15;font-weight:900;letter-spacing:-1px;margin-bottom:14px;color:var(--txt-0)}
+.hero h1 .glow{background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{font-size:clamp(14px,2vw,17px);color:var(--txt-1);max-width:680px;margin-bottom:26px}
+.hero-stats{display:flex;gap:36px;flex-wrap:wrap}
+.hero-stat .num{font-size:clamp(20px,3vw,28px);font-weight:800;font-family:Consolas,Menlo,monospace;color:var(--cyan)}
+.hero-stat .lbl{font-size:12px;color:var(--txt-2);margin-top:2px}
+/* ---- 修改后效果：叠入 Hero 主视觉区内部右上角、靠右、吸顶、毛玻璃 + 底部发光渐变线 ---- */
+.nav-new{position:sticky;top:0;z-index:999;display:flex;flex-wrap:nowrap;justify-content:flex-end;gap:10px;
+  width:fit-content;max-width:100%;margin:-340px 28px 0 auto;height:60px;align-items:center;
+  padding:0 16px;border-radius:12px;border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(7,11,20,.75);
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.nav-new::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,224,255,.55),rgba(155,123,255,.55),transparent)}
+/* ---- 占位内容 ---- */
+.ph{background:var(--bg-card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:14px}
+.ph h3{color:var(--txt-2);font-size:14px;font-weight:700;margin-bottom:8px}
+.ph p{color:var(--txt-2);font-size:13px;margin-bottom:6px}
+.ph p b{color:var(--txt-1)}
+.hint{max-width:1080px;margin:20px auto 0;padding:12px 24px;color:var(--cyan);font-size:13px;text-align:center;opacity:.85}
+/* ---- 页脚说明 ---- */
+.foot{max-width:1080px;margin:48px auto 0;padding:18px 24px;border-top:1px solid var(--line);color:var(--txt-2);font-size:12px;text-align:center}
+.foot code{color:var(--cyan);background:rgba(0,224,255,.08);padding:1px 6px;border-radius:4px}
+/* ---- 窄屏：保持横向滚动，对齐改回 flex-start（避免 flex-end 导致左侧裁切不可滚动） ---- */
+@media(max-width:768px){
+  .nav-cur,.nav-new{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding:12px 16px 14px;scrollbar-width:none}
+  .nav-cur::-webkit-scrollbar,.nav-new::-webkit-scrollbar{display:none}
+  .nav a{flex-shrink:0}
+  .demo-head h1{font-size:20px}
+  .hero{height:auto;padding:44px 0 40px}
+  .nav-new{margin:18px 0 0;width:auto;height:auto;align-items:flex-start;border-radius:12px;box-shadow:none}
+  .hero-stats{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="demo-head">
+  <span class="tag">DEMO · 仅供预览</span>
+  <h1>导航栏改动对比 Demo（Hero 右上角叠入版）</h1>
+  <p>当前效果 vs 修改后效果（居中不吸顶 → 叠入 Hero 主视觉右上角 + 吸顶 + 毛玻璃发光），向下滚动体验区别。</p>
+</div>
+<div class="note">此文件是独立演示，<b>不影响网站项目任何文件</b>。当前效果区域保持原样；修改后效果区域模拟真实页面结构：Hero 主视觉区（版块导航条叠放在其内部右上角）→ 正文。</div>
+
+<!-- ==================== 区域一：当前效果 ==================== -->
+<div class="section">
+  <h2><span class="badge badge-cur">当前</span> 页面顶部居中 · 不吸顶（滚动消失）</h2>
+  <p class="desc">版块导航条位于页面最顶部，<code>justify-content:center</code>，往下滚会随页面滚走。</p>
+
+  <nav class="nav nav-cur" style="--dot:#5b6678">
+    <a>可回收火箭</a><a>中美登月</a><a>半导体</a><a>中国科技</a><a>大工程</a><a>可控核聚变</a><a>科技资本</a>
+  </nav>
+
+  <div style="margin-top:22px">
+    <div class="ph">
+      <h3>占位内容 01 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 02 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 03 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 04 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 05 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 区域二：修改后效果 ==================== -->
+<div class="section">
+  <h2><span class="badge badge-new">修改后</span> Hero 主视觉右上角 · 叠入吸顶</h2>
+  <p class="desc">版块导航条叠放在 Hero 主视觉区内部、右上角对齐：<code>justify-content:flex-end</code>（靠右）+ <code>position:sticky;top:0</code>（吸顶）+ 毛玻璃 + 底部发光渐变线。滚动时导航条先吸在页面顶部，Hero 从下方滚走。</p>
+
+  <!-- 模拟 Hero 主视觉区（真实站点风格，固定高度约 400px，导航条叠入其右上角） -->
+  <div class="hero">
+    <div class="inner">
+      <div class="crumb">首页 › <b>中美登月</b></div>
+      <div class="badge"><span class="dot"></span>月球竞速 · 实时追踪</div>
+      <h1>中美登月竞速 <span class="glow">谁先踏上月球</span></h1>
+      <p class="sub">聚焦中美两国登月计划的最新进展、节点与差距，数据持续更新。</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">2026</div><div class="lbl">计划载人登月</div></div>
+        <div class="hero-stat"><div class="num">12</div><div class="lbl">关键里程碑</div></div>
+        <div class="hero-stat"><div class="num">04</div><div class="lbl">跟踪机构</div></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav nav-new" style="--dot:#5b6678">
+    <a>可回收火箭</a><a>中美登月</a><a>半导体</a><a>中国科技</a><a>大工程</a><a>可控核聚变</a><a>科技资本</a>
+  </nav>
+
+  <div style="margin-top:22px">
+    <div class="ph">
+      <h3>占位内容 01 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 02 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 03 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 04 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 05 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 06 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 07 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 08 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 09 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 10 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 11 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+    <div class="ph">
+      <h3>占位内容 12 · 灰色小标题</h3>
+      <p>这是用来撑高页面的占位段落。请向下滚动页面，观察上方导航条的行为：<b>当前效果</b>区域里的导航条会随页面一起滚走消失；<b>修改后效果</b>区域里的导航条会在 Hero 滚出屏幕后吸在页面顶部不动。</p>
+      <p>占位段落第二行：钛星科技新闻站深色主题，背景 #070b14，卡片深灰、青色强调 #00e0ff，与网站观感保持一致。</p>
+    </div>
+  </div>
+  <div class="hint">↓ 滚到这里时，「修改后」的导航条应已吸在页面顶部；「当前」的早已滚走。</div>
+</div>
+
+<div class="foot">
+  实际改动需调整 <b>HTML 结构</b>（把 <code>.quick-nav</code> 移入 Hero 主视觉区内部、置于右上角）＋ <b>CSS</b>（<code>css/style-pages.css</code> 的 <code>.top-quick-nav</code>：<code>justify-content:flex-end</code>、<code>position:sticky;top:0;z-index</code>、负 margin 上移叠入 hero 等）。<br>
+  窄屏（&lt;768px）保持横向滚动 + <code>flex-start</code>，导航条回退到 Hero 下方正常流，避免遮住标题。
+</div>
+
+</body>
+</html>

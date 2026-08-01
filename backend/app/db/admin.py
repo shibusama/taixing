@@ -91,3 +91,80 @@ def delete_latest_news(news_id: int) -> bool:
     sb = get_supabase()
     sb.table("latest_news").delete().eq("id", news_id).execute()
     return True
+
+
+# ============ ai_extract_logs（AI 提取历史，v3 管理后台专用表） ============
+
+def log_ai_extract(
+    category: str = None,
+    limit: int = 0,
+    total: int = 0,
+    inserted: int = 0,
+    failed: int = 0,
+    status: str = "success",
+    message: str = "",
+) -> bool:
+    """写入一条 AI 提取历史记录。
+
+    容错：ai_extract_logs 表尚未创建时，捕获异常并返回 False，不影响主流程。
+    """
+    try:
+        sb = get_supabase()
+        now = datetime.now().isoformat()
+        sb.table("ai_extract_logs").insert({
+            "category": category,
+            "limit": limit,
+            "total": total,
+            "inserted": inserted,
+            "failed": failed,
+            "status": status,
+            "message": message,
+            "created_at": now,
+        }).execute()
+        return True
+    except Exception as e:
+        print(f"[ai_extract_logs] 写入失败（表可能未创建，已忽略）：{e}")
+        return False
+
+
+def get_ai_extract_logs(limit: int = 20) -> List[Dict]:
+    """读取 AI 提取历史（按时间倒序）。
+
+    容错：ai_extract_logs 表尚未创建时，捕获异常并返回空列表。
+    """
+    try:
+        sb = get_supabase()
+        result = sb.table("ai_extract_logs").select("*").order("created_at", desc=True).limit(limit).execute()
+        return result.data or []
+    except Exception as e:
+        print(f"[ai_extract_logs] 读取失败（表可能未创建，已忽略）：{e}")
+        return []
+
+
+# ============ 仪表盘总览 ============
+
+def get_admin_stats() -> Dict:
+    """仪表盘总览：文章统计 + 版块状态 + 最近爬取/AI 记录"""
+    from app.db.articles import get_raw_article_stats
+    from app.db.board_ops import get_all_board_status
+
+    articles = get_raw_article_stats()
+    boards = get_all_board_status()
+    recent_crawl = get_crawl_logs(limit=5)
+    recent_ai = get_ai_extract_logs(limit=5)
+
+    latest_news_total = 0
+    try:
+        sb = get_supabase()
+        r = sb.table("latest_news").select("id", count="exact").execute()
+        latest_news_total = r.count if hasattr(r, "count") and r.count else len(r.data or [])
+    except Exception:
+        pass
+
+    return {
+        "articles": articles,
+        "boards": boards,
+        "recent_crawl_logs": recent_crawl,
+        "recent_ai_logs": recent_ai,
+        "latest_news_total": latest_news_total,
+    }

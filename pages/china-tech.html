@@ -6,80 +6,154 @@
 <title>钛星 · 中国前沿科技全景</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-/* ===== 中国科技 Tab 专属样式 ===== */
-.ct-tabs{margin:16px 0 0}
+/* 页面级样式：中国科技（accent = 紫色） */
+.bd-page{--accent:var(--purple);--accent-soft:rgba(155,123,255,.14)}
+/* 分类图标配色 */
+.bd-icon.ai{background:rgba(155,123,255,.16)}
+.bd-icon.qc{background:rgba(0,224,255,.16)}
+.bd-icon.energy{background:rgba(61,220,132,.16)}
+.bd-icon.sc{background:rgba(255,138,61,.16)}
+.bd-icon.bio{background:rgba(255,77,119,.16)}
 
-/* 新闻拆解卡片 */
-.breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin:20px 0}
-.breakdown-card{
-  background:var(--bg-card);border:1px solid var(--line);
-  border-radius:var(--radius);overflow:hidden;
-  transition:var(--trans);
-}
-.breakdown-card:hover{border-color:rgba(155,123,255,.35);box-shadow:0 8px 28px rgba(0,0,0,.4);transform:translateY(-2px)}
-.bd-head{
-  padding:18px 20px 0;display:flex;align-items:flex-start;gap:10px;
-}
-.bd-icon{
-  width:40px;height:40px;border-radius:10px;flex-shrink:0;
-  display:grid;place-items:center;font-size:20px;
-}
-.bd-icon.ai{background:rgba(155,123,255,.15)}
-.bd-icon.qc{background:rgba(0,224,255,.15)}
-.bd-icon.energy{background:rgba(61,220,132,.15)}
-.bd-icon.sc{background:rgba(255,138,61,.15)}
-.bd-icon.bio{background:rgba(255,77,119,.15)}
+/* =========================================================
+   版块页重设计 · 共享样式（semiconductor / china-tech 两页同步维护）
+   说明：页面级样式，正式上线时由协调者统一收敛至 css/
+   ========================================================= */
+.bd-page{--accent:var(--green);--accent-soft:rgba(61,220,132,.14)}
 
-.bd-title{
-  font-size:15px;font-weight:700;color:var(--txt);line-height:1.5;
-}
-.bd-body{padding:12px 20px 18px}
-.bd-body p{font-size:13.5px;color:var(--txt-2);line-height:1.75;margin:0}
-.bd-stats{
-  display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0;
-}
-.bd-tag{
-  display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;
-  background:rgba(155,123,255,.12);color:var(--purple);
-}
-.bd-tag.green{background:rgba(61,220,132,.12);color:var(--green)}
-.bd-tag.cyan{background:rgba(0,224,255,.12);color:var(--cyan)}
-.bd-tag.amber{background:rgba(255,138,61,.12);color:var(--amber)}
-.bd-tag.pink{background:rgba(255,77,119,.12);color:#ff4d77}
-.bd-source{
-  font-size:11px;color:var(--txt-3);margin-top:10px;padding-top:10px;
-  border-top:1px solid var(--line);
-  display:flex;justify-content:space-between;align-items:center;
-}
+/* ---- 版块 Hero ---- */
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
+.bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
+.bd-hero>*{position:relative;z-index:1}
+.bd-hero .breadcrumb{padding:0;margin-bottom:16px}
+.bd-hero .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:16px;border-radius:999px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
+.bd-hero h1 .glow{background:linear-gradient(120deg,var(--accent),var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
+.bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
+.bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.bd-hero .meta span:first-child::before{display:none}
 
-.company-card{
-  background:var(--bg-card);border:1px solid var(--line);
-  border-radius:var(--radius);padding:20px;
-  transition:var(--trans);
-}
-.company-card:hover{border-color:rgba(155,123,255,.35);box-shadow:0 8px 28px rgba(0,0,0,.4)}
-.company-card h3{font-size:16px;margin:0 0 4px;color:var(--txt)}
-.cc-flag{
-  display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;
-  font-weight:600;margin-bottom:8px;
-}
-.cc-flag.cn{background:rgba(255,77,119,.12);color:#ff4d77}
-.cc-flag.private{background:rgba(155,123,255,.12);color:var(--purple)}
-.cc-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;
-}
-.cc-grid .kv{text-align:center}
-.cc-grid .k{font-size:11px;color:var(--txt-3);margin-bottom:4px}
-.cc-grid .v{font-size:18px;font-weight:800;color:var(--cyan)}
-.cc-desc{font-size:13.5px;color:var(--txt-2);line-height:1.75;margin-top:10px}
+/* ---- 区块标题 ---- */
+.bd-sec{margin:42px 0 0}
+.bd-sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.bd-sec-idx{flex-shrink:0;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--accent-soft)}
+.bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
+.bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin-top:-4px}
 
-/* 两列对比 */
-.compare-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin:20px 0}
+/* ---- Tab 导航 ---- */
+.bd-tabs{gap:4px;margin:28px 0 4px;border-bottom:2px solid var(--line);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tabs button{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;font-size:14px;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.bd-tabs button .tb-ico{font-size:15px;line-height:1}
+.bd-tabs button:hover{color:var(--txt-1)}
+.bd-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-@media (max-width:768px){
+/* ---- Tab 引言 ---- */
+.bd-intro{font-size:14px;line-height:1.9;color:var(--txt-1);background:var(--bg-1);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:22px 0 4px}
+
+/* ---- 新闻拆解卡片 ---- */
+.breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin:0 0 8px}
+.breakdown-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:var(--trans)}
+.breakdown-card:hover{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.42);transform:translateY(-3px)}
+.bd-head{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 0}
+.bd-icon{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;font-size:20px;background:var(--accent-soft)}
+.bd-meta{flex:1;min-width:0}
+.bd-tag{display:inline-block;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:5px;background:var(--accent-soft);color:var(--accent)}
+.bd-tag.green{background:rgba(61,220,132,.16);color:var(--green)}
+.bd-tag.cyan{background:rgba(0,224,255,.16);color:var(--cyan)}
+.bd-tag.purple{background:rgba(155,123,255,.16);color:var(--purple)}
+.bd-tag.amber{background:rgba(255,138,61,.16);color:var(--amber)}
+.bd-tag.red{background:rgba(255,84,112,.16);color:var(--red)}
+.bd-tag.pink{background:rgba(255,77,119,.16);color:#ff4d77}
+/* 兼容旧命名：tag-green / tag-cyan / ... */
+.bd-tag.tag-green{background:rgba(61,220,132,.16);color:var(--green)}
+.bd-tag.tag-cyan{background:rgba(0,224,255,.16);color:var(--cyan)}
+.bd-tag.tag-purple{background:rgba(155,123,255,.16);color:var(--purple)}
+.bd-tag.tag-amber{background:rgba(255,138,61,.16);color:var(--amber)}
+.bd-tag.tag-red{background:rgba(255,84,112,.16);color:var(--red)}
+.bd-date{font-size:11px;color:var(--txt-2)}
+.bd-body{padding:12px 20px 18px;flex:1;display:flex;flex-direction:column}
+.bd-title{font-size:16.5px;font-weight:800;line-height:1.4;margin-bottom:8px}
+.bd-body p{font-size:13px;color:var(--txt-1);line-height:1.8;margin:0 0 12px}
+.bd-stats{display:flex;gap:10px;flex-wrap:wrap;margin:auto 0 0}
+.bd-stat{flex:1;min-width:82px;background:var(--bg-1);border:1px solid var(--line);border-radius:9px;padding:8px 10px;text-align:center}
+.bd-stat .v{display:block;font-size:15px;font-weight:800;font-family:var(--mono);color:var(--accent)}
+.bd-stat .l{display:block;font-size:10px;color:var(--txt-2);margin-top:2px}
+.bd-chip{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(155,123,255,.12);color:var(--purple)}
+.bd-chip.green{background:rgba(61,220,132,.12);color:var(--green)}
+.bd-chip.cyan{background:rgba(0,224,255,.12);color:var(--cyan)}
+.bd-chip.amber{background:rgba(255,138,61,.12);color:var(--amber)}
+.bd-chip.pink{background:rgba(255,77,119,.12);color:#ff4d77}
+.bd-highlight{margin-top:12px;padding:12px 14px;background:var(--bg-1);border-left:3px solid var(--accent);border-radius:8px;font-size:13px;color:var(--txt-0);line-height:1.75}
+.bd-src{font-size:11px;color:var(--txt-2);margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ---- 公司档案卡片 ---- */
+.compare-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin:0 0 8px}
+.company-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px;position:relative;transition:var(--trans);display:flex;flex-direction:column}
+.company-card:hover{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.42);transform:translateY(-3px)}
+.company-card .cc-flag{position:static;display:inline-block;width:fit-content;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;margin:0 0 8px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);letter-spacing:.3px}
+.company-card .cc-flag.cn{background:rgba(255,84,112,.14);color:var(--red)}
+.company-card .cc-flag.private{background:rgba(155,123,255,.14);color:var(--purple)}
+.company-card h3{font-size:17px;font-weight:800;color:var(--txt-0);margin:0 0 6px;letter-spacing:-.2px}
+.company-card .cc-desc{font-size:13px;color:var(--txt-1);line-height:1.8;margin:0}
+.cc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.cc-grid .kv{text-align:center;padding:9px 6px}
+.cc-grid .k{font-size:10px;color:var(--txt-2);margin-bottom:3px;text-transform:none;letter-spacing:.3px}
+.cc-grid .v{font-size:16px;font-weight:800;color:var(--cyan);line-height:1.3}
+
+/* ---- 进程条 ---- */
+.progress-strip{display:flex;gap:0;border-radius:12px;overflow:hidden;background:var(--bg-1);margin:22px 0 6px;border:1px solid var(--line)}
+.progress-step{flex:1;padding:14px 12px;text-align:center;position:relative;border-right:1px solid var(--line)}
+.progress-step:last-child{border-right:none}
+.progress-step::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:transparent}
+.progress-step.done::before{background:var(--green)}
+.progress-step.cur::before{background:var(--cyan)}
+.progress-step.next::before{background:var(--amber)}
+.progress-step .yr{font-size:11px;color:var(--txt-2);margin-bottom:4px;font-family:var(--mono)}
+.progress-step .val{font-size:18px;font-weight:800;font-family:var(--mono)}
+.progress-step .lbl{font-size:11px;color:var(--txt-1);margin-top:2px}
+.progress-step.done .val{color:var(--green)}
+.progress-step.cur .val{color:var(--cyan)}
+.progress-step.next .val{color:var(--amber)}
+
+/* ---- 对比小表 ---- */
+.mini-cmp{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.mini-cmp td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--txt-1);line-height:1.6}
+.mini-cmp tr:last-child td{border-bottom:none}
+.mini-cmp td:first-child{color:var(--txt-2);font-weight:600;width:38%;white-space:nowrap}
+.mini-cmp td:last-child{color:var(--txt-0);font-weight:600}
+
+/* ---- 响应式 ---- */
+@media(max-width:768px){
+  .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
+  .bd-hero .meta{gap:10px;font-size:11px}
+  .bd-hero .sub{font-size:13.5px}
   .breakdown,.compare-2col{grid-template-columns:1fr}
+  .bd-sec{margin:32px 0 0}
+  .bd-sec-head{flex-wrap:wrap;gap:8px}
   .cc-grid{grid-template-columns:repeat(2,1fr)}
+  .progress-strip{flex-wrap:wrap}
+  .progress-step{flex:1 1 50%;border-bottom:1px solid var(--line)}
+  .progress-step:nth-child(2n){border-right:none}
+  .bd-tabs button{padding:10px 14px;font-size:13px}
+  .bd-stats{gap:8px}
+  .bd-stat{min-width:70px;padding:6px 8px}
+  .bd-stat .v{font-size:13px}
 }
+@media(max-width:480px){
+  .bd-hero h1{font-size:23px}
+  .progress-step{flex:1 1 100%;border-right:none}
+  .bd-title{font-size:15px}
+  .bd-head{padding:16px 16px 0}
+  .bd-body{padding:10px 16px 16px}
+  .company-card{padding:16px 14px 14px}
+}
+
 </style>
 </head>
 <body>
@@ -87,246 +161,291 @@
 <div class="progress-bar"></div>
 
 <div id="header-placeholder"></div>
-<article class="article">
+<article class="article bd-page">
   <div class="wrap">
-    <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">&#8250;</span> <span>中国科技</span></div>
-    <div class="article-head">
+
+    <!-- ===== 版块 Hero ===== -->
+    <div class="bd-hero">
+      <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>中国科技</span></div>
       <div class="kicker">CHINA TECH · 2026 前沿科技全景</div>
-      <h1>AI称霸、量子领先、能源革命：中国科技全面爆发</h1>
-      <div class="meta"><span>数据来源：Nature、新华社、人民日报、各科技企业官方</span><span>更新时间：2026-07-26</span></div>
+      <h1>AI称霸、量子领先、能源革命：<span class="glow">中国科技全面爆发</span></h1>
+      <p class="sub">从大模型调用量登顶全球，到九章四号刷新量子优越性纪录，再到 6G 试验频率全球首发——AI、量子、能源、通信、生命科学五线并进，中国前沿科技进入全面爆发期。</p>
+      <div class="meta">
+        <span>数据来源：Nature、新华社、人民日报、各科技企业官方</span>
+        <span>更新时间：2026-07-26</span>
+      </div>
     </div>
 
-    <!-- 全局关键数据 -->
+    <!-- 全局关键数据（API 动态渲染） -->
     <div class="highlight-row" id="ct-highlights"></div>
 
     <!-- ===== Tab 导航 ===== -->
-    <div class="tab-nav ct-tabs" id="ct-tabs">
-      <button class="active" data-tab="tab-ai">人工智能</button>
-      <button data-tab="tab-quantum">量子计算</button>
-      <button data-tab="tab-energy">新能源</button>
-      <button data-tab="tab-scicomm">超算与通信</button>
-      <button data-tab="tab-biomed">生物医药与脑机</button>
+    <div class="tab-nav bd-tabs ct-tabs" id="ct-tabs">
+      <button class="active" data-tab="tab-ai"><span class="tb-ico">🤖</span>人工智能</button>
+      <button data-tab="tab-quantum"><span class="tb-ico">⚛️</span>量子计算</button>
+      <button data-tab="tab-energy"><span class="tb-ico">🔋</span>新能源</button>
+      <button data-tab="tab-scicomm"><span class="tb-ico">📡</span>超算与通信</button>
+      <button data-tab="tab-biomed"><span class="tb-ico">🧬</span>生物医药与脑机</button>
     </div>
 
     <!-- ===== Tab 1: 人工智能 ===== -->
     <div class="tab-panel active" id="tab-ai">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
-        2026年上半年，中国AI大模型周调用量达7.94万亿Token，连续十周超过美国，稳居全球第一。
-        DeepSeek V4系列登顶OpenRouter全球调用榜、千问Qwen 3.7-Max登顶国产模型盲测榜首、文心5.1成本仅业界6%——从参数竞赛到生态协同，国产大模型正式进入效率为王的新阶段。
-      </p>
+      <div class="article-body">
+        <p class="bd-intro">2026年上半年，中国AI大模型周调用量达7.94万亿Token，连续十周超过美国，稳居全球第一。DeepSeek V4系列登顶OpenRouter全球调用榜、千问Qwen 3.7-Max登顶国产模型盲测榜首、文心5.1成本仅业界6%——从参数竞赛到生态协同，国产大模型正式进入效率为王的新阶段。</p>
 
-      <!-- DeepSeek V4 -->
-      <h2>DeepSeek V4系列：全球调用量登顶</h2>
-      <div class="company-card">
-        <span class="cc-flag private">明星创业公司</span>
-        <h3>DeepSeek · V4 Pro / V4 Flash</h3>
-        <p class="cc-desc">采用全球首创CSA+HCA混合注意力架构，V4-Pro为1.6T参数/49B激活，V4-Flash为284B参数/13B激活，均原生支持100万Token上下文，以MIT协议全面开源。V4-Flash登顶OpenRouter全球调用榜，V4-Pro永久降价75%，百万输出Token仅3.48美元。已原生适配华为昇腾950PR等国产芯片，推理效率提升3倍以上。DeepSeek正与腾讯、阿里洽谈首轮约510亿元融资。</p>
-        <div class="cc-grid">
-          <div class="kv"><div class="k">V4-Pro参数</div><div class="v">1.6T/49B</div></div>
-          <div class="kv"><div class="k">编码代理</div><div class="v">SWE 80.6%</div></div>
-          <div class="kv"><div class="k">上下文</div><div class="v">1M Token</div></div>
-          <div class="kv"><div class="k">输出定价</div><div class="v">$3.48/M</div></div>
-        </div>
-      </div>
-
-      <!-- Qwen & 百度 -->
-      <div class="compare-2col">
-        <div class="company-card">
-          <span class="cc-flag private">阿里云</span>
-          <h3>千问 Qwen 3.7-Max</h3>
-          <p class="cc-desc">三方机构Arena全球大模型盲测总榜国产第一，超过Kimi-K2.6、DeepSeek-V4-Pro。在平头哥真武M890芯片上，从零自主工作35小时，完成1158次工具调用，推理内核性能提升10倍。阿里AI业务ARR超80亿元，年底预计突破300亿元。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">Arena排名</div><div class="v">国产第1</div></div>
-            <div class="kv"><div class="k">自主工作</div><div class="v">35小时</div></div>
-            <div class="kv"><div class="k">推理得分</div><div class="v">GPQA 92.4</div></div>
-            <div class="kv"><div class="k">AI收入ARR</div><div class="v">&gt;80亿</div></div>
-          </div>
-        </div>
-        <div class="company-card">
-          <span class="cc-flag private">百度</span>
-          <h3>文心大模型 5.1</h3>
-          <p class="cc-desc">采用"多维弹性预训练"技术，参数压缩至文心5.0约1/3，预训练成本仅业界同规模模型6%。LMArena搜索榜国产第一、全球第四，Agent能力超越DeepSeek-V4-Pro。李彦宏提出新度量衡DAA（日活智能体数），发布通用智能体DuMate、代码智能体秒哒3.0。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">训练成本</div><div class="v">业界6%</div></div>
-            <div class="kv"><div class="k">数学AIME</div><div class="v">99.6分</div></div>
-            <div class="kv"><div class="k">MAU</div><div class="v">2亿+</div></div>
-            <div class="kv"><div class="k">LMArena</div><div class="v">全球第4</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 智谱 & MiniMax & 阶跃 -->
-      <h2>GLM / MiniMax / Step：多极并进</h2>
-      <div class="breakdown">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon ai">&#9883;</div>
-            <div class="bd-title">智谱 GLM-5.1：8小时级持续工作</div>
-          </div>
-          <div class="bd-body">
-            <p>全球唯一达到8小时级持续工作的开源模型。SWE-Bench Pro 58.4分排名全球第一，全面对齐Claude Opus 4.6。GLM-5.1高速版API输出速度达400 tokens/s，刷新全球纪录，由GLM与TileRT团队联合打造。</p>
-            <div class="bd-stats">
-              <span class="bd-tag">SWE-Bench Pro 全球第1</span>
-              <span class="bd-tag cyan">400 tokens/s</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>DeepSeek V4系列：全球调用量登顶</h2></div>
+          <div class="company-card">
+            <span class="cc-flag private">明星创业公司</span>
+            <h3>DeepSeek · V4 Pro / V4 Flash</h3>
+            <p class="cc-desc">采用全球首创CSA+HCA混合注意力架构，V4-Pro为1.6T参数/49B激活，V4-Flash为284B参数/13B激活，均原生支持100万Token上下文，以MIT协议全面开源。V4-Flash登顶OpenRouter全球调用榜，V4-Pro永久降价75%，百万输出Token仅3.48美元。已原生适配华为昇腾950PR等国产芯片，推理效率提升3倍以上。DeepSeek正与腾讯、阿里洽谈首轮约510亿元融资。</p>
+            <div class="cc-grid">
+              <div class="kv"><div class="k">V4-Pro参数</div><div class="v">1.6T/49B</div></div>
+              <div class="kv"><div class="k">编码代理</div><div class="v">SWE 80.6%</div></div>
+              <div class="kv"><div class="k">上下文</div><div class="v">1M Token</div></div>
+              <div class="kv"><div class="k">输出定价</div><div class="v">$3.48/M</div></div>
             </div>
-            <div class="bd-source"><span>来源：智谱AI</span><span>2026年5月</span></div>
           </div>
         </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon ai">&#9889;</div>
-            <div class="bd-title">MiniMax M3：首个三要素齐备开源模型</div>
-          </div>
-          <div class="bd-body">
-            <p>国内首个齐备前沿编程+1M超长上下文+原生多模态三大要素的模型，也是唯一开源的。采用MSA稀疏注意力架构，SWE-Bench Pro超GPT-5.5和Gemini 3.1 Pro。全球企业开发者客户超百万，ARR翻番周期压缩至60天。</p>
-            <div class="bd-stats">
-              <span class="bd-tag">2.1T参数</span>
-              <span class="bd-tag green">开源</span>
+
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>千问与文心：国产双子星</h2></div>
+          <div class="compare-2col">
+            <div class="company-card">
+              <span class="cc-flag private">阿里云</span>
+              <h3>千问 Qwen 3.7-Max</h3>
+              <p class="cc-desc">三方机构Arena全球大模型盲测总榜国产第一，超过Kimi-K2.6、DeepSeek-V4-Pro。在平头哥真武M890芯片上，从零自主工作35小时，完成1158次工具调用，推理内核性能提升10倍。阿里AI业务ARR超80亿元，年底预计突破300亿元。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">Arena排名</div><div class="v">国产第1</div></div>
+                <div class="kv"><div class="k">自主工作</div><div class="v">35小时</div></div>
+                <div class="kv"><div class="k">推理得分</div><div class="v">GPQA 92.4</div></div>
+                <div class="kv"><div class="k">AI收入ARR</div><div class="v">&gt;80亿</div></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：MiniMax</span><span>2026年5月</span></div>
-          </div>
-        </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon ai">&#128640;</div>
-            <div class="bd-title">阶跃星辰 Step 3.7 Flash：生产级Agent模型</div>
-          </div>
-          <div class="bd-body">
-            <p>稀疏MoE架构，196B+1.8B参数/仅11B激活，最高生成速度400 Tokens/s，兼容Claude Code等主流框架。累计发布38款基座模型，获25亿美元Pre-IPO融资创行业纪录，装机量超4200万台。</p>
-            <div class="bd-stats">
-              <span class="bd-tag amber">25亿融资</span>
-              <span class="bd-tag">400 tokens/s</span>
+            <div class="company-card">
+              <span class="cc-flag private">百度</span>
+              <h3>文心大模型 5.1</h3>
+              <p class="cc-desc">采用「多维弹性预训练」技术，参数压缩至文心5.0约1/3，预训练成本仅业界同规模模型6%。LMArena搜索榜国产第一、全球第四，Agent能力超越DeepSeek-V4-Pro。李彦宏提出新度量衡DAA（日活智能体数），发布通用智能体DuMate、代码智能体秒哒3.0。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">训练成本</div><div class="v">业界6%</div></div>
+                <div class="kv"><div class="k">数学AIME</div><div class="v">99.6分</div></div>
+                <div class="kv"><div class="k">MAU</div><div class="v">2亿+</div></div>
+                <div class="kv"><div class="k">LMArena</div><div class="v">全球第4</div></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：阶跃星辰</span><span>2026年5月</span></div>
           </div>
         </div>
-      </div>
 
-      <!-- 华为 & 小米 & 商汤 -->
-      <h2>华为盘古 / 小米MiMo / 商汤SenseNova</h2>
-      <div class="company-card">
-        <span class="cc-flag cn">华为</span>
-        <h3>盘古大模型 6.0 + 鸿蒙 7：系统级AI</h3>
-        <p class="cc-desc">余承东接管盘古团队，放言"我的字典里没有第二"。盘古大模型6.0将百亿参数模型嵌入鸿蒙7系统内核，实现端侧AI本地部署，覆盖6600万台终端。依托昇腾910C国产算力集群，深港团队成功完成1.6万亿参数DeepSeek-V4-Pro的全参数后训练，标志国产算力从基础推理迈入复杂训练阶段。</p>
-        <div class="cc-grid">
-          <div class="kv"><div class="k">终端覆盖</div><div class="v">6600万</div></div>
-          <div class="kv"><div class="k">盘古参数</div><div class="v">10万亿</div></div>
-          <div class="kv"><div class="k">芯片适配</div><div class="v">昇腾910C</div></div>
-          <div class="kv"><div class="k">训练验证</div><div class="v">1.6T模型</div></div>
-        </div>
-      </div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">03</span><h2>GLM / MiniMax / Step：多极并进</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon ai">⚛️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag">开源模型</span></div>
+                  <div class="bd-date">2026年5月</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">智谱 GLM-5.1：8小时级持续工作</div>
+                <p>全球唯一达到8小时级持续工作的开源模型。SWE-Bench Pro 58.4分排名全球第一，全面对齐Claude Opus 4.6。GLM-5.1高速版API输出速度达400 tokens/s，刷新全球纪录，由GLM与TileRT团队联合打造。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip">SWE-Bench Pro 全球第1</span>
+                  <span class="bd-chip cyan">400 tokens/s</span>
+                </div>
+                <div class="bd-src"><span>来源：智谱AI</span><span>2026年5月</span></div>
+              </div>
+            </div>
 
-      <div class="compare-2col">
-        <div class="company-card">
-          <span class="cc-flag private">小米</span>
-          <h3>MiMo-V2.5：全球开源并列第一</h3>
-          <p class="cc-desc">1.02T参数/42B激活，混合注意力架构，KV缓存缩减7倍。Artificial Analysis综合智能和Agent指数均位列全球开源并列第一。4.3小时从零完成编译器，11.5小时完成8192行桌面视频编辑器。API永久降价最高99%。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">参数规模</div><div class="v">1.02T</div></div>
-            <div class="kv"><div class="k">编译器测试</div><div class="v">233/233</div></div>
-            <div class="kv"><div class="k">自主编码</div><div class="v">8192行</div></div>
-            <div class="kv"><div class="k">API降价</div><div class="v">99%</div></div>
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon ai">⚡</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag">开源模型</span></div>
+                  <div class="bd-date">2026年5月</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">MiniMax M3：首个三要素齐备开源模型</div>
+                <p>国内首个齐备前沿编程+1M超长上下文+原生多模态三大要素的模型，也是唯一开源的。采用MSA稀疏注意力架构，SWE-Bench Pro超GPT-5.5和Gemini 3.1 Pro。全球企业开发者客户超百万，ARR翻番周期压缩至60天。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip">2.1T参数</span>
+                  <span class="bd-chip green">开源</span>
+                </div>
+                <div class="bd-src"><span>来源：MiniMax</span><span>2026年5月</span></div>
+              </div>
+            </div>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon ai">🚀</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag">Agent模型</span></div>
+                  <div class="bd-date">2026年5月</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">阶跃星辰 Step 3.7 Flash：生产级Agent模型</div>
+                <p>稀疏MoE架构，196B+1.8B参数/仅11B激活，最高生成速度400 Tokens/s，兼容Claude Code等主流框架。累计发布38款基座模型，获25亿美元Pre-IPO融资创行业纪录，装机量超4200万台。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip amber">25亿融资</span>
+                  <span class="bd-chip">400 tokens/s</span>
+                </div>
+                <div class="bd-src"><span>来源：阶跃星辰</span><span>2026年5月</span></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="company-card">
-          <span class="cc-flag private">商汤科技</span>
-          <h3>SenseNova U1：原生理解生成统一</h3>
-          <p class="cc-desc">基于NEO-unify架构彻底摒弃视觉编码器和VAE，首次实现连续性图文创作输出。8B-MoT开源后，壁仞、寒武纪、昆仑芯等10家国产芯片完成Day 0适配。生成式AI收入36.29亿元增长51%。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">MMMU评分</div><div class="v">74.78</div></div>
-            <div class="kv"><div class="k">芯片适配</div><div class="v">10家</div></div>
-            <div class="kv"><div class="k">AI收入</div><div class="v">36.29亿</div></div>
-            <div class="kv"><div class="k">同比增速</div><div class="v">+51%</div></div>
+
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">04</span><h2>华为盘古 / 小米MiMo / 商汤SenseNova</h2></div>
+          <div class="company-card">
+            <span class="cc-flag cn">华为</span>
+            <h3>盘古大模型 6.0 + 鸿蒙 7：系统级AI</h3>
+            <p class="cc-desc">余承东接管盘古团队，放言「我的字典里没有第二」。盘古大模型6.0将百亿参数模型嵌入鸿蒙7系统内核，实现端侧AI本地部署，覆盖6600万台终端。依托昇腾910C国产算力集群，深港团队成功完成1.6万亿参数DeepSeek-V4-Pro的全参数后训练，标志国产算力从基础推理迈入复杂训练阶段。</p>
+            <div class="cc-grid">
+              <div class="kv"><div class="k">终端覆盖</div><div class="v">6600万</div></div>
+              <div class="kv"><div class="k">盘古参数</div><div class="v">10万亿</div></div>
+              <div class="kv"><div class="k">芯片适配</div><div class="v">昇腾910C</div></div>
+              <div class="kv"><div class="k">训练验证</div><div class="v">1.6T模型</div></div>
+            </div>
+          </div>
+
+          <div class="compare-2col">
+            <div class="company-card">
+              <span class="cc-flag private">小米</span>
+              <h3>MiMo-V2.5：全球开源并列第一</h3>
+              <p class="cc-desc">1.02T参数/42B激活，混合注意力架构，KV缓存缩减7倍。Artificial Analysis综合智能和Agent指数均位列全球开源并列第一。4.3小时从零完成编译器，11.5小时完成8192行桌面视频编辑器。API永久降价最高99%。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">参数规模</div><div class="v">1.02T</div></div>
+                <div class="kv"><div class="k">编译器测试</div><div class="v">233/233</div></div>
+                <div class="kv"><div class="k">自主编码</div><div class="v">8192行</div></div>
+                <div class="kv"><div class="k">API降价</div><div class="v">99%</div></div>
+              </div>
+            </div>
+            <div class="company-card">
+              <span class="cc-flag private">商汤科技</span>
+              <h3>SenseNova U1：原生理解生成统一</h3>
+              <p class="cc-desc">基于NEO-unify架构彻底摒弃视觉编码器和VAE，首次实现连续性图文创作输出。8B-MoT开源后，壁仞、寒武纪、昆仑芯等10家国产芯片完成Day 0适配。生成式AI收入36.29亿元增长51%。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">MMMU评分</div><div class="v">74.78</div></div>
+                <div class="kv"><div class="k">芯片适配</div><div class="v">10家</div></div>
+                <div class="kv"><div class="k">AI收入</div><div class="v">36.29亿</div></div>
+                <div class="kv"><div class="k">同比增速</div><div class="v">+51%</div></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <h2>国产主流大模型综合对比</h2>
-      <div class="cmp-wrap">
-        <table class="cmp">
-          <thead>
-            <tr>
-              <th>模型</th>
-              <th>公司</th>
-              <th>参数规模</th>
-              <th>上下文</th>
-              <th>编码能力</th>
-              <th>数学 AIME</th>
-              <th>Arena 排名</th>
-              <th>开源</th>
-              <th>输出定价</th>
-            </tr>
-          </thead>
-          <tbody id="ct-llm-table"></tbody>
-        </table>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">05</span><h2>国产主流大模型综合对比</h2></div>
+          <div class="cmp-wrap">
+            <table class="cmp">
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>公司</th>
+                  <th>参数规模</th>
+                  <th>上下文</th>
+                  <th>编码能力</th>
+                  <th>数学 AIME</th>
+                  <th>Arena 排名</th>
+                  <th>开源</th>
+                  <th>输出定价</th>
+                </tr>
+              </thead>
+              <tbody id="ct-llm-table"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- ===== Tab 2: 量子计算 ===== -->
     <div class="tab-panel" id="tab-quantum">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
-        中国是全球唯一在超导和光量子两条技术路线上都验证了"量子计算优越性"的国家。
-        2026年5月，"九章四号"登陆Nature，操纵3050个光子，比最快超算快10的54次方倍；超导路线的"祖冲之三号"同步刷新纪录。
-      </p>
+      <div class="article-body">
+        <p class="bd-intro">中国是全球唯一在超导和光量子两条技术路线上都验证了「量子计算优越性」的国家。2026年5月，「九章四号」登陆Nature，操纵3050个光子，比最快超算快10的54次方倍；超导路线的「祖冲之三号」同步刷新纪录。</p>
 
-      <h2>九章四号：光量子计算的史诗级跃迁</h2>
-      <div class="company-card">
-        <span class="cc-flag cn">中国科学技术大学 · Nature 2026</span>
-        <h3>九章四号量子计算原型机</h3>
-        <p class="cc-desc">潘建伟、陆朝阳团队联合多家单位，成功研制1024个量子压缩态输入、8176模式的可编程量子计算原型机，首次操纵和探测高达3050个光子的量子态。团队首创"可编程时空混合编码"架构，让光子在时间和空间两个维度上同时干涉，不仅极大提升连通性，更控制了物理器件规模。生成一个样本仅需25微秒，而全球最强超算El Capitan需要超过10的42次方年。</p>
-        <div class="cc-grid">
-          <div class="kv"><div class="k">操纵光子数</div><div class="v">3050</div></div>
-          <div class="kv"><div class="k">量子优势比</div><div class="v">10^54</div></div>
-          <div class="kv"><div class="k">生成样本</div><div class="v">25微秒</div></div>
-          <div class="kv"><div class="k">超算耗时</div><div class="v">&gt;10^42年</div></div>
-        </div>
-      </div>
-
-      <h2>两条路线并列突破</h2>
-      <div class="compare-2col">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon qc">&#128301;</div>
-            <div class="bd-title">光量子路线：九章系列进化史</div>
-          </div>
-          <div class="bd-body">
-            <p>九章(2020, 76光子) → 九章二号(2021, 113光子) → 九章三号(2023, 255光子) → 九章四号(2026, 3050光子)。五年来光子操控规模暴增40倍，为构建"万亿量子模式三维簇态"和未来"容错光量子计算硬件"奠定基础。</p>
-            <div class="bd-stats">
-              <span class="bd-tag cyan">光子数+40倍</span>
-              <span class="bd-tag">Nature发表</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>九章四号：光量子计算的史诗级跃迁</h2></div>
+          <div class="company-card">
+            <span class="cc-flag cn">中国科学技术大学 · Nature 2026</span>
+            <h3>九章四号量子计算原型机</h3>
+            <p class="cc-desc">潘建伟、陆朝阳团队联合多家单位，成功研制1024个量子压缩态输入、8176模式的可编程量子计算原型机，首次操纵和探测高达3050个光子的量子态。团队首创「可编程时空混合编码」架构，让光子在时间和空间两个维度上同时干涉，不仅极大提升连通性，更控制了物理器件规模。生成一个样本仅需25微秒，而全球最强超算El Capitan需要超过10的42次方年。</p>
+            <div class="cc-grid">
+              <div class="kv"><div class="k">操纵光子数</div><div class="v">3050</div></div>
+              <div class="kv"><div class="k">量子优势比</div><div class="v">10^54</div></div>
+              <div class="kv"><div class="k">生成样本</div><div class="v">25微秒</div></div>
+              <div class="kv"><div class="k">超算耗时</div><div class="v">&gt;10^42年</div></div>
             </div>
-            <div class="bd-source"><span>来源：中国科学技术大学</span><span>2026年5月</span></div>
           </div>
         </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon qc">&#9883;</div>
-            <div class="bd-title">超导路线：祖冲之三号</div>
-          </div>
-          <div class="bd-body">
-            <p>本源悟空-180第四代自主超导量子计算机上线，开始接收全球量子计算任务。中国是全球唯一同时掌握超导和光量子两条技术路线"量子优越性"的国家。量子纠错技术持续突破，为实用化容错量子计算机扫清障碍。</p>
-            <div class="bd-stats">
-              <span class="bd-tag amber">双路线唯一</span>
-              <span class="bd-tag green">全球任务</span>
+
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>两条路线并列突破</h2></div>
+          <div class="compare-2col">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon qc">🔦</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag cyan">光量子路线</span></div>
+                  <div class="bd-date">2026年5月 · Nature</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">九章系列进化史</div>
+                <p>九章(2020, 76光子) → 九章二号(2021, 113光子) → 九章三号(2023, 255光子) → 九章四号(2026, 3050光子)。五年来光子操控规模暴增40倍，为构建「万亿量子模式三维簇态」和未来「容错光量子计算硬件」奠定基础。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip cyan">光子数+40倍</span>
+                  <span class="bd-chip">Nature发表</span>
+                </div>
+                <div class="bd-src"><span>来源：中国科学技术大学</span><span>2026年5月</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：本源量子</span><span>2026年</span></div>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon qc">⚛️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag amber">超导路线</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">祖冲之三号</div>
+                <p>本源悟空-180第四代自主超导量子计算机上线，开始接收全球量子计算任务。中国是全球唯一同时掌握超导和光量子两条技术路线「量子优越性」的国家。量子纠错技术持续突破，为实用化容错量子计算机扫清障碍。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip amber">双路线唯一</span>
+                  <span class="bd-chip green">全球任务</span>
+                </div>
+                <div class="bd-src"><span>来源：本源量子</span><span>2026年</span></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="breakdown">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon qc">&#127758;</div>
-            <div class="bd-title">全球量子竞赛格局</div>
-          </div>
-          <div class="bd-body">
-            <p>谷歌悬铃木(53比特)2019年率先宣称优越性，随后被中国团队以创新经典算法全面打破。Xanadu"北极光"(216光子)是国际上第二个光学体系优越性团队。当前中国光量子优势比10^54，遥遥领先国际竞争。量子在新药研发、金融计算、新材料发现等领域的早期应用已经开始探索。</p>
-            <div class="bd-stats">
-              <span class="bd-tag">优势比10^54</span>
-              <span class="bd-tag cyan">全球领先</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">03</span><h2>全球量子竞赛格局</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon qc">🌐</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag">全球格局</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">中国光量子优势比10^54，遥遥领先</div>
+                <p>谷歌悬铃木(53比特)2019年率先宣称优越性，随后被中国团队以创新经典算法全面打破。Xanadu「北极光」(216光子)是国际上第二个光学体系优越性团队。当前中国光量子优势比10^54，遥遥领先国际竞争。量子在新药研发、金融计算、新材料发现等领域的早期应用已经开始探索。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip">优势比10^54</span>
+                  <span class="bd-chip cyan">全球领先</span>
+                </div>
+                <div class="bd-src"><span>来源：Nature / 科普中国</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：Nature / 科普中国</span><span>2026年</span></div>
           </div>
         </div>
       </div>
@@ -334,78 +453,96 @@
 
     <!-- ===== Tab 3: 新能源 ===== -->
     <div class="tab-panel" id="tab-energy">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
-        "十五五"新能源规划正式落地，2030年建成清洁低碳安全高效体系。宁德时代凝聚态电池2.0达500Wh/kg、比亚迪全固态电池通过车规全项验证、海上风电全球最大换流站投运——中国新能源产业从"跟跑"全面进入"领跑"。
-      </p>
+      <div class="article-body">
+        <p class="bd-intro">「十五五」新能源规划正式落地，2030年建成清洁低碳安全高效体系。宁德时代凝聚态电池2.0达500Wh/kg、比亚迪全固态电池通过车规全项验证、海上风电全球最大换流站投运——中国新能源产业从「跟跑」全面进入「领跑」。</p>
 
-      <h2>电池技术：固态与凝聚态双线突破</h2>
-      <div class="compare-2col">
-        <div class="company-card">
-          <span class="cc-flag cn">宁德时代</span>
-          <h3>凝聚态电池 2.0</h3>
-          <p class="cc-desc">能量密度达500Wh/kg，支持1000公里续航电动汽车，有望彻底终结"里程焦虑"。2026年Q1归母净利润207亿元同比增长48.52%，天恒钠电储能系统发布，同步推进锂电、钠电、固态三条技术路线。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">能量密度</div><div class="v">500Wh/kg</div></div>
-            <div class="kv"><div class="k">续航</div><div class="v">1000km</div></div>
-            <div class="kv"><div class="k">Q1净利</div><div class="v">207亿</div></div>
-            <div class="kv"><div class="k">同比</div><div class="v">+48.5%</div></div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>电池技术：固态与凝聚态双线突破</h2></div>
+          <div class="compare-2col">
+            <div class="company-card">
+              <span class="cc-flag cn">宁德时代</span>
+              <h3>凝聚态电池 2.0</h3>
+              <p class="cc-desc">能量密度达500Wh/kg，支持1000公里续航电动汽车，有望彻底终结「里程焦虑」。2026年Q1归母净利润207亿元同比增长48.52%，天恒钠电储能系统发布，同步推进锂电、钠电、固态三条技术路线。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">能量密度</div><div class="v">500Wh/kg</div></div>
+                <div class="kv"><div class="k">续航</div><div class="v">1000km</div></div>
+                <div class="kv"><div class="k">Q1净利</div><div class="v">207亿</div></div>
+                <div class="kv"><div class="k">同比</div><div class="v">+48.5%</div></div>
+              </div>
+            </div>
+            <div class="company-card">
+              <span class="cc-flag private">比亚迪</span>
+              <h3>全固态电池通过车规全项验证</h3>
+              <p class="cc-desc">单体容量达400Wh/kg，原型车CLTC续航里程突破1218公里。全固态电池通过车规级全项验证，标志从实验室到量产的关键一步。宁德时代同步入围国家全固态电池研发项目。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">单体容量</div><div class="v">400Wh/kg</div></div>
+                <div class="kv"><div class="k">CLTC续航</div><div class="v">1218km</div></div>
+                <div class="kv"><div class="k">验证状态</div><div class="v">全项通过</div></div>
+                <div class="kv"><div class="k">阶段</div><div class="v">量产倒计时</div></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="company-card">
-          <span class="cc-flag private">比亚迪</span>
-          <h3>全固态电池通过车规全项验证</h3>
-          <p class="cc-desc">单体容量达400Wh/kg，原型车CLTC续航里程突破1218公里。全固态电池通过车规级全项验证，标志从实验室到量产的关键一步。宁德时代同步入围国家全固态电池研发项目。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">单体容量</div><div class="v">400Wh/kg</div></div>
-            <div class="kv"><div class="k">CLTC续航</div><div class="v">1218km</div></div>
-            <div class="kv"><div class="k">验证状态</div><div class="v">全项通过</div></div>
-            <div class="kv"><div class="k">阶段</div><div class="v">量产倒计时</div></div>
-          </div>
-        </div>
-      </div>
 
-      <h2>海上风电与储能</h2>
-      <div class="breakdown">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon energy">&#127754;</div>
-            <div class="bd-title">广东阳江：全球最大海上换流站投运</div>
-          </div>
-          <div class="bd-body">
-            <p>"海风之心"海上换流站正式投运，每年向大陆输送60亿度绿色电力。国内陆上风电机组年初至今招标17.2GW，海上0.6GW，陆风中标均价2033元/kW。欧洲海风需求受中东局势推高，中国风机出口迎来窗口期。</p>
-            <div class="bd-stats">
-              <span class="bd-tag green">60亿度/年</span>
-              <span class="bd-tag">陆风17.2GW</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>海上风电与储能</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon energy">🌊</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag green">海上风电</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">广东阳江：全球最大海上换流站投运</div>
+                <p>「海风之心」海上换流站正式投运，每年向大陆输送60亿度绿色电力。国内陆上风电机组年初至今招标17.2GW，海上0.6GW，陆风中标均价2033元/kW。欧洲海风需求受中东局势推高，中国风机出口迎来窗口期。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip green">60亿度/年</span>
+                  <span class="bd-chip">陆风17.2GW</span>
+                </div>
+                <div class="bd-src"><span>来源：广东省能源局</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：广东省能源局</span><span>2026年</span></div>
-          </div>
-        </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon energy">&#9889;</div>
-            <div class="bd-title">储能：思格新能港股上市</div>
-          </div>
-          <div class="bd-body">
-            <p>户储龙头思格新能4月登陆港交所，募资超44亿港元。海南鼓励新能源配建储能转为电网侧独立储能。宁德时代天恒钠电储能系统发布，大储板块阳光电源、海博思创订单饱满。</p>
-            <div class="bd-stats">
-              <span class="bd-tag amber">募资44亿</span>
-              <span class="bd-tag green">钠电储能</span>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon energy">⚡</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag amber">储能</span></div>
+                  <div class="bd-date">2026年4月</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">储能：思格新能港股上市</div>
+                <p>户储龙头思格新能4月登陆港交所，募资超44亿港元。海南鼓励新能源配建储能转为电网侧独立储能。宁德时代天恒钠电储能系统发布，大储板块阳光电源、海博思创订单饱满。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip amber">募资44亿</span>
+                  <span class="bd-chip green">钠电储能</span>
+                </div>
+                <div class="bd-src"><span>来源：港交所、各公司公告</span><span>2026年4月</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：港交所、各公司公告</span><span>2026年4月</span></div>
-          </div>
-        </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon energy">&#9881;</div>
-            <div class="bd-title">氢能与绿色燃料：导入期加速</div>
-          </div>
-          <div class="bd-body">
-            <p>福建嘉庚创新实验室电解水制氢取得核心突破，福州大学"氨-氢"转换技术基础成型。电能替代打开绿氢空间，绿色燃料处于导入期，设备及运营环节率先享受溢价。十五五规划将氢能列为新兴增长点。</p>
-            <div class="bd-stats">
-              <span class="bd-tag cyan">十五五重点</span>
-              <span class="bd-tag">绿氢导入</span>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon energy">⚙️</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag cyan">氢能</span></div>
+                  <div class="bd-date">2026年7月</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">氢能与绿色燃料：导入期加速</div>
+                <p>福建嘉庚创新实验室电解水制氢取得核心突破，福州大学「氨-氢」转换技术基础成型。电能替代打开绿氢空间，绿色燃料处于导入期，设备及运营环节率先享受溢价。十五五规划将氢能列为新兴增长点。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip cyan">十五五重点</span>
+                  <span class="bd-chip">绿氢导入</span>
+                </div>
+                <div class="bd-src"><span>来源：福建省科技厅</span><span>2026年7月</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：福建省科技厅</span><span>2026年7月</span></div>
           </div>
         </div>
       </div>
@@ -413,51 +550,64 @@
 
     <!-- ===== Tab 4: 超算与通信 ===== -->
     <div class="tab-panel" id="tab-scicomm">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
-        从算力基础设施到通信网络，中国在两大底层能力上同步登顶：灵晟超算以2.19EFLOPS登顶全球TOP500，中国成为全球首个批复6G试验频率的国家——计算与通信的"双底座"为上层AI、量子、新能源应用提供了坚实支撑。
-      </p>
+      <div class="article-body">
+        <p class="bd-intro">从算力基础设施到通信网络，中国在两大底层能力上同步登顶：灵晟超算以2.19EFLOPS登顶全球TOP500，中国成为全球首个批复6G试验频率的国家——计算与通信的「双底座」为上层AI、量子、新能源应用提供了坚实支撑。</p>
 
-      <h2>灵晟超算：全球第一</h2>
-      <div class="company-card">
-        <span class="cc-flag cn">算力基础设施</span>
-        <h3>灵晟超算登顶全球TOP500排行榜</h3>
-        <p class="cc-desc">2026年6月，国产灵晟超算以2.19EFLOPS（219亿亿次/秒）持续算力登顶全球TOP500排行榜，采用全国产芯片和存储架构。服务气候模拟、核聚变仿真、生物医药分子模拟等前沿科研领域。同期，百度昆仑芯天池256卡超节点点亮，阿里平头哥真武M890芯片（144GB显存）发布，磐久AL128超节点服务器实现128卡组成一台计算机。</p>
-        <div class="cc-grid">
-          <div class="kv"><div class="k">持续算力</div><div class="v">2.19</div></div>
-          <div class="kv"><div class="k">单位</div><div class="v">EFLOPS</div></div>
-          <div class="kv"><div class="k">全球排名</div><div class="v">TOP 1</div></div>
-          <div class="kv"><div class="k">架构</div><div class="v">全国产</div></div>
-        </div>
-      </div>
-
-      <h2>通信：5G-A商用 + 6G预研</h2>
-      <div class="compare-2col">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon sc">&#128246;</div>
-            <div class="bd-title">5G-A全面商用：万兆下行 + 厘米级定位</div>
-          </div>
-          <div class="bd-body">
-            <p>5G-A已实现万兆下行速率和厘米级高精度定位能力，赋能工业互联网、车路协同、低空经济等场景。全国5G基站超400万个，5G用户渗透率突破80%。</p>
-            <div class="bd-stats">
-              <span class="bd-tag green">万兆下行</span>
-              <span class="bd-tag">基站400万+</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>灵晟超算：全球第一</h2></div>
+          <div class="company-card">
+            <span class="cc-flag cn">算力基础设施</span>
+            <h3>灵晟超算登顶全球TOP500排行榜</h3>
+            <p class="cc-desc">2026年6月，国产灵晟超算以2.19EFLOPS（219亿亿次/秒）持续算力登顶全球TOP500排行榜，采用全国产芯片和存储架构。服务气候模拟、核聚变仿真、生物医药分子模拟等前沿科研领域。同期，百度昆仑芯天池256卡超节点点亮，阿里平头哥真武M890芯片（144GB显存）发布，磐久AL128超节点服务器实现128卡组成一台计算机。</p>
+            <div class="cc-grid">
+              <div class="kv"><div class="k">持续算力</div><div class="v">2.19</div></div>
+              <div class="kv"><div class="k">单位</div><div class="v">EFLOPS</div></div>
+              <div class="kv"><div class="k">全球排名</div><div class="v">TOP 1</div></div>
+              <div class="kv"><div class="k">架构</div><div class="v">全国产</div></div>
             </div>
-            <div class="bd-source"><span>来源：工信部</span><span>2026年</span></div>
           </div>
         </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon sc">&#128225;</div>
-            <div class="bd-title">6G：中国首批试验频率 全球首个批复</div>
-          </div>
-          <div class="bd-body">
-            <p>工信部向IMT-2030推进组正式批复6GHz频段6G试验频率，中国成为全球首个批复6G试验频率的国家。第二阶段技术试验聚焦空天地一体化组网、通感融合、太赫兹通信等核心难题，规划2030年商用。</p>
-            <div class="bd-stats">
-              <span class="bd-tag amber">全球首个</span>
-              <span class="bd-tag cyan">6GHz频段</span>
+
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>通信：5G-A商用 + 6G预研</h2></div>
+          <div class="compare-2col">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon sc">📡</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag green">通信</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">5G-A全面商用：万兆下行 + 厘米级定位</div>
+                <p>5G-A已实现万兆下行速率和厘米级高精度定位能力，赋能工业互联网、车路协同、低空经济等场景。全国5G基站超400万个，5G用户渗透率突破80%。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip green">万兆下行</span>
+                  <span class="bd-chip">基站400万+</span>
+                </div>
+                <div class="bd-src"><span>来源：工信部</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：工信部 / 中关村论坛</span><span>2026年</span></div>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon sc">📡</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag amber">6G</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">6G：中国首批试验频率 全球首个批复</div>
+                <p>工信部向IMT-2030推进组正式批复6GHz频段6G试验频率，中国成为全球首个批复6G试验频率的国家。第二阶段技术试验聚焦空天地一体化组网、通感融合、太赫兹通信等核心难题，规划2030年商用。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip amber">全球首个</span>
+                  <span class="bd-chip cyan">6GHz频段</span>
+                </div>
+                <div class="bd-src"><span>来源：工信部 / 中关村论坛</span><span>2026年</span></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -465,78 +615,96 @@
 
     <!-- ===== Tab 5: 生物医药与脑机 ===== -->
     <div class="tab-panel" id="tab-biomed">
-      <p style="color:var(--txt-2);font-size:14px;line-height:1.8;margin:16px 0">
-        从基因测序到AI制药，从脑机接口到合成生物——中国在生命科学领域正从"跟跑"进入"并跑"甚至"领跑"。博睿康拿下国内首张侵入式脑机接口注册证，"北脑一号"完成7例人体植入，华大测序成本压至100美元以下。
-      </p>
+      <div class="article-body">
+        <p class="bd-intro">从基因测序到AI制药，从脑机接口到合成生物——中国在生命科学领域正从「跟跑」进入「并跑」甚至「领跑」。博睿康拿下国内首张侵入式脑机接口注册证，「北脑一号」完成7例人体植入，华大测序成本压至100美元以下。</p>
 
-      <h2>脑机接口：从实验室走向临床</h2>
-      <div class="compare-2col">
-        <div class="company-card">
-          <span class="cc-flag cn">博睿康 + 芯智达</span>
-          <h3>国内首张侵入式脑机接口注册证</h3>
-          <p class="cc-desc">博睿康NEO植入式脑机接口系统获批上市，成为全球首款获得正式注册证的侵入式脑机接口医疗器械。"北脑一号"智能脑机系统完成7例人体植入，帮助患者实现肢体运动、言语功能的替代和康复。脑虎科技全植入式脑机接口完成首例临床试验。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">注册证</div><div class="v">国内首张</div></div>
-            <div class="kv"><div class="k">人体植入</div><div class="v">7例</div></div>
-            <div class="kv"><div class="k">患者恢复</div><div class="v">运动+言语</div></div>
-            <div class="kv"><div class="k">阶段</div><div class="v">临床验证</div></div>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">01</span><h2>脑机接口：从实验室走向临床</h2></div>
+          <div class="compare-2col">
+            <div class="company-card">
+              <span class="cc-flag cn">博睿康 + 芯智达</span>
+              <h3>国内首张侵入式脑机接口注册证</h3>
+              <p class="cc-desc">博睿康NEO植入式脑机接口系统获批上市，成为全球首款获得正式注册证的侵入式脑机接口医疗器械。「北脑一号」智能脑机系统完成7例人体植入，帮助患者实现肢体运动、言语功能的替代和康复。脑虎科技全植入式脑机接口完成首例临床试验。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">注册证</div><div class="v">国内首张</div></div>
+                <div class="kv"><div class="k">人体植入</div><div class="v">7例</div></div>
+                <div class="kv"><div class="k">患者恢复</div><div class="v">运动+言语</div></div>
+                <div class="kv"><div class="k">阶段</div><div class="v">临床验证</div></div>
+              </div>
+            </div>
+            <div class="company-card">
+              <span class="cc-flag private">脑虎科技</span>
+              <h3>柔性脑机接口芯片：2027年临床试验</h3>
+              <p class="cc-desc">脑虎科技柔性脑机接口芯片通过伦理审查，计划2027年进入临床试验。同期，北京大学团队发现帕金森病核心致病环路，自主研发精准脑环路刺激系统，临床试验效果显著。</p>
+              <div class="cc-grid">
+                <div class="kv"><div class="k">伦理审查</div><div class="v">已通过</div></div>
+                <div class="kv"><div class="k">临床阶段</div><div class="v">2027计划</div></div>
+                <div class="kv"><div class="k">技术路径</div><div class="v">柔性芯片</div></div>
+                <div class="kv"><div class="k">应用</div><div class="v">帕金森+康复</div></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="company-card">
-          <span class="cc-flag private">脑虎科技</span>
-          <h3>柔性脑机接口芯片：2027年临床试验</h3>
-          <p class="cc-desc">脑虎科技柔性脑机接口芯片通过伦理审查，计划2027年进入临床试验。同期，北京大学团队发现帕金森病核心致病环路，自主研发精准脑环路刺激系统，临床试验效果显著。</p>
-          <div class="cc-grid">
-            <div class="kv"><div class="k">伦理审查</div><div class="v">已通过</div></div>
-            <div class="kv"><div class="k">临床阶段</div><div class="v">2027计划</div></div>
-            <div class="kv"><div class="k">技术路径</div><div class="v">柔性芯片</div></div>
-            <div class="kv"><div class="k">应用</div><div class="v">帕金森+康复</div></div>
-          </div>
-        </div>
-      </div>
 
-      <h2>基因测序与AI制药</h2>
-      <div class="breakdown">
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon bio">&#129514;</div>
-            <div class="bd-title">华大基因：2小时完成全基因组测序</div>
-          </div>
-          <div class="bd-body">
-            <p>第五代测序仪单次运行完成全基因组测序仅需2小时，成本降至100美元以下，推动基因测序从科研工具走向大规模临床和公共卫生应用。中国散裂中子源首次实现医用阿尔法同位素居里级量产，打破进口依赖。</p>
-            <div class="bd-stats">
-              <span class="bd-tag pink">2小时</span>
-              <span class="bd-tag green">&lt;$100</span>
+        <div class="bd-sec">
+          <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>基因测序与AI制药</h2></div>
+          <div class="breakdown">
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon bio">🧬</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag pink">基因测序</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">华大基因：2小时完成全基因组测序</div>
+                <p>第五代测序仪单次运行完成全基因组测序仅需2小时，成本降至100美元以下，推动基因测序从科研工具走向大规模临床和公共卫生应用。中国散裂中子源首次实现医用阿尔法同位素居里级量产，打破进口依赖。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip pink">2小时</span>
+                  <span class="bd-chip green">&lt;$100</span>
+                </div>
+                <div class="bd-src"><span>来源：华大基因 / 中科院高能所</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：华大基因 / 中科院高能所</span><span>2026年</span></div>
-          </div>
-        </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon bio">&#128300;</div>
-            <div class="bd-title">AI制药：从10年缩至3年</div>
-          </div>
-          <div class="bd-body">
-            <p>药明康德AI驱动药物发现平台将新药研发周期从10年压缩至3年。合成生物制造产业快速发展，昌平集聚区已入驻160余家企业，微元合成阿洛酮糖获批全国首个合成生物新食品原料。</p>
-            <div class="bd-stats">
-              <span class="bd-tag amber">10年→3年</span>
-              <span class="bd-tag">昌平160+企业</span>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon bio">🔬</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag amber">AI制药</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">AI制药：从10年缩至3年</div>
+                <p>药明康德AI驱动药物发现平台将新药研发周期从10年压缩至3年。合成生物制造产业快速发展，昌平集聚区已入驻160余家企业，微元合成阿洛酮糖获批全国首个合成生物新食品原料。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip amber">10年→3年</span>
+                  <span class="bd-chip">昌平160+企业</span>
+                </div>
+                <div class="bd-src"><span>来源：药明康德 / 微元合成</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：药明康德 / 微元合成</span><span>2026年</span></div>
-          </div>
-        </div>
-        <div class="breakdown-card">
-          <div class="bd-head">
-            <div class="bd-icon bio">&#129656;</div>
-            <div class="bd-title">百济神州泽布替尼：国产创新药全球化标杆</div>
-          </div>
-          <div class="bd-body">
-            <p>百济神州BTK抑制剂泽布替尼在全球超60个国家获批，年销售额突破200亿元，成为首个来自中国的全球重磅炸弹药物。恒瑞医药、荣昌生物等创新药企同步推进，国产创新药License-out交易2025年超500亿美元。</p>
-            <div class="bd-stats">
-              <span class="bd-tag pink">60+国家获批</span>
-              <span class="bd-tag">年销200亿+</span>
+
+            <div class="breakdown-card">
+              <div class="bd-head">
+                <div class="bd-icon bio">💊</div>
+                <div class="bd-meta">
+                  <div><span class="bd-tag pink">创新药</span></div>
+                  <div class="bd-date">2026年</div>
+                </div>
+              </div>
+              <div class="bd-body">
+                <div class="bd-title">百济神州泽布替尼：国产创新药全球化标杆</div>
+                <p>百济神州BTK抑制剂泽布替尼在全球超60个国家获批，年销售额突破200亿元，成为首个来自中国的全球重磅炸弹药物。恒瑞医药、荣昌生物等创新药企同步推进，国产创新药License-out交易2025年超500亿美元。</p>
+                <div class="bd-stats">
+                  <span class="bd-chip pink">60+国家获批</span>
+                  <span class="bd-chip">年销200亿+</span>
+                </div>
+                <div class="bd-src"><span>来源：百济神州年报 / 医药魔方</span><span>2026年</span></div>
+              </div>
             </div>
-            <div class="bd-source"><span>来源：百济神州年报 / 医药魔方</span><span>2026年</span></div>
           </div>
         </div>
       </div>
@@ -545,45 +713,55 @@
   </div>
 </article>
 
-<button class="back-to-top" aria-label="回到顶部" title="回到顶部">&#8593;</button>
+<button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
 <div id="footer-placeholder"></div>
+
+<script src="js/data-loader.js"></script>
 <script src="js/app.js"></script>
 <script>
-// Tab 切换逻辑 + 数据动态渲染
-(async function(){
-  // 加载数据
-  let d;
-  try {
-    d = await fetch('data/china-tech.json').then(r => r.json());
-  } catch(e) { console.error('China-tech data load failed:', e); d = null; }
-
-  if (d) {
-    // 渲染全局关键数据
-    document.getElementById('ct-highlights').innerHTML = d.highlights.map(h =>
-      `<div class="hl-card ${h.color}"><div class="hl-num">${h.num}</div><div class="hl-lbl">${h.lbl}</div></div>`
-    ).join('');
-
-    // 渲染 LLM 对比表
-    const fields = ['model','company','params','ctx','coding','math','arena','opensource','price'];
-    document.getElementById('ct-llm-table').innerHTML = d.llm_table.map(r =>
-      `<tr>${fields.map(f => {
-        const hi = (r.hi_fields||[]).includes(f) ? ' class="hi"' : '';
-        return `<td${hi}>${r[f]}</td>`;
-      }).join('')}</tr>`
-    ).join('');
+// ===== 数据渲染（API 优先，静态 JSON 兜底） =====
+(async function () {
+  var d = null;
+  if (window.taixingData) {
+    d = await window.taixingData.loadData('china-tech');
+  }
+  if (!d) {
+    try {
+      d = await fetch('data/china-tech.json').then(function (r) { return r.json(); });
+    } catch (e) { d = null; }
   }
 
-  // Tab 切换逻辑
-  const tabs = document.querySelectorAll('#ct-tabs button');
-  const panels = document.querySelectorAll('.tab-panel');
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.getAttribute('data-tab');
-      tabs.forEach(b => b.classList.remove('active'));
+  if (d) {
+    var hlEl = document.getElementById('ct-highlights');
+    if (hlEl && d.highlights) {
+      hlEl.innerHTML = d.highlights.map(function (h) {
+        return '<div class="hl-card ' + h.color + '"><div class="hl-num">' + h.num + '</div><div class="hl-lbl">' + h.lbl + '</div></div>';
+      }).join('');
+    }
+
+    var tbody = document.getElementById('ct-llm-table');
+    if (tbody && d.llm_table) {
+      var fields = ['model', 'company', 'params', 'ctx', 'coding', 'math', 'arena', 'opensource', 'price'];
+      tbody.innerHTML = d.llm_table.map(function (r) {
+        return '<tr>' + fields.map(function (f) {
+          var hi = (r.hi_fields || []).indexOf(f) >= 0 ? ' class="hi"' : '';
+          return '<td' + hi + '>' + r[f] + '</td>';
+        }).join('') + '</tr>';
+      }).join('');
+    }
+  } else {
+    console.warn('[钛星] 中国科技数据加载失败，页面显示静态骨架');
+  }
+
+  // ===== Tab 切换逻辑 =====
+  var tabs = document.querySelectorAll('#ct-tabs button');
+  var panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-tab');
+      tabs.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      panels.forEach(p => {
-        p.classList.toggle('active', p.id === target);
-      });
+      panels.forEach(function (p) { p.classList.toggle('active', p.id === target); });
     });
   });
 })();

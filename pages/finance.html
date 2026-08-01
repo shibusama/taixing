@@ -5,6 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 科技资本</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* ===== 科技资本页面 V2 样式（仅本页，重设计） ===== */
+.page-lead{color:var(--txt-2);font-size:14px;line-height:1.8;margin:0 0 20px}
+
+/* Tab 胶囊导航（与大工程页视觉一致） */
+#fin-tabs{border-bottom:none;gap:6px;flex-wrap:wrap;margin:0 0 24px}
+#fin-tabs button{
+  padding:7px 18px;border-radius:20px;font-size:13px;font-weight:600;
+  color:var(--txt-2);border:1px solid var(--line);margin-bottom:0;
+  background:var(--bg-1);cursor:pointer;transition:var(--trans);white-space:nowrap;
+}
+#fin-tabs button:hover{border-color:var(--cyan);color:var(--txt-1)}
+#fin-tabs button.active{background:var(--cyan);color:var(--bg-0);border-color:var(--cyan)}
+
+/* 高亮卡 label/sub（全局仅定义 .hl-num/.hl-lbl，本页补齐） */
+.hl-card .hl-label{font-size:12px;color:var(--txt-2);margin-bottom:4px;line-height:1.4}
+.hl-card .hl-sub{font-size:12px;color:var(--txt-1);margin-top:4px;line-height:1.4}
+
+/* 页脚注 */
+.fin-note{color:var(--txt-2);font-size:13px;margin-top:16px;line-height:1.7}
+</style>
 </head>
 <body>
 <div class="stars"></div>
@@ -20,14 +41,18 @@
       <div class="meta"><span>数据来源：美联储、汇通网、彭博、财联社</span><span id="update-time">更新时间：--</span></div>
     </div>
 
-    <div class="article-body">
-      <p>2026年下半年，全球资本市场聚焦三条主线：美联储在"沃什时代"维持高利率鹰派立场，美元日元利差持续走阔；SpaceX IPO后股价大幅回调；OpenAI与Anthropic的万亿估值IPO竞速进入白热化。</p>
+    <p class="page-lead">2026年下半年，全球资本市场聚焦三条主线：美联储在"沃什时代"维持高利率鹰派立场，美元日元利差持续走阔；SpaceX IPO后股价大幅回调；OpenAI与Anthropic的万亿估值IPO竞速进入白热化。</p>
+
+    <div class="sec-head">
+      <h2><span class="bar"></span>市场雷达</h2>
+      <p class="desc">美联储、汇率、SpaceX 与 AI 巨头四线并行，点击 Tab 切换追踪。</p>
+    </div>
 
     <div class="tab-nav" id="fin-tabs">
-      <button class="active" data-tab="tab-fed">美联储利率</button>
-      <button data-tab="tab-fx">汇率市场</button>
-      <button data-tab="tab-spacex">SpaceX</button>
-      <button data-tab="tab-ai">AI巨头</button>
+      <button class="active" data-tab="tab-fed">🏦 美联储利率</button>
+      <button data-tab="tab-fx">💱 汇率市场</button>
+      <button data-tab="tab-spacex">🚀 SpaceX</button>
+      <button data-tab="tab-ai">🤖 AI巨头</button>
     </div>
 
     <!-- ===== Tab 1: 美联储利率 ===== -->
@@ -64,7 +89,7 @@
         <h3>主要央行利率对比</h3>
         <div id="fx-cb-rates"></div>
 
-        <p style="color:var(--txt-2);font-size:13px;margin-top:16px">日本央行7月31日将公布利率决议，市场关注是否进一步加息以支撑日元。日元持续贬值已引发官方汇率干预预期。</p>
+        <p class="fin-note">日本央行7月31日将公布利率决议，市场关注是否进一步加息以支撑日元。日元持续贬值已引发官方汇率干预预期。</p>
 
       </div>
     </div>
@@ -87,7 +112,7 @@
         <h3>机构观点</h3>
         <div id="spacex-analyst"></div>
 
-        <p style="color:var(--txt-2);font-size:13px;margin-top:16px">关键变量：Starship可重复使用火箭能否可靠运行——一次Starship发射可部署60颗V3卫星，带宽容量是猎鹰9号的23.7倍。若Starship延迟，估值逻辑将迅速弱化。</p>
+        <p class="fin-note">关键变量：Starship可重复使用火箭能否可靠运行——一次Starship发射可部署60颗V3卫星，带宽容量是猎鹰9号的23.7倍。若Starship延迟，估值逻辑将迅速弱化。</p>
 
       </div>
     </div>
@@ -112,8 +137,6 @@
 
       </div>
     </div>
-
-    </div>
   </div>
 </article>
 
@@ -125,7 +148,10 @@
 <script>
 /* ===== 数据加载与渲染 ===== */
 async function initFinance() {
-  const d = await taixingData.loadData('finance');
+  let d = await taixingData.loadData('finance');
+  if (!d) {
+    d = await fetch('data/finance.json').then(r => r.json()).catch(() => null);
+  }
   if (!d) return;
 
   // 更新时间

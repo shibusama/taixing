@@ -130,6 +130,32 @@ def extract_news_from_article(article: Dict) -> Optional[Dict]:
     }
 
 
+def _record_ai_extract_log(
+    category: str,
+    limit: int,
+    total: int,
+    inserted: int,
+    failed: int,
+    status: str,
+    message: str = "",
+):
+    """写入 ai_extract_logs 历史记录（表不存在时容错，不影响主流程）"""
+    try:
+        from app.db.admin import log_ai_extract
+        log_ai_extract(
+            category=category,
+            limit=limit,
+            total=total,
+            inserted=inserted,
+            failed=failed,
+            status=status,
+            message=message,
+        )
+    except Exception as e:
+        print(f"[AI] ai_extract_logs 记录失败（已忽略，不影响主流程）：{e}")
+
+
+
 def process_pending_articles(
     category: str = None,
     limit: int = 20,
@@ -160,6 +186,7 @@ def process_pending_articles(
     articles = result.data
 
     if not articles:
+        _record_ai_extract_log(category, limit, 0, 0, 0, "success", "没有待处理的文章")
         return {"processed": 0, "message": "没有待处理的文章"}
 
     stats = {
@@ -218,6 +245,16 @@ def process_pending_articles(
             "summary": news_data.get("summary", "")[:60],
             "auto_inserted": auto_insert and confidence >= confidence_threshold
         })
+
+    _record_ai_extract_log(
+        category,
+        limit,
+        stats.get("total", 0),
+        stats.get("auto_inserted", 0),
+        stats.get("failed", 0),
+        "success",
+        f"提取 {stats.get('extracted', 0)} 条，自动入库 {stats.get('auto_inserted', 0)} 条，待审核 {stats.get('pending_review', 0)} 条，重复 {stats.get('skipped_duplicate', 0)} 条",
+    )
 
     return stats
 

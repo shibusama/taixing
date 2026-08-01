@@ -36,6 +36,8 @@ app.mount("/css", StaticFiles(directory=str(PROJECT_DIR / "css")), name="css")
 app.mount("/js", StaticFiles(directory=str(PROJECT_DIR / "js")), name="js")
 app.mount("/data", StaticFiles(directory=str(PROJECT_DIR / "data")), name="data")
 app.mount("/assets", StaticFiles(directory=str(PROJECT_DIR / "assets")), name="assets")
+
+app.mount("/components", StaticFiles(directory=str(PROJECT_DIR / "components")), name="components")
 app.mount("/", StaticFiles(directory=str(PROJECT_DIR / "pages"), html=True), name="static")
 
 if __name__ == "__main__":

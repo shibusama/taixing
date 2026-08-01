@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 可控核聚变全球进展</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* ===== 可控核聚变页面 V2 样式（仅本页，重设计） ===== */
+.page-lead{color:var(--txt-2);font-size:14px;line-height:1.8;margin:0 0 20px}
+</style>
 </head>
 <body>
 <div class="stars"></div>
@@ -17,15 +21,21 @@
     <div class="article-head">
       <div class="kicker">FUSION ENERGY · 2026</div>
       <h1>可控核聚变："人造太阳"离我们还有多远？</h1>
-      <div class="meta"><span>数据来源：核聚变中心、人民日报、新浪科技</span><span>更新时间：2026-07-26</span></div>
+      <div class="meta"><span id="data-source">数据来源：核聚变中心、人民日报、新浪科技</span><span id="update-time">更新时间：--</span></div>
     </div>
 
+    <p class="page-lead">
+      2026年，全球可控核聚变研发进入多元并进的新阶段。ITER托卡马克总装过半，中国CFEDR瞄准2030年第一度电，NIF激光聚变能量增益破4倍。
+    </p>
+
+    <div class="sec-head">
+      <h2><span class="bar"></span>核心数据速览</h2>
+      <p class="desc">中国磁约束、ITER 国际合作与激光聚变的关键指标。</p>
+    </div>
+    <div class="highlight-row" id="fusion-highlights"></div>
+
     <div class="article-body">
-      <p>2026年，全球可控核聚变研发进入多元并进的新阶段。ITER托卡马克总装过半，中国CFEDR瞄准2030年第一度电，NIF激光聚变能量增益破4倍。</p>
-
-      <div class="highlight-row" id="fusion-highlights"></div>
-
-      <h2>中国路线：ITER参与 + 自主并行发展</h2>
+      <h2>🇨🇳 中国路线：ITER 参与 + 自主并行发展</h2>
 
       <div class="company">
         <span class="company-flag flag-cn-g">国家队</span>
@@ -63,7 +73,7 @@
         <p>中国率先完成第一壁钨铜连接认证，在4.7MW/m²热负荷下连续成功通过15000次热循环疲劳测试。ITER调整后时间表：研究运行2034年启动，氘氚实验2039年展开。</p>
       </div>
 
-      <h2>美国：激光聚变与商业力量</h2>
+      <h2>🇺🇸 美国：激光聚变与商业力量</h2>
       <div class="company">
         <span class="company-flag flag-us">NIF</span>
         <h3>国家点火装置 · 惯性约束聚变</h3>
@@ -121,11 +131,18 @@
 <button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
 <div id="footer-placeholder"></div>
 <script src="js/app.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
 (async function(){
   try {
     const d = await fetch('data/fusion.json').then(r => r.json());
-    const colors = {red:'#ff5470', gold:'#f0c060', cyan:'#00e0ff', purple:'#9b7bff'};
+    // 元信息（数据驱动）
+    if (d.meta) {
+      const ds = document.getElementById('data-source');
+      if (ds && d.meta.source) ds.textContent = '数据来源：' + d.meta.source;
+      const ut = document.getElementById('update-time');
+      if (ut && d.meta.updated) ut.textContent = '更新时间：' + String(d.meta.updated).slice(0, 10);
+    }
     const heads = {china:{flag:'🇨🇳',name:'中国',cls:'cn'},us:{flag:'🇺🇸',name:'美国',cls:'us'},eu:{flag:'🇪🇺',name:'欧洲',cls:'eu'}};
 
     // 高亮卡片

@@ -238,11 +238,15 @@ def get_finance_sections() -> List[Dict]:
 # ========================================================================
 
 def re_sync_all_from_json():
-    pass
+    """从 data/*.json 同步全部 7 个版块到数据库（幂等，单版块失败不影响其他）"""
+    from app.db.json_sync import sync_all_from_json
+    return sync_all_from_json()
 
 
 def re_sync_board_from_json(board_id: str):
-    pass
+    """从 data/{board_id}.json 同步单个版块到数据库（幂等，先查后插/更新）"""
+    from app.db.json_sync import sync_board_from_json
+    return sync_board_from_json(board_id)
 
 
 def get_cursor():
