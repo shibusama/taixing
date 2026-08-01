@@ -5,50 +5,72 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 中美登月竞速</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* =========================================================
+   版块页重设计 · 中美登月（accent = 金色）
+   参照 semiconductor.html 页面级样式，仅作用于本页
+   ========================================================= */
+.bd-page{--accent:var(--gold);--accent-soft:rgba(240,192,96,.14)}
+
+/* ---- 版块 Hero ---- */
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
+.bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
+.bd-hero>*{position:relative;z-index:1}
+.bd-hero .breadcrumb{padding:0;margin-bottom:16px}
+.bd-hero .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:16px;border-radius:999px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
+.bd-hero h1 .glow{background:linear-gradient(120deg,var(--gold),var(--amber) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
+.bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
+.bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.bd-hero .meta span:first-child::before{display:none}
+
+/* ---- 区块标题（semiconductor 同款） ---- */
+.bd-sec-head{display:flex;align-items:center;gap:12px;margin:38px 0 18px;flex-wrap:wrap}
+.bd-sec-idx{flex-shrink:0;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--accent-soft)}
+.bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
+.bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin:0}
+
+/* ---- 响应式 ---- */
+@media(max-width:768px){
+  .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
+  .bd-hero .meta{gap:10px;font-size:11px}
+  .bd-hero .sub{font-size:13.5px}
+  .bd-sec-head{flex-wrap:wrap;gap:8px}
+}
+@media(max-width:480px){
+  .bd-hero h1{font-size:23px}
+}
+</style>
 </head>
 <body>
 <div class="stars"></div>
 <div class="progress-bar" id="progressBar"></div>
 
 <div id="header-placeholder"></div>
-<nav class="quick-nav top-quick-nav" aria-label="版块导航">
-  <a href="rocket.html">可回收火箭</a>
-  <a href="moon.html" class="moon" style="color:var(--gold);border-color:var(--gold)">中美登月</a>
-  <a href="semiconductor.html" class="semi">半导体</a>
-  <a href="china-tech.html" class="tech">中国科技</a>
-  <a href="mega-projects.html" class="mega">大工程</a>
-  <a href="fusion.html" class="fusion">可控核聚变</a>
-  <a href="finance.html" class="finance">科技资本</a>
-</nav>
-
-<section class="hero">
-  <div class="wrap">
-    <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>中美登月</span></div>
-    <span class="badge" style="background:rgba(240,192,96,.1);border-color:rgba(240,192,96,.3);color:var(--gold)"><span class="dot" style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></span> MOON RACE · 2026</span>
-    <h1>中美登月竞速：<span style="color:var(--gold)">从南极水冰到载人登月</span></h1>
-    <p class="sub">2026 年是中美月球探索的关键之年：中国嫦娥七号 8 月出征南极，载人登月工程全面转入工程验证阶段；美国 Artemis II 刚刚完成历史性载人绕月飞行。两国在月球南极的战略博弈日益白热化。</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="num" style="color:var(--gold)">2030前</div><div class="lbl">中国载人登月目标</div></div>
-      <div class="hero-stat"><div class="num" style="color:var(--gold)">2028</div><div class="lbl">美国重返月面目标</div></div>
-      <div class="hero-stat"><div class="num" style="color:var(--gold)">2026.08</div><div class="lbl">嫦娥七号出征南极</div></div>
-      <div class="hero-stat"><div class="num" style="color:var(--gold)">2026.04</div><div class="lbl">Artemis II 载人绕月</div></div>
-    </div>
-  </div>
-</section>
-
-<article class="article">
+<article class="article bd-page">
   <div class="wrap">
 
-    <div class="sec-head" style="margin-bottom:14px">
-      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>关键时间节点</h2>
-      <p class="desc">数据来源：中国载人航天工程办公室、NASA、虎嗅 · 更新于 2026-07-26</p>
+    <!-- ===== 版块 Hero（参照 semiconductor 风格） ===== -->
+    <div class="bd-hero">
+      <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>中美登月</span></div>
+      <div class="kicker">MOON RACE · 2026</div>
+      <h1><span class="glow">中美登月竞速：从南极水冰到载人登月</span></h1>
+      <p class="sub">2026 年是中美月球探索的关键之年：中国嫦娥七号 8 月出征南极，载人登月工程全面转入工程验证阶段；美国 Artemis II 刚刚完成历史性载人绕月飞行。两国在月球南极的战略博弈日益白热化。</p>
+      <div class="meta">
+        <span>数据来源：中国载人航天工程办公室、NASA、虎嗅（公开信源聚合 · AI 解读）</span>
+        <span>更新时间：2026-07-26</span>
+      </div>
     </div>
+
+    <div class="bd-sec-head" style="margin-top:4px"><span class="bd-sec-idx">01</span><h2>关键时间节点</h2><p class="bd-sec-desc">数据来源：中国载人航天工程办公室、NASA、虎嗅 · 更新于 2026-07-26</p></div>
     <div class="highlight-row" id="moon-highlights"></div>
 
-    <div class="sec-head">
-      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>中国 · 稳步推进，2030 年前载人登月</h2>
-      <p class="desc">载人登月工程与嫦娥探月双线并进，任务、资源、队伍三方面整合为统一的“月球探测工程”。</p>
-    </div>
+    <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>中国 · 稳步推进，2030 年前载人登月</h2><p class="bd-sec-desc">载人登月工程与嫦娥探月双线并进，任务、资源、队伍三方面整合为统一的“月球探测工程”。</p></div>
     <div class="article-body">
       <div class="company">
         <span class="company-flag flag-cn-g">国家队</span>
@@ -79,10 +101,7 @@
       <p><strong>战略整合：</strong>2026年，中国对载人登月和无人探月从任务、资源、队伍三方面进行整合，统称为“月球探测工程”。</p>
     </div>
 
-    <div class="sec-head">
-      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>美国 · Artemis 加速，但不确定性犹存</h2>
-      <p class="desc">Artemis II 载人绕月已落地，Artemis III / IV 接力推进——SLS、猎户座与商业着陆器并行。</p>
-    </div>
+    <div class="bd-sec-head"><span class="bd-sec-idx">03</span><h2>美国 · Artemis 加速，但不确定性犹存</h2><p class="bd-sec-desc">Artemis II 载人绕月已落地，Artemis III / IV 接力推进——SLS、猎户座与商业着陆器并行。</p></div>
     <div class="article-body">
       <div class="company">
         <span class="company-flag flag-us">NASA</span>
@@ -112,18 +131,12 @@
       </div>
     </div>
 
-    <div class="sec-head">
-      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>🔬 南极水冰：为何成为战略焦点？</h2>
-      <p class="desc">谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</p>
-    </div>
+    <div class="bd-sec-head"><span class="bd-sec-idx">04</span><h2>🔬 南极水冰：为何成为战略焦点？</h2><p class="bd-sec-desc">谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</p></div>
     <div class="article-body">
       <blockquote style="border-left-color:var(--gold);background:rgba(240,192,96,.07)">月球南极部分陨石坑深处终年不见阳光，温度极低。水冰既是宇航员的生命保障资源（饮用水、氧气），也可分解为氢氧用作火箭燃料——谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</blockquote>
     </div>
 
-    <div class="sec-head">
-      <h2><span class="bar" style="background:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)"></span>⚖️ 中美登月路线对比</h2>
-      <p class="desc">维度、节奏与组织模式的全景对照，数据由 API（/api/boards/moon/full）动态加载。</p>
-    </div>
+    <div class="bd-sec-head"><span class="bd-sec-idx">05</span><h2>⚖️ 中美登月路线对比</h2><p class="bd-sec-desc">维度、节奏与组织模式的全景对照，数据由 API（/api/boards/moon/full）动态加载。</p></div>
     <div class="cmp-wrap" id="moon-compare">
       <table class="cmp"><thead><tr><th>维度</th><th>中国</th><th>美国</th></tr></thead><tbody></tbody></table>
     </div>

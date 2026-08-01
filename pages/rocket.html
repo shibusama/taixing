@@ -10,7 +10,7 @@
    版块页重设计 · 可回收火箭（accent = 青色）
    参照 semiconductor.html 页面级样式，仅作用于本页
    ========================================================= */
-.bd-page{--accent:var(--cyan);--accent-soft:rgba(0,224,255,.14)}
+.bd-page{--accent:#fff;--accent-soft:rgba(255,255,255,.14)}
 
 /* ---- 版块 Hero ---- */
 .bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
@@ -22,7 +22,7 @@
 .bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
 @keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
 .bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
-.bd-hero h1 .glow{background:linear-gradient(120deg,var(--accent),var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero h1 .glow{background:linear-gradient(120deg,#fff,var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
 .bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
 .bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
 .bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
@@ -71,7 +71,7 @@
     <div class="bd-hero">
       <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>可回收火箭</span></div>
       <div class="kicker">REUSABLE ROCKETS · 2026</div>
-      <h1>全球可回收火箭：<span class="glow">谁在领跑，谁在追赶</span></h1>
+      <h1><span class="glow">全球可回收火箭：谁在领跑，谁在追赶</span></h1>
       <p class="sub">一子级造价占全箭约 70%——复用正把“一次性筷子”变成可反复使用的“太空交通工具”。国家队与民营多线并进，中美 9 家重点企业、5 大回收路线全景拆解。</p>
       <div class="meta">
         <span>数据来源：公开信源聚合 · AI 解读</span>

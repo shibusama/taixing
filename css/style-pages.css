@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 /* ========== Hero ========== */
 .hero{
   position:relative;padding:80px 0 60px;overflow:hidden;
@@ -118,7 +118,9 @@
 .section-card.tech{--accent:var(--purple)}.section-card.tech::after{background:var(--purple)}
 .section-card.mega{--accent:var(--amber)}.section-card.mega::after{background:var(--amber)}
 .section-card.fusion{--accent:var(--red)}.section-card.fusion::after{background:var(--red)}
-.section-card.finance{--accent:#ffd740}.section-card.finance::after{background:#ffd740}
+.section-card.rocket{--accent:#fff}
+.section-card.rocket::after{background:#fff}
+.section-card.finance{--accent:#4d9fff}.section-card.finance::after{background:#4d9fff}
 .section-card .sc-icon{width:48px;height:48px;margin-bottom:12px}
 .section-card .sc-icon svg{width:100%;height:100%;display:block}
 .card-cover svg{width:100%;height:100%;display:block}
