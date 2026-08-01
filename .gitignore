@@ -36,3 +36,6 @@ __pycache__/
 *.db
 *.sqlite3
 *.sqlite
+
+# Visual Studio (VS Code workspace state)
+.vs/
