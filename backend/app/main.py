@@ -7,6 +7,13 @@ import os
 # Ensure project root is importable for crawlers/
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+# Load .env config from project root (API keys, scheduler switch)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
+except Exception:
+    pass
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,7 +27,10 @@ from app.scheduler import start_scheduler, shutdown_scheduler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 鍚姩鏃?    init_db()
-    start_scheduler()
+    if os.environ.get("SCHEDULER_ENABLED", "true").lower() in ("1", "true", "yes"):
+        start_scheduler()
+    else:
+        print("[scheduler] disabled by SCHEDULER_ENABLED=false")
     yield
     # 鍏抽棴鏃?    shutdown_scheduler()
 

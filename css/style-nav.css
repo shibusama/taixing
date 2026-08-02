@@ -27,7 +27,7 @@
   background:var(--grad-brand);font-size:15px;
   box-shadow:0 0 14px rgba(0,224,255,.25);
 }
-.logo-txt{display:flex;flex-direction:column;line-height:1.25}
+.logo-name{line-height:1.25}
 .logo-sub{
   font-size:10px;font-weight:500;letter-spacing:2px;
   color:var(--txt-2);text-transform:uppercase;transition:color var(--trans);

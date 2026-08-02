@@ -43,7 +43,7 @@ def get_global_last_updated() -> str:
 
 # ============ latest_news ============
 
-def get_latest_news(limit: int = 10) -> List[Dict]:
+def get_latest_news(limit: int = 10, group_by_board: bool = False) -> List[Dict]:
     """获取最新要闻列表（仅 active，按 sort_order + publish_date 排序）"""
     sb = get_supabase()
     result = (
@@ -52,10 +52,18 @@ def get_latest_news(limit: int = 10) -> List[Dict]:
         .eq("is_active", True)
         .order("sort_order", desc=False)
         .order("publish_date", desc=True)
-        .limit(limit)
+        .limit(max(limit, 100) if group_by_board else limit)
         .execute()
     )
-    return result.data
+    rows = result.data
+    if group_by_board:
+        seen = {}
+        for row in rows:
+            board = row.get("board") or ""
+            if board not in seen:
+                seen[board] = row
+        rows = list(seen.values())[:limit]
+    return rows
 
 
 def get_all_latest_news() -> List[Dict]:

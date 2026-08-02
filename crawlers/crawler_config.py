@@ -39,7 +39,7 @@ def get_enabled_sources(config, board_ids=None, source_ids=None):
             src["_board_id"] = board_id
             src["_board_name"] = board_cfg.get("name", board_id)
             src["_output_file"] = board_cfg.get("output_file", "")
-            src["_auto_write"] = board_cfg.get("auto_write", False)
+            src["_auto_write"] = src.get("auto_write", board_cfg.get("auto_write", False))
             sources.append(src)
     return sources
 

@@ -1,5 +1,4 @@
-INFO:     Started server process [22908]
+INFO:     Started server process [21144]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
-Run time of job "每小时全量爬虫 (trigger: cron[hour='7-23', minute='0'], next run at: 2026-08-01 17:00:00 CST)" was missed by 0:03:20.644088

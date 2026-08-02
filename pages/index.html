@@ -129,34 +129,102 @@
     'finance':           { color: '#ffd740', icon: 'M140,90 h120 v-50 h-120 Z' }
   };
 
+  // 版块专属封面插画（viewBox 400x140 内的 SVG 元素）
+  function coverArt(boardId, c) {
+    if (boardId === 'rocket') {
+      return '<path d="M200,26 L213,62 L200,72 L187,62 Z" fill="' + c + '" fill-opacity=".16" stroke="' + c + '" stroke-width="1.1"/>' +
+        '<path d="M187,62 L176,88 L200,74 L224,88 L213,62" fill="' + c + '" fill-opacity=".10" stroke="' + c + '" stroke-width=".9"/>' +
+        '<circle cx="200" cy="50" r="3" fill="#fff" fill-opacity=".85"/>' +
+        '<path d="M196,74 Q200,92 200,102 Q200,92 204,74" fill="none" stroke="' + c + '" stroke-width="1.5" opacity=".75"/>' +
+        '<path d="M118,122 Q200,8 286,122" fill="none" stroke="' + c + '" stroke-width="1" stroke-dasharray="3,6" opacity=".4"/>';
+    }
+    if (boardId === 'moon') {
+      return '<circle cx="228" cy="66" r="34" fill="' + c + '" fill-opacity=".10" stroke="' + c + '" stroke-width="1"/>' +
+        '<circle cx="240" cy="56" r="6" fill="none" stroke="' + c + '" stroke-width=".7" opacity=".5"/>' +
+        '<circle cx="218" cy="78" r="9" fill="none" stroke="' + c + '" stroke-width=".7" opacity=".4"/>' +
+        '<circle cx="244" cy="82" r="4" fill="none" stroke="' + c + '" stroke-width=".7" opacity=".5"/>' +
+        '<path d="M120,118 Q200,84 286,118" fill="none" stroke="' + c + '" stroke-width="1" opacity=".35"/>';
+    }
+    if (boardId === 'semiconductor') {
+      return '<rect x="174" y="42" width="52" height="52" rx="6" fill="' + c + '" fill-opacity=".12" stroke="' + c + '" stroke-width="1.2"/>' +
+        '<rect x="184" y="52" width="32" height="32" rx="3" fill="none" stroke="' + c + '" stroke-width=".8" opacity=".55"/>' +
+        '<path d="M168,50 L136,50 M168,62 L128,62 M168,74 L136,74 M168,86 L128,86 M232,50 L264,50 M232,62 L272,62 M232,74 L264,74 M232,86 L272,86" stroke="' + c + '" stroke-width="1.4" opacity=".65"/>' +
+        '<circle cx="136" cy="50" r="2.2" fill="' + c + '" opacity=".7"/>' +
+        '<circle cx="128" cy="62" r="2.2" fill="' + c + '" opacity=".7"/>' +
+        '<circle cx="264" cy="50" r="2.2" fill="' + c + '" opacity=".7"/>' +
+        '<circle cx="272" cy="62" r="2.2" fill="' + c + '" opacity=".7"/>';
+    }
+    if (boardId === 'china-tech') {
+      var nodes = 'M120,38 L184,56 M120,38 L184,74 M120,38 L184,92 M120,38 L188,110 M150,120 L184,56 M150,120 L184,74 M150,120 L184,92';
+      return '<g stroke="' + c + '" stroke-width=".8" opacity=".5">' + '<path d="' + nodes + '" fill="none"/>' + '</g>' +
+        '<circle cx="120" cy="38" r="5" fill="' + c + '" fill-opacity=".3" stroke="' + c + '" stroke-width=".8"/>' +
+        '<circle cx="150" cy="120" r="5" fill="' + c + '" fill-opacity=".3" stroke="' + c + '" stroke-width=".8"/>' +
+        '<circle cx="184" cy="56" r="4" fill="' + c + '" fill-opacity=".45"/>' +
+        '<circle cx="184" cy="74" r="4" fill="' + c + '" fill-opacity=".25"/>' +
+        '<circle cx="184" cy="92" r="4" fill="' + c + '" fill-opacity=".45"/>' +
+        '<circle cx="188" cy="110" r="3" fill="' + c + '" fill-opacity=".6"/>';
+    }
+    if (boardId === 'mega-projects') {
+      return '<path d="M88,118 L88,70 L104,70 L104,118 M120,118 L120,50 L142,50 L142,118 M158,118 L158,80 L178,80 L178,118 M194,118 L194,58 L212,58 L212,118 M228,118 L228,74 L246,74 L246,118 M260,118 L260,54 L280,54 L280,118" fill="none" stroke="' + c + '" stroke-width="2" opacity=".5"/>' +
+        '<path d="M56,118 Q200,28 344,118" fill="none" stroke="' + c + '" stroke-width="1" stroke-dasharray="4,5" opacity=".35"/>' +
+        '<circle cx="306" cy="42" r="11" fill="none" stroke="' + c + '" stroke-width="1.3" opacity=".55"/>';
+    }
+    if (boardId === 'controlled-fusion') {
+      return '<ellipse cx="200" cy="70" rx="104" ry="36" fill="none" stroke="' + c + '" stroke-width="1.2" opacity=".5"/>' +
+        '<ellipse cx="200" cy="70" rx="104" ry="36" fill="none" stroke="#ff9d8a" stroke-width=".5" opacity=".3" transform="rotate(60,200,70)"/>' +
+        '<ellipse cx="200" cy="70" rx="104" ry="36" fill="none" stroke="#ff9d8a" stroke-width=".5" opacity=".3" transform="rotate(120,200,70)"/>' +
+        '<ellipse cx="200" cy="70" rx="58" ry="20" fill="' + c + '" fill-opacity=".14" stroke="' + c + '" stroke-width=".9" opacity=".6"/>' +
+        '<circle cx="200" cy="70" r="5" fill="#ff9d8a" fill-opacity=".75"/>';
+    }
+    if (boardId === 'finance') {
+      return '<g stroke="' + c + '" stroke-width="1.2" opacity=".6">' +
+        '<line x1="132" y1="104" x2="132" y2="66"/><rect x="126" y="68" width="12" height="26" fill="' + c + '" fill-opacity=".14"/>' +
+        '<line x1="172" y1="104" x2="172" y2="74"/><rect x="166" y="76" width="12" height="18" fill="' + c + '" fill-opacity=".14"/>' +
+        '<line x1="212" y1="104" x2="212" y2="56"/><rect x="206" y="58" width="12" height="34" fill="' + c + '" fill-opacity=".14"/>' +
+        '<line x1="252" y1="104" x2="252" y2="80"/><rect x="246" y="82" width="12" height="14" fill="' + c + '" fill-opacity=".14"/>' +
+        '</g>' +
+        '<path d="M108,98 L162,82 L214,88 L262,58 L306,42" fill="none" stroke="' + c + '" stroke-width="2" stroke-linecap="round" opacity=".85"/>' +
+        '<circle cx="306" cy="42" r="5" fill="' + c + '" fill-opacity=".35"/>';
+    }
+    return '<path d="' + (BOARD_THEME[boardId] || {}).icon + '" fill="' + c + '" fill-opacity=".08" stroke="' + c + '" stroke-width=".8"/>';
+  }
+
   function buildCoverSVG(boardId, uid) {
     var theme = BOARD_THEME[boardId] || { color: '#00e0ff', icon: '' };
     var c = theme.color;
     var gradId = 'hlg' + uid;
+    var glowId = 'hgl' + uid;
 
-    if (boardId === 'controlled-fusion') {
-      return '<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">' +
-        '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="1" y2="1">' +
-        '<stop offset="0%" stop-color="' + c + '" stop-opacity=".12"/>' +
-        '<stop offset="100%" stop-color="#0c1322" stop-opacity=".9"/>' +
-        '</linearGradient></defs>' +
-        '<rect width="400" height="140" fill="url(#' + gradId + ')"/>' +
-        '<ellipse cx="200" cy="70" rx="100" ry="35" fill="none" stroke="' + c + '" stroke-width="1.2" opacity=".45"/>' +
-        '<ellipse cx="200" cy="70" rx="100" ry="35" fill="none" stroke="#ff8470" stroke-width=".4" opacity=".25" transform="rotate(60,200,70)"/>' +
-        '<ellipse cx="200" cy="70" rx="100" ry="35" fill="none" stroke="#ff8470" stroke-width=".4" opacity=".25" transform="rotate(120,200,70)"/>' +
-        '<ellipse cx="200" cy="70" rx="55" ry="19" fill="' + c + '" fill-opacity=".12" stroke="' + c + '" stroke-width=".8" opacity=".55"/>' +
-        '<circle cx="200" cy="70" r="5" fill="#ff8470" fill-opacity=".6"/>' +
-        '</svg>';
+    // 确定性星点（随 uid 变化，每张卡片略有不同）
+    function rnd(seed) {
+      var x = Math.sin(seed * 12.9898 + uid * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    }
+    var stars = '';
+    for (var i = 0; i < 26; i++) {
+      var sx = 8 + rnd(i) * 384;
+      var sy = 10 + rnd(i + 100) * 120;
+      var sr = 0.5 + rnd(i + 200) * 1.3;
+      var so = 0.15 + rnd(i + 300) * 0.5;
+      stars += '<circle cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="' + sr.toFixed(1) + '" fill="#fff" fill-opacity="' + so.toFixed(2) + '"/>';
     }
 
-    return '<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">' +
-      '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0%" stop-color="' + c + '" stop-opacity=".12"/>' +
-      '<stop offset="100%" stop-color="#0c1322" stop-opacity=".9"/>' +
-      '</linearGradient></defs>' +
+    return '<svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs>' +
+      '<linearGradient id="' + gradId + '" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0%" stop-color="' + c + '" stop-opacity=".22"/>' +
+      '<stop offset="55%" stop-color="#0c1322" stop-opacity=".95"/>' +
+      '<stop offset="100%" stop-color="#060b16" stop-opacity="1"/>' +
+      '</linearGradient>' +
+      '<radialGradient id="' + glowId + '" cx=".5" cy=".5" r=".5">' +
+      '<stop offset="0%" stop-color="' + c + '" stop-opacity=".30"/>' +
+      '<stop offset="100%" stop-color="' + c + '" stop-opacity="0"/>' +
+      '</radialGradient>' +
+      '</defs>' +
       '<rect width="400" height="140" fill="url(#' + gradId + ')"/>' +
-      '<path d="' + theme.icon + '" fill="' + c + '" fill-opacity=".08" stroke="' + c + '" stroke-width=".8"/>' +
-      '<circle cx="200" cy="70" r="4" fill="' + c + '" fill-opacity=".35"/>' +
+      '<rect width="400" height="140" fill="url(#' + glowId + ')" opacity=".6"/>' +
+      '<g opacity=".55">' + stars + '</g>' +
+      '<g>' + coverArt(boardId, c) + '</g>' +
       '</svg>';
   }
 
@@ -167,6 +235,21 @@
     var m = ('0' + (d.getMonth() + 1)).slice(-2);
     var day = ('0' + d.getDate()).slice(-2);
     return m + '-' + day;
+  }
+
+  // 中文分类 -> 版块 id（latest_news.board 来自 raw_articles.category，可能为中文名）
+  var BOARD_ID_BY_LABEL = {
+    '航空航天': 'rocket',
+    '可回收火箭': 'rocket',
+    '中美登月': 'moon',
+    '中国半导体': 'semiconductor',
+    '中国科技AI': 'china-tech',
+    '中国大工程': 'mega-projects',
+    '可控核聚变': 'controlled-fusion',
+    '科技资本': 'finance',
+  };
+  function resolveBoard(b) {
+    return BOARD_ID_BY_LABEL[b] || b;
   }
 
   function renderHeadlines(items) {
@@ -184,8 +267,9 @@
     }
 
     grid.innerHTML = items.map(function(item, idx) {
-      var tagCls = TAG_CLASS[item.board] || 'tag-rocket';
-      var cover = buildCoverSVG(item.board, idx);
+      var board = resolveBoard(item.board);
+      var tagCls = TAG_CLASS[board] || 'tag-rocket';
+      var cover = buildCoverSVG(board, idx);
       var dateStr = formatDate(item.publish_date);
 
       return '<a href="' + (item.link || '#') + '" class="card">' +
@@ -381,7 +465,7 @@
   ];
 
   function loadLatestNews() {
-    return fetch('/api/latest-news?t=' + Date.now())
+    return fetch('/api/latest-news?group_by_board=1&t=' + Date.now())
       .then(function(res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();

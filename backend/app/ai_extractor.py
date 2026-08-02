@@ -11,8 +11,16 @@ import requests
 from datetime import datetime
 from typing import List, Dict, Optional
 
-DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-DEEPSEEK_MODEL = "deepseek-v4-flash"
+# Load .env config from project root (API key / base url / model)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"))
+except Exception:
+    pass
+
+DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1").rstrip("/")
+DEEPSEEK_API_URL = os.environ.get("DEEPSEEK_API_URL", DEEPSEEK_BASE_URL + "/chat/completions")
+DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 # 板块映射
@@ -229,7 +237,7 @@ def process_pending_articles(
                     sb.table("latest_news").insert(news_data).execute()
                     update_article_status(news_id, "online")
                     stats["auto_inserted"] += 1
-                    print(f"  [AI] → 入库 ✓")
+                    print(f"  [AI] → 入库 OK")
                 except Exception as e:
                     stats["failed"] += 1
                     print(f"  [AI] → 入库失败: {e}")

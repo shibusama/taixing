@@ -337,9 +337,9 @@ def api_ai_stats():
 # ---- latest news ----
 
 @router.get("/latest-news")
-def api_get_latest_news(limit: int = 10):
+def api_get_latest_news(limit: int = 10, group_by_board: bool = False):
     from app.database import get_latest_news
-    return {"items": get_latest_news(limit)}
+    return {"items": get_latest_news(limit, group_by_board=group_by_board)}
 
 @router.get("/admin/latest-news")
 def api_get_all_latest_news():

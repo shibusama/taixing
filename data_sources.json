@@ -2,8 +2,15 @@
   "_schema": "1.0",
   "_description": "钛星数据源配置文件。按7个板块分类，每个数据源定义名称、爬虫函数、类型和描述。",
   "_usage": "新增数据源：在对应板块的 sources 数组中添加一条记录，然后在 fetch_data.py 中实现对应的爬虫函数。",
-  "_boards": ["rocket", "moon", "controlled-fusion", "semiconductor", "china-tech", "mega-projects", "finance"],
-
+  "_boards": [
+    "rocket",
+    "moon",
+    "controlled-fusion",
+    "semiconductor",
+    "china-tech",
+    "mega-projects",
+    "finance"
+  ],
   "boards": {
     "rocket": {
       "name": "可回收火箭",
@@ -30,7 +37,6 @@
         }
       ]
     },
-
     "moon": {
       "name": "中美登月",
       "name_en": "Moon Race",
@@ -44,10 +50,33 @@
           "description": "NASA Artemis 登月计划新闻",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "moon_google_lunar_en",
+          "name": "Google News 登月新闻（英文）",
+          "crawler": "crawl_rss_moon_google_lunar_en",
+          "type": "rss",
+          "feed_url": "https://news.google.com/rss/search?q=%22lunar+lander%22+OR+%22Moon+landing%22+OR+%22Chang%27e%22+OR+%22NASA+Artemis%22+OR+%E5%AB%A6%E5%A8%A5+OR+%E7%99%BB%E6%9C%88&hl=en-US&gl=US&ceid=US:en",
+          "language": "en",
+          "limit": 20,
+          "description": "Google News 聚合的英文登月新闻（查询过滤），覆盖 Artemis、CLPS 商业登月舱、ispace 及嫦娥相关报道，日更量大",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "moon_google_lunar_zh",
+          "name": "Google News 登月新闻（中文）",
+          "crawler": "crawl_rss_moon_google_lunar_zh",
+          "type": "rss",
+          "feed_url": "https://news.google.com/rss/search?q=%E7%99%BB%E6%9C%88%20OR%20%E6%8E%A2%E6%9C%88%20OR%20%E5%AB%A6%E5%A8%A5&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+          "language": "zh",
+          "limit": 20,
+          "description": "Google News 聚合的中文登月/探月新闻（查询过滤），聚焦中国载人登月与嫦娥探月工程动态",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },
-
     "controlled-fusion": {
       "name": "可控核聚变",
       "name_en": "Controlled Fusion",
@@ -79,10 +108,33 @@
           "description": "ASIPP EAST/CFETR 最新进展",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "fusion_industry_association",
+          "name": "Fusion Industry Association 新闻",
+          "crawler": "crawl_rss_fusion_industry_association",
+          "type": "rss",
+          "feed_url": "https://www.fusionindustryassociation.org/feed/",
+          "language": "en",
+          "limit": 20,
+          "description": "全球聚变行业协会官方新闻源，覆盖聚变公司融资、政策与项目进展",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "fusion_google_news",
+          "name": "Google News 核聚变聚合",
+          "crawler": "crawl_rss_fusion_google_news",
+          "type": "rss",
+          "feed_url": "https://news.google.com/rss/search?q=%22nuclear+fusion%22+OR+tokamak+OR+ITER&hl=en-US&gl=US&ceid=US:en",
+          "language": "en",
+          "limit": 20,
+          "description": "Google News 关键词聚合源（nuclear fusion/tokamak/ITER），持续更新聚变相关新闻",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },
-
     "semiconductor": {
       "name": "中国半导体",
       "name_en": "China Semiconductor",
@@ -105,10 +157,33 @@
           "description": "上海微电子官网新闻",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "semiconductor_icsmart",
+          "name": "芯智讯",
+          "crawler": "crawl_rss_semiconductor_icsmart",
+          "type": "rss",
+          "feed_url": "https://www.icsmart.cn/feed/",
+          "language": "zh",
+          "limit": 20,
+          "description": "中国半导体/芯片产业资讯站，覆盖晶圆代工、设备材料、存储、AI芯片等动态",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "semiconductor_semiengineering",
+          "name": "Semiconductor Engineering",
+          "crawler": "crawl_rss_semiconductor_semiengineering",
+          "type": "rss",
+          "feed_url": "https://semiengineering.com/feed/",
+          "language": "en",
+          "limit": 20,
+          "description": "全球半导体工程深度报道，含制造工艺、先进封装及中国芯片产业周评",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },
-
     "china-tech": {
       "name": "中国科技",
       "name_en": "China Tech",
@@ -149,10 +224,33 @@
           "description": "OpenAI Blog（需 curl_cffi 绕过 TLS 指纹）",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "china_tech_google_news_zh",
+          "name": "Google News 中国AI聚合（中文）",
+          "crawler": "crawl_rss_china_tech_google_news_zh",
+          "type": "rss",
+          "feed_url": "https://news.google.com/rss/search?q=%E4%B8%AD%E5%9B%BD%20AI%20OR%20%E6%B7%B1%E5%BA%A6%E6%8E%A2%E7%B4%A2%20OR%20%E9%98%BF%E9%87%8C%E9%80%9A%E4%B9%89%20OR%20%E5%A4%A7%E6%A8%A1%E5%9E%8B&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+          "language": "zh",
+          "limit": 20,
+          "description": "Google News 聚合的中文中国AI新闻（查询过滤：中国AI/DeepSeek/通义/大模型），覆盖大模型竞争与中国AI产业动态",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "china_tech_technode",
+          "name": "TechNode 动点科技",
+          "crawler": "crawl_rss_china_tech_technode",
+          "type": "rss",
+          "feed_url": "https://technode.com/feed/",
+          "language": "en",
+          "limit": 20,
+          "description": "英文中国科技媒体官方源，聚焦中国科技公司与AI产品动态（DeepSeek/字节/小米等）",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },
-
     "mega-projects": {
       "name": "大工程",
       "name_en": "Mega Projects",
@@ -166,10 +264,33 @@
           "description": "国铁集团官网新闻",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "mega_projects_railway_gazette",
+          "name": "Railway Gazette International",
+          "crawler": "crawl_rss_mega_projects_railway_gazette",
+          "type": "rss",
+          "feed_url": "https://www.railwaygazette.com/feed/",
+          "language": "en",
+          "limit": 20,
+          "description": "国际铁路工程专业媒体，覆盖高铁、隧道、跨海线路等轨道交通超级工程，含中国基建报道",
+          "enabled": true,
+          "sleep_after": 1
+        },
+        {
+          "id": "mega_projects_chinanews_finance",
+          "name": "中国新闻网·财经",
+          "crawler": "crawl_rss_mega_projects_chinanews_finance",
+          "type": "rss",
+          "feed_url": "http://www.chinanews.com.cn/rss/finance.xml",
+          "language": "zh",
+          "limit": 20,
+          "description": "中新社官方财经频道，高频更新中国铁路、核电、重大工程开工投产等基建动态",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },
-
     "finance": {
       "name": "科技资本",
       "name_en": "Tech Finance",
@@ -193,6 +314,32 @@
           "description": "FRED API 或网页抓取",
           "enabled": true,
           "sleep_after": 0
+        },
+        {
+          "id": "finance_crunchbase",
+          "name": "Crunchbase News",
+          "crawler": "crawl_rss_finance_crunchbase",
+          "type": "rss",
+          "feed_url": "https://news.crunchbase.com/feed/",
+          "language": "en",
+          "limit": 20,
+          "description": "全球科技创业融资与风投轮次新闻（Crunchbase 官方源），覆盖 AI/半导体/航天等热门赛道融资动态",
+          "enabled": true,
+          "sleep_after": 1,
+          "auto_write": false
+        },
+        {
+          "id": "finance_cnbc_tech",
+          "name": "CNBC Technology",
+          "crawler": "crawl_rss_finance_cnbc_tech",
+          "type": "rss",
+          "feed_url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19854910",
+          "language": "en",
+          "limit": 20,
+          "description": "CNBC 科技频道，聚焦美股科技公司财报、IPO、AI 资本开支与科技产业投融资动态",
+          "enabled": true,
+          "sleep_after": 1,
+          "auto_write": false
         }
       ]
     }

@@ -26,6 +26,9 @@ def upsert_news_article(article: Dict) -> bool:
 
     # 插入新文章（过滤掉以 _ 开头的临时字段）
     clean_article = {k: v for k, v in article.items() if not k.startswith('_')}
+    # explicitly set created_at to local time (avoid UTC DB default)
+    if "created_at" not in clean_article:
+        clean_article["created_at"] = datetime.now().isoformat()
     sb.table("raw_articles").insert(clean_article).execute()
     return True
 

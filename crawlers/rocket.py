@@ -113,7 +113,8 @@ def crawl_rocket_news_snapi():
             # SNAPI v4: 搜索关键词，按时间倒序，取最新 20 条
             data = fetch_json(
                 "https://api.spaceflightnewsapi.net/v4/articles/",
-                params={"search": company, "limit": 20, "ordering": "-published_at"}
+                params={"search": company, "limit": 20, "ordering": "-published_at"},
+                headers=API_HEADERS,
             )
             if data is None:
                 print(f"  [{company}] SNAPI 被限流，跳过")

@@ -70,12 +70,15 @@ def run_crawler(src_cfg):
                         upsert_news_article(item)
                     else:
                         url = item.get("url", "")
-                        news_id = hashlib.sha256(url.encode()).hexdigest()[:16] if url else hashlib.sha256(item.get("title", "").encode()).hexdigest()[:16]
+                        # items without url/title (e.g. launch calendar): build stable unique key from timeline_id/mission_name
+                        dedup_key = url or item.get("timeline_id") or item.get("news_id") or item.get("title") or item.get("mission_name") or item.get("name") or ""
+                        news_id = hashlib.sha256(str(dedup_key).encode()).hexdigest()[:16]
+                        title = item.get("title") or item.get("mission_name") or ""
                         new_item = {
                             "news_id": news_id,
                             "source_name": src_cfg.get("name", ""),
                             "source_url": url,
-                            "title": item.get("title", ""),
+                            "title": title,
                             "raw_content": item.get("summary", ""),
                             "summary": "",
                             "cover_image": item.get("image_url", ""),

@@ -79,3 +79,34 @@ def iter_board_crawl_functions(board_id: str) -> list[tuple[str, Callable]]:
         if name.startswith("crawl_") and callable(getattr(mod, name)):
             results.append((name, getattr(mod, name)))
     return results
+
+
+# ============ generic RSS sources auto-registration ============
+def _register_rss_sources():
+    """Scan data_sources.json for type=rss sources and register crawl_rss_<id>."""
+    import json
+    from pathlib import Path
+    cfg_file = Path(__file__).parent.parent / "data_sources.json"
+    try:
+        cfg = json.loads(cfg_file.read_text(encoding="utf-8"))
+        from crawlers.rss import make_rss_crawler
+    except Exception as e:
+        print(f"[registry] rss init failed: {e}")
+        return
+    for board_id, board_cfg in cfg.get("boards", {}).items():
+        for src in board_cfg.get("sources", []):
+            if src.get("type") != "rss":
+                continue
+            sid = src.get("id", "")
+            func_name = "crawl_rss_" + sid
+            CRAWLER_FUNCTIONS[func_name] = make_rss_crawler(
+                feed_url=src.get("feed_url", ""),
+                source_name=src.get("name", sid),
+                category=board_id,
+                board_id=board_id,
+                language=src.get("language", "en"),
+                limit=src.get("limit", 20),
+            )
+
+
+_register_rss_sources()
