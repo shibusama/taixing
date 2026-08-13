@@ -1,7 +1,7 @@
-﻿﻿
+﻿
 /* ========== Hero ========== */
 .hero{
-  position:relative;padding:80px 0 60px;overflow:hidden;
+  position:relative;padding:64px 0 0;overflow:hidden;
   background:linear-gradient(180deg,rgba(0,224,255,.03) 0%,transparent 100%);
 }
 .hero::before{
@@ -15,6 +15,33 @@
   width:500px;height:500px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,138,61,.08),transparent 70%);
   filter:blur(40px);
+}
+
+/* ---- Hero card wrapper (style matches board-page bd-hero) ---- */
+.hero .wrap{
+  position:relative;overflow:hidden;
+  border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(0,224,255,.045),transparent 60%);
+  padding:46px 48px 40px;
+}
+.hero .wrap::before{
+  content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;
+  border-radius:50%;background:var(--cyan);opacity:.10;filter:blur(80px);pointer-events:none;
+}
+.hero .wrap::after{
+  content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;
+  border-radius:50%;background:var(--purple);opacity:.06;filter:blur(80px);pointer-events:none;
+}
+.hero .wrap>*{position:relative;z-index:1}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;margin-bottom:18px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(0,224,255,.08);
+  color:var(--cyan);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+}
+.hero .kicker::before{
+  content:"";width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite;
 }
 .badge{
   display:inline-flex;align-items:center;gap:8px;
@@ -645,7 +672,8 @@ table.cmp .hi{color:var(--amber);font-weight:700}
   .logo .rk{width:26px;height:26px;font-size:13px}
 
   /* Hero */
-  .hero{padding:50px 0 40px}
+  .hero{padding:40px 0 0}
+  .hero .wrap{padding:30px 26px}
   .hero-stats{gap:20px}
   .hero-stats .num{font-size:20px}
 
@@ -706,7 +734,8 @@ table.cmp .hi{color:var(--amber);font-weight:700}
 }
 
 @media(max-width:480px){
-  .hero{padding:40px 0 30px}
+  .hero{padding:28px 0 0}
+  .hero .wrap{padding:24px 18px}
   .hero h1{font-size:24px}
   .hero p.sub{font-size:14px}
   .hero-stats{flex-direction:column;gap:12px}
