@@ -10,7 +10,7 @@
 .bd-page{--accent:#f0c060;--accent-soft:rgba(240,192,96,.14)}
 
 /* ---- 版块 Hero ---- */
-.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid rgba(255,255,255,.10);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025) 55%,rgba(255,255,255,.01));backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);box-shadow:0 6px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);min-height:300px}
 .bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
 .bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
 .bd-hero>*{position:relative;z-index:1}
@@ -25,6 +25,23 @@
 .bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
 .bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
 .bd-hero .meta span:first-child::before{display:none}
+
+/* ---- 指标 Tab 胶囊导航（复刻参考图：选中=纯青填充+发光，未选中=暗底+细描边） ---- */
+#macroTabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;border-bottom:none;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#macroTabs::-webkit-scrollbar{display:none}
+#macroTabs button{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:999px;
+  font-size:13.5px;font-weight:600;color:var(--txt-2);white-space:nowrap;margin-bottom:0;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);cursor:pointer;transition:var(--trans);
+}
+#macroTabs button:hover{border-color:var(--cyan);color:var(--txt-0)}
+#macroTabs button.active{
+  background:var(--cyan);color:#06222a;font-weight:700;border-color:transparent;
+  box-shadow:0 0 18px rgba(0,224,255,.45),0 2px 10px rgba(0,224,255,.25);
+}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:tabFade .25s ease}
+@keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 /* ---- 区块标题 ---- */
 .bd-sec-head{display:flex;align-items:center;gap:12px;margin:38px 0 18px;flex-wrap:wrap}
@@ -80,6 +97,15 @@
 .warn-card .warn-ratio.watch{color:var(--orange)}
 .warn-card .warn-ratio.danger{color:var(--red)}
 .warn-card .warn-note{font-size:12px;color:var(--txt-2);line-height:1.5}
+
+/* ---- 利息警戒线历史图表 ---- */
+.warn-chart{border:1px solid var(--line);border-radius:14px;padding:18px 16px 10px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);margin:0 0 30px}
+.warn-chart svg{width:100%;height:auto;display:block}
+.warn-chart-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.warn-chart-title h3{font-size:14px;font-weight:700;margin:0}
+.wc-legend{display:flex;gap:14px;flex-wrap:wrap}
+.wc-lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-1)}
+.wc-lg i{width:16px;height:3px;border-radius:2px;display:inline-block}
 .warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
 .warn-threshold strong{font-size:18px}
 
@@ -123,56 +149,76 @@
       <div class="kicker">MACRO MONITOR · 2026</div>
       <h1><span class="glow">宏观指标监控：债务、利率与大商品</span></h1>
       <p class="sub">追踪中日美三国债务规模、主要经济体利率走势、关键大宗商品价格，设置年利息占财政支出1/4警戒线，为科技投资提供宏观视角。</p>
-      <div class="meta" id="macro-meta">
-        <span>数据更新中...</span>
+      <div class="meta"><span>数据来源：各国财政部、央行及交易所公开信息</span><span id="update-time">更新时间：--</span></div>
+    </div>
+
+    <!-- 指标 Tab 导航 -->
+    <nav class="tab-nav bd-tabs" id="macroTabs">
+      <button class="active" data-tab="tab-debt">📊 债务与利息</button>
+      <button data-tab="tab-rate">🏦 利率监控</button>
+      <button data-tab="tab-commodity">🛢️ 大宗商品</button>
+    </nav>
+
+    <!-- Tab 1：债务与利息（默认） -->
+    <section class="tab-panel active" id="tab-debt">
+      <div class="bd-sec-head" style="margin-top:22px">
+        <span class="bd-sec-idx">01</span>
+        <h2>中日美债务规模</h2>
+        <div class="bd-sec-desc">各国政府债务总规模及占GDP比例，每年更新</div>
       </div>
-    </div>
+      <div class="debt-grid" id="debt-grid"></div>
 
-    <!-- 01 债务规模 -->
-    <div class="bd-sec-head">
-      <span class="bd-sec-idx">01</span>
-      <h2>中日美债务规模</h2>
-      <div class="bd-sec-desc">各国政府债务总规模及占GDP比例，每年更新</div>
-    </div>
-    <div class="debt-grid" id="debt-grid"></div>
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">02</span>
+        <h2>利息支出警戒线</h2>
+        <div class="bd-sec-desc">年利息占财政支出比例监控</div>
+      </div>
+      <div class="warn-grid" id="warn-grid"></div>
+      <div class="warn-threshold" id="warn-threshold"></div>
+      <div class="warn-chart" id="warn-chart">
+        <div class="warn-chart-title">
+          <h3>中美日历史利息支出占比趋势</h3>
+          <div class="wc-legend">
+            <span class="wc-lg"><i style="background:#ff5470"></i>美国</span>
+            <span class="wc-lg"><i style="background:#ff8a3d"></i>日本</span>
+            <span class="wc-lg"><i style="background:#00e0ff"></i>中国</span>
+          </div>
+        </div>
+        <div id="warn-chart-svg"></div>
+      </div>
 
-    <!-- 02 利率监控 -->
-    <div class="bd-sec-head">
-      <span class="bd-sec-idx">02</span>
-      <h2>利率监控</h2>
-      <div class="bd-sec-desc">主要经济体央行利率</div>
-    </div>
-    <div class="rate-grid" id="rate-grid"></div>
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">03</span>
+        <h2>债务规模走势</h2>
+        <div class="bd-sec-desc">中日美年度债务规模（万亿美元）</div>
+      </div>
+      <div class="history-table-wrap">
+        <table class="history-table" id="history-table">
+          <thead><tr><th>年份</th><th class="series-name us">美国</th><th class="series-name jp">日本</th><th class="series-name cn">中国</th></tr></thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <!-- 03 大宗商品 -->
-    <div class="bd-sec-head">
-      <span class="bd-sec-idx">03</span>
-      <h2>大宗商品</h2>
-      <div class="bd-sec-desc">关键战略资源价格</div>
-    </div>
-    <div class="com-grid" id="com-grid"></div>
+    <!-- Tab 2：利率监控 -->
+    <section class="tab-panel" id="tab-rate">
+      <div class="bd-sec-head" style="margin-top:22px">
+        <span class="bd-sec-idx">01</span>
+        <h2>利率监控</h2>
+        <div class="bd-sec-desc">主要经济体央行利率</div>
+      </div>
+      <div class="rate-grid" id="rate-grid"></div>
+    </section>
 
-    <!-- 04 利息支出警戒线 -->
-    <div class="bd-sec-head">
-      <span class="bd-sec-idx">04</span>
-      <h2>利息支出警戒线</h2>
-      <div class="bd-sec-desc">年利息占财政支出比例监控</div>
-    </div>
-    <div class="warn-grid" id="warn-grid"></div>
-    <div class="warn-threshold" id="warn-threshold"></div>
-
-    <!-- 05 历史走势 -->
-    <div class="bd-sec-head">
-      <span class="bd-sec-idx">05</span>
-      <h2>债务规模走势</h2>
-      <div class="bd-sec-desc">中日美年度债务规模（万亿美元）</div>
-    </div>
-    <div class="history-table-wrap">
-      <table class="history-table" id="history-table">
-        <thead><tr><th>年份</th><th class="series-name us">美国</th><th class="series-name jp">日本</th><th class="series-name cn">中国</th></tr></thead>
-        <tbody id="history-body"></tbody>
-      </table>
-    </div>
+    <!-- Tab 3：大宗商品 -->
+    <section class="tab-panel" id="tab-commodity">
+      <div class="bd-sec-head" style="margin-top:22px">
+        <span class="bd-sec-idx">01</span>
+        <h2>大宗商品</h2>
+        <div class="bd-sec-desc">关键战略资源价格</div>
+      </div>
+      <div class="com-grid" id="com-grid"></div>
+    </section>
 
     <div class="macro-note" id="macro-note">
       <strong>📌 数据说明：</strong> 债务数据为年度更新，大宗商品及利率为近期数据。数据来源包括各国财政部、央行及交易所公开信息。
@@ -184,12 +230,26 @@
 <script src="js/components.js?v=20260813"></script>
 <script src="js/app.js?v=20260813"></script>
 <script>
+// 指标 Tab 切换（不依赖数据，先初始化激活态）
+(function(){
+  const tabs = document.getElementById('macroTabs');
+  if (!tabs) return;
+  tabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    const id = btn.dataset.tab;
+    tabs.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === id));
+  });
+})();
+
 (async function(){
   try {
     const resp = await fetch('data/macro.json').then(r => r.json());
     
-    // 更新时间
-    document.getElementById('macro-meta').innerHTML = '<span>数据更新：' + resp.meta.updated + '</span>';
+    // 更新时间（数据驱动，与其他板块页一致）
+    const ut = document.getElementById('update-time');
+    if (ut && resp.meta && resp.meta.updated) ut.textContent = '更新时间：' + String(resp.meta.updated).slice(0, 10);
     
     // 01 债务规模
     const debtHtml = resp.debt.countries.map(c => `
@@ -238,6 +298,46 @@
     document.getElementById('warn-grid').innerHTML = warnHtml;
     document.getElementById('warn-threshold').innerHTML = 
       `<span>⚠️</span> 警戒线：年利息占财政支出 <strong>${resp.warning.threshold}</strong> ${resp.warning.threshold_desc}`;
+
+    // 04-2 利息警戒线历史图表（SVG 折线图，零依赖）
+    const wchart = document.getElementById('warn-chart-svg');
+    const wh = resp.warning.history;
+    if (wchart && wh) {
+      const W = 760, H = 300, PL = 44, PR = 14, PT = 24, PB = 34;
+      const maxV = 30, th = 25; // 警戒线 25%
+      const n = wh.years.length;
+      const X = i => PL + i * (W - PL - PR) / (n - 1);
+      const Y = v => PT + (maxV - v) * (H - PT - PB) / maxV;
+      const pts = s => s.data.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+      let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="中美日历史利息支出占比折线图">`;
+      // 网格 + Y 轴刻度（0~30%，每 5%）
+      for (let v = 0; v <= maxV; v += 5) {
+        const y = Y(v);
+        svg += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
+        svg += `<text x="${PL - 8}" y="${y + 4}" text-anchor="end" font-size="10.5" fill="#8b93a7">${v}%</text>`;
+      }
+      // 警戒线：红色虚线 + 标签
+      const yTh = Y(th);
+      svg += `<line x1="${PL}" y1="${yTh}" x2="${W - PR}" y2="${yTh}" stroke="#ff5470" stroke-width="1.6" stroke-dasharray="7 5"/>`;
+      svg += `<rect x="${W - PR - 98}" y="${yTh - 18}" width="98" height="17" rx="8.5" fill="#ff5470" opacity=".92"/>`;
+      svg += `<text x="${W - PR - 49}" y="${yTh - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">警戒线 ${th}%</text>`;
+      // 三条折线 + 数据点（hover 有原生提示）
+      // 注意：SVG 属性不支持 CSS 变量 var()，必须用具体色值
+      const CHART_COLORS = { '美国': '#ff5470', '日本': '#ff8a3d', '中国': '#00e0ff' };
+      wh.series.forEach(s => {
+        const col = CHART_COLORS[s.name] || '#00e0ff';
+        svg += `<polyline points="${pts(s)}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
+        s.data.forEach((v, i) => {
+          svg += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.2" fill="${col}"><title>${s.name} ${wh.years[i]}：${v}%</title></circle>`;
+        });
+      });
+      // X 轴年份（隔年标注）
+      wh.years.forEach((y, i) => {
+        if (i % 2 === 0) svg += `<text x="${X(i).toFixed(1)}" y="${H - 13}" text-anchor="middle" font-size="10.5" fill="#8b93a7">${y}</text>`;
+      });
+      svg += '</svg>';
+      wchart.innerHTML = svg;
+    }
     
     // 05 历史走势表
     const years = resp.history.years;
