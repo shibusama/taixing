@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>钛星 · 宏观指标监控</title>
+<link rel="stylesheet" href="css/style.css?v=20260813">
+<style>
+/* ===== 宏观指标监控页面样式 ===== */
+.bd-page{--accent:#f0c060;--accent-soft:rgba(240,192,96,.14)}
+
+/* ---- 版块 Hero ---- */
+.bd-hero{position:relative;overflow:hidden;padding:34px 36px 26px;margin:16px 0 26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 60%)}
+.bd-hero::before{content:"";position:absolute;top:-130px;right:-90px;width:430px;height:430px;border-radius:50%;background:var(--accent);opacity:.10;filter:blur(80px);pointer-events:none}
+.bd-hero::after{content:"";position:absolute;bottom:-150px;left:-70px;width:360px;height:360px;border-radius:50%;background:var(--cyan);opacity:.06;filter:blur(80px);pointer-events:none}
+.bd-hero>*{position:relative;z-index:1}
+.bd-hero .breadcrumb{padding:0;margin-bottom:16px}
+.bd-hero .kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:16px;border-radius:999px;border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.bd-hero .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:bdPulse 2s infinite}
+@keyframes bdPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.bd-hero h1{font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.16;letter-spacing:-.5px;margin-bottom:14px}
+.bd-hero h1 .glow{background:linear-gradient(120deg,var(--accent),var(--cyan) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bd-hero .sub{font-size:14.5px;line-height:1.85;color:var(--txt-1);max-width:840px;margin-bottom:18px}
+.bd-hero .meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--txt-2);font-size:12px}
+.bd-hero .meta span{display:inline-flex;align-items:center;gap:8px}
+.bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.bd-hero .meta span:first-child::before{display:none}
+
+/* ---- 区块标题 ---- */
+.bd-sec-head{display:flex;align-items:center;gap:12px;margin:38px 0 18px;flex-wrap:wrap}
+.bd-sec-idx{flex-shrink:0;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--accent-soft)}
+.bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
+.bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin-top:-4px}
+
+/* ---- 债务卡片 ---- */
+.debt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
+.debt-card{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.debt-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.debt-flag{font-size:28px;margin-bottom:8px}
+.debt-card h3{font-size:15px;font-weight:700;margin:0 0 12px;color:var(--txt-1)}
+.debt-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+.debt-row:last-child{border-bottom:none}
+.debt-label{color:var(--txt-2)}
+.debt-value{font-weight:700;font-family:var(--mono)}
+.debt-value .green{color:var(--green)}
+.debt-value .red{color:var(--red)}
+.debt-value .orange{color:var(--orange)}
+
+/* ---- 利率卡片 ---- */
+.rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
+.rate-card{border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.rate-card:hover{border-color:var(--accent)}
+.rate-card .rate-label{font-size:12px;color:var(--txt-2);margin-bottom:8px}
+.rate-card .rate-value{font-size:26px;font-weight:900;font-family:var(--mono);margin-bottom:6px}
+.rate-card .rate-sub{font-size:12px;color:var(--txt-1);line-height:1.5}
+.rate-trend{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.rate-trend.up{background:var(--green)}
+.rate-trend.down{background:var(--red)}
+.rate-trend.stable{background:var(--txt-2)}
+
+/* ---- 大宗商品 ---- */
+.com-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:0 0 30px}
+.com-card{border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.com-card:hover{border-color:var(--accent)}
+.com-icon{font-size:32px;margin-bottom:8px}
+.com-card .com-name{font-size:12px;color:var(--txt-2);margin-bottom:4px}
+.com-card .com-price{font-size:22px;font-weight:900;font-family:var(--mono);margin-bottom:2px}
+.com-card .com-unit{font-size:11px;color:var(--txt-2)}
+.com-card .com-change{font-size:13px;font-weight:700;margin-top:6px}
+.com-card .com-change.up{color:var(--green)}
+.com-card .com-change.down{color:var(--red)}
+
+/* ---- 警戒线 ---- */
+.warn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
+.warn-card{border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.warn-card:hover{border-color:var(--accent)}
+.warn-card .warn-name{font-size:14px;font-weight:700;margin-bottom:8px}
+.warn-card .warn-ratio{font-size:32px;font-weight:900;font-family:var(--mono);margin-bottom:6px}
+.warn-card .warn-ratio.safe{color:var(--green)}
+.warn-card .warn-ratio.watch{color:var(--orange)}
+.warn-card .warn-ratio.danger{color:var(--red)}
+.warn-card .warn-note{font-size:12px;color:var(--txt-2);line-height:1.5}
+.warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
+.warn-threshold strong{font-size:18px}
+
+/* ---- 历史走势 ---- */
+.history-table-wrap{overflow-x:auto;margin:0 0 30px;border:1px solid var(--line);border-radius:14px;padding:4px}
+.history-table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+.history-table th{text-align:left;padding:10px 14px;color:var(--txt-2);font-weight:600;border-bottom:1px solid var(--line);font-size:12px}
+.history-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--mono)}
+.history-table tr:last-child td{border-bottom:none}
+.history-table .series-name{font-weight:700}
+.history-table .series-name.us{color:var(--red)}
+.history-table .series-name.jp{color:var(--orange)}
+.history-table .series-name.cn{color:var(--cyan)}
+
+/* ---- 数据更新说明 ---- */
+.macro-note{color:var(--txt-2);font-size:13px;margin-top:16px;line-height:1.7;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
+
+/* ---- 响应式 ---- */
+@media(max-width:768px){
+  .debt-grid,.rate-grid,.warn-grid{grid-template-columns:1fr}
+  .com-grid{grid-template-columns:repeat(2,1fr)}
+  .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
+  .bd-hero .meta{gap:10px;font-size:11px}
+  .bd-hero .sub{font-size:13.5px}
+}
+@media(max-width:480px){
+  .com-grid{grid-template-columns:1fr}
+  .bd-hero h1{font-size:23px}
+}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="progress-bar"></div>
+
+<div id="header-placeholder"></div>
+<article class="article bd-page">
+  <div class="wrap">
+    <div class="bd-hero">
+      <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>宏观指标监控</span></div>
+      <div class="kicker">MACRO MONITOR · 2026</div>
+      <h1><span class="glow">宏观指标监控：债务、利率与大商品</span></h1>
+      <p class="sub">追踪中日美三国债务规模、主要经济体利率走势、关键大宗商品价格，设置年利息占财政支出1/4警戒线，为科技投资提供宏观视角。</p>
+      <div class="meta" id="macro-meta">
+        <span>数据更新中...</span>
+      </div>
+    </div>
+
+    <!-- 01 债务规模 -->
+    <div class="bd-sec-head">
+      <span class="bd-sec-idx">01</span>
+      <h2>中日美债务规模</h2>
+      <div class="bd-sec-desc">各国政府债务总规模及占GDP比例，每年更新</div>
+    </div>
+    <div class="debt-grid" id="debt-grid"></div>
+
+    <!-- 02 利率监控 -->
+    <div class="bd-sec-head">
+      <span class="bd-sec-idx">02</span>
+      <h2>利率监控</h2>
+      <div class="bd-sec-desc">主要经济体央行利率</div>
+    </div>
+    <div class="rate-grid" id="rate-grid"></div>
+
+    <!-- 03 大宗商品 -->
+    <div class="bd-sec-head">
+      <span class="bd-sec-idx">03</span>
+      <h2>大宗商品</h2>
+      <div class="bd-sec-desc">关键战略资源价格</div>
+    </div>
+    <div class="com-grid" id="com-grid"></div>
+
+    <!-- 04 利息支出警戒线 -->
+    <div class="bd-sec-head">
+      <span class="bd-sec-idx">04</span>
+      <h2>利息支出警戒线</h2>
+      <div class="bd-sec-desc">年利息占财政支出比例监控</div>
+    </div>
+    <div class="warn-grid" id="warn-grid"></div>
+    <div class="warn-threshold" id="warn-threshold"></div>
+
+    <!-- 05 历史走势 -->
+    <div class="bd-sec-head">
+      <span class="bd-sec-idx">05</span>
+      <h2>债务规模走势</h2>
+      <div class="bd-sec-desc">中日美年度债务规模（万亿美元）</div>
+    </div>
+    <div class="history-table-wrap">
+      <table class="history-table" id="history-table">
+        <thead><tr><th>年份</th><th class="series-name us">美国</th><th class="series-name jp">日本</th><th class="series-name cn">中国</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+
+    <div class="macro-note" id="macro-note">
+      <strong>📌 数据说明：</strong> 债务数据为年度更新，大宗商品及利率为近期数据。数据来源包括各国财政部、央行及交易所公开信息。
+    </div>
+  </div>
+</article>
+
+<div id="footer-placeholder"></div>
+<script src="js/app.js?v=20260813"></script>
+<script>
+(async function(){
+  try {
+    const resp = await fetch('data/macro.json').then(r => r.json());
+    
+    // 更新时间
+    document.getElementById('macro-meta').innerHTML = '<span>数据更新：' + resp.meta.updated + '</span>';
+    
+    // 01 债务规模
+    const debtHtml = resp.debt.countries.map(c => `
+      <div class="debt-card">
+        <div class="debt-flag">${c.flag}</div>
+        <h3>${c.name}</h3>
+        <div class="debt-row"><span class="debt-label">债务总额</span><span class="debt-value" style="color:${c.color}">${c.total}</span></div>
+        <div class="debt-row"><span class="debt-label">占GDP</span><span class="debt-value">${c.gdp_ratio}</span></div>
+        <div class="debt-row"><span class="debt-label">年增量</span><span class="debt-value" style="color:${c.color}">${c.annual_change}</span></div>
+      </div>
+    `).join('');
+    document.getElementById('debt-grid').innerHTML = debtHtml;
+    
+    // 02 利率
+    const rateHtml = resp.rates.items.map(r => `
+      <div class="rate-card">
+        <div class="rate-label">${r.label}</div>
+        <div class="rate-value">${r.value}</div>
+        <div class="rate-sub"><span class="rate-trend ${r.trend}"></span>${r.sub}</div>
+      </div>
+    `).join('');
+    document.getElementById('rate-grid').innerHTML = rateHtml;
+    
+    // 03 大宗商品
+    const comHtml = resp.commodities.items.map(c => {
+      const cls = c.trend === 'up' ? 'up' : 'down';
+      return `<div class="com-card">
+        <div class="com-icon">${c.icon}</div>
+        <div class="com-name">${c.name}</div>
+        <div class="com-price">${c.price}</div>
+        <div class="com-unit">${c.unit}</div>
+        <div class="com-change ${cls}">${c.change}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('com-grid').innerHTML = comHtml;
+    
+    // 04 利息警戒线
+    const warnHtml = resp.warning.countries.map(w => {
+      const cls = w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe';
+      return `<div class="warn-card">
+        <div class="warn-name">${w.name}</div>
+        <div class="warn-ratio ${cls}">${w.ratio}</div>
+        <div class="warn-note">${w.note}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('warn-grid').innerHTML = warnHtml;
+    document.getElementById('warn-threshold').innerHTML = 
+      `<span>⚠️</span> 警戒线：年利息占财政支出 <strong>${resp.warning.threshold}</strong> ${resp.warning.threshold_desc}`;
+    
+    // 05 历史走势表
+    const years = resp.history.years;
+    const series = resp.history.series;
+    const rowsHtml = years.map((y, i) => {
+      const usVal = series[0].data[i];
+      const jpVal = series[1].data[i];
+      const cnVal = series[2].data[i];
+      return `<tr><td style="font-weight:600">${y}</td><td>${usVal}</td><td>${jpVal}</td><td>${cnVal}</td></tr>`;
+    }).join('');
+    document.getElementById('history-body').innerHTML = rowsHtml;
+    
+    // 数据说明
+    document.getElementById('macro-note').innerHTML = 
+      `<strong>📌 数据说明：</strong> 债务数据为年度更新，大宗商品及利率为近期数据。数据来源包括各国财政部、央行及交易所公开信息。 — 更新于 ${resp.meta.updated}`;
+    
+  } catch(e) {
+    console.error('Macro data load failed:', e);
+    document.getElementById('debt-grid').innerHTML = '<p style="color:var(--txt-2)">数据加载失败</p>';
+  }
+})();
+</script>
+</body>
+</html>

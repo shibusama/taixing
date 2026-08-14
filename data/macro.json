@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "updated": "2026-08-13T23:30:00+08:00",
+    "module": "macro"
+  },
+  "debt": {
+    "title": "中日美债务规模",
+    "desc": "各国政府债务总规模及占GDP比例",
+    "updated": "2026年8月",
+    "countries": [
+      {
+        "name": "美国",
+        "flag": "🇺🇸",
+        "total": "36.2万亿美元",
+        "gdp_ratio": "123%",
+        "annual_change": "+1.8万亿",
+        "color": "var(--red)"
+      },
+      {
+        "name": "日本",
+        "flag": "🇯🇵",
+        "total": "1,306万亿日元",
+        "gdp_ratio": "255%",
+        "annual_change": "+15万亿",
+        "color": "var(--orange)"
+      },
+      {
+        "name": "中国",
+        "flag": "🇨🇳",
+        "total": "52.5万亿元",
+        "gdp_ratio": "56%",
+        "annual_change": "+4.2万亿",
+        "color": "var(--cyan)"
+      }
+    ]
+  },
+  "rates": {
+    "title": "利率监控",
+    "desc": "主要经济体央行利率",
+    "updated": "2026年8月",
+    "items": [
+      {
+        "label": "日元利率",
+        "value": "0.50%",
+        "sub": "日本央行 · 2026年7月加息至0.5%",
+        "trend": "up"
+      },
+      {
+        "label": "美联储利率",
+        "value": "3.50—3.75%",
+        "sub": "连续4次维持不变",
+        "trend": "stable"
+      },
+      {
+        "label": "中国LPR",
+        "value": "3.35%",
+        "sub": "1年期 · 维持不变",
+        "trend": "stable"
+      }
+    ]
+  },
+  "commodities": {
+    "title": "大宗商品",
+    "desc": "关键战略资源价格",
+    "updated": "2026年8月",
+    "items": [
+      {
+        "name": "原油",
+        "icon": "🛢️",
+        "price": "76.50",
+        "unit": "美元/桶",
+        "change": "-2.3%",
+        "trend": "down"
+      },
+      {
+        "name": "黄金",
+        "icon": "🥇",
+        "price": "2,680",
+        "unit": "美元/盎司",
+        "change": "+4.8%",
+        "trend": "up"
+      },
+      {
+        "name": "铜",
+        "icon": "🔌",
+        "price": "9,850",
+        "unit": "美元/吨",
+        "change": "+1.2%",
+        "trend": "up"
+      },
+      {
+        "name": "铁矿石",
+        "icon": "⛏️",
+        "price": "108.50",
+        "unit": "美元/吨",
+        "change": "-0.8%",
+        "trend": "down"
+      }
+    ]
+  },
+  "warning": {
+    "title": "利息支出警戒线",
+    "desc": "年度利息支出占财政支出比例监控",
+    "threshold": "25%",
+    "threshold_desc": "年利息占财政支出1/4警戒线",
+    "countries": [
+      {
+        "name": "美国",
+        "ratio": "18.5%",
+        "status": "safe",
+        "note": "2026财年利息支出约1.1万亿美元"
+      },
+      {
+        "name": "日本",
+        "ratio": "22.3%",
+        "status": "watch",
+        "note": "逼近警戒线，国债收益率上升压力"
+      },
+      {
+        "name": "中国",
+        "ratio": "8.2%",
+        "status": "safe",
+        "note": "债务成本可控"
+      }
+    ]
+  },
+  "history": {
+    "title": "债务规模走势",
+    "desc": "中日美年度债务规模（万亿美元）",
+    "years": ["2020", "2021", "2022", "2023", "2024", "2025", "2026"],
+    "series": [
+      {
+        "name": "美国",
+        "data": [27.7, 29.6, 31.4, 33.2, 34.5, 35.8, 36.2],
+        "color": "var(--red)"
+      },
+      {
+        "name": "日本",
+        "data": [11.6, 12.1, 12.5, 12.8, 13.1, 13.3, 13.5],
+        "color": "var(--orange)"
+      },
+      {
+        "name": "中国",
+        "data": [5.8, 6.3, 6.9, 7.4, 7.9, 8.3, 8.8],
+        "color": "var(--cyan)"
+      }
+    ]
+  }
+}
