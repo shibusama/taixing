@@ -100,12 +100,9 @@
 
 /* ---- 利息警戒线历史图表 ---- */
 .warn-chart{border:1px solid var(--line);border-radius:14px;padding:18px 16px 10px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);margin:0 0 30px}
-.warn-chart svg{width:100%;height:auto;display:block}
+.warn-chart .echart-box{width:100%;height:340px}
 .warn-chart-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
 .warn-chart-title h3{font-size:14px;font-weight:700;margin:0}
-.wc-legend{display:flex;gap:14px;flex-wrap:wrap}
-.wc-lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-1)}
-.wc-lg i{width:16px;height:3px;border-radius:2px;display:inline-block}
 .warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
 .warn-threshold strong{font-size:18px}
 
@@ -127,6 +124,7 @@
 @media(max-width:768px){
   .debt-grid,.rate-grid,.warn-grid{grid-template-columns:1fr}
   .com-grid{grid-template-columns:repeat(2,1fr)}
+  .warn-chart .echart-box{height:300px}
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
   .bd-hero .meta{gap:10px;font-size:11px}
   .bd-hero .sub{font-size:13.5px}
@@ -176,21 +174,28 @@
       <div class="warn-grid" id="warn-grid"></div>
       <div class="warn-threshold" id="warn-threshold"></div>
       <div class="warn-chart" id="warn-chart">
-        <div class="warn-chart-title">
-          <h3>中美日历史利息支出占比趋势</h3>
-          <div class="wc-legend">
-            <span class="wc-lg"><i style="background:#ff5470"></i>美国</span>
-            <span class="wc-lg"><i style="background:#ff8a3d"></i>日本</span>
-            <span class="wc-lg"><i style="background:#00e0ff"></i>中国</span>
-          </div>
-        </div>
-        <div id="warn-chart-svg"></div>
+        <div class="warn-chart-title"><h3>中美日历史利息支出占比趋势</h3></div>
+        <div id="warn-chart-box" class="echart-box"></div>
       </div>
 
       <div class="bd-sec-head">
         <span class="bd-sec-idx">03</span>
+        <h2>三国债务健康度</h2>
+        <div class="bd-sec-desc">占GDP比例 · 利息支出占比 · 距警戒线空间 三维对比</div>
+      </div>
+      <div class="warn-chart">
+        <div class="warn-chart-title"><h3>中日美债务健康度雷达图</h3></div>
+        <div id="debt-health-box" class="echart-box"></div>
+      </div>
+
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">04</span>
         <h2>债务规模走势</h2>
         <div class="bd-sec-desc">中日美年度债务规模（万亿美元）</div>
+      </div>
+      <div class="warn-chart" style="margin-bottom:18px">
+        <div class="warn-chart-title"><h3>中日美年度债务规模趋势</h3></div>
+        <div id="debt-chart-box" class="echart-box"></div>
       </div>
       <div class="history-table-wrap">
         <table class="history-table" id="history-table">
@@ -229,6 +234,7 @@
 <div id="footer-placeholder"></div>
 <script src="js/components.js?v=20260814"></script>
 <script src="js/app.js?v=20260814"></script>
+<script src="js/lib/echarts.min.js?v=20260814"></script>
 <script>
 // 指标 Tab 切换（不依赖数据，先初始化激活态）
 (function(){
@@ -299,44 +305,161 @@
     document.getElementById('warn-threshold').innerHTML = 
       `<span>⚠️</span> 警戒线：年利息占财政支出 <strong>${resp.warning.threshold}</strong> ${resp.warning.threshold_desc}`;
 
-    // 04-2 利息警戒线历史图表（SVG 折线图，零依赖）
-    const wchart = document.getElementById('warn-chart-svg');
+    // ================= ECharts 升级（引入外部库 js/lib/echarts.min.js） =================
+    const CHART_COLORS = { '美国': '#ff5470', '日本': '#ff8a3d', '中国': '#00e0ff' };
+    const GRID_LINE = 'rgba(255,255,255,.07)';
+    const AXIS_TXT = '#8b93a7';
+    const TOOLTIP_STYLE = {
+      backgroundColor: 'rgba(13,21,34,.92)',
+      borderColor: 'rgba(255,255,255,.12)',
+      borderWidth: 1,
+      textStyle: { color: '#f2f6fc', fontSize: 12 }
+    };
+    // ECharts 未加载时的兜底
+    if (typeof echarts === 'undefined') {
+      document.querySelectorAll('.echart-box').forEach(el => {
+        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--txt-2);font-size:13px">图表组件加载失败</div>';
+      });
+    }
+    function hexToRgba(hex, a) {
+      const m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+      if (!m) return 'rgba(0,224,255,' + a + ')';
+      const n = parseInt(m[1], 16);
+      return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    }
+    const chartInstances = [];
+    function initEChart(id, option) {
+      const el = document.getElementById(id);
+      if (!el || typeof echarts === 'undefined') return null;
+      const chart = echarts.init(el);
+      chart.setOption(option);
+      chartInstances.push(chart);
+      return chart;
+    }
+    window.addEventListener('resize', function () {
+      chartInstances.forEach(function (c) { if (c) c.resize(); });
+    });
+
+    // 04-2 利息警戒线历史（ECharts 折线图：渐变面积 + 悬浮提示 + 25% 红色虚线警戒线）
     const wh = resp.warning.history;
-    if (wchart && wh) {
-      const W = 760, H = 300, PL = 44, PR = 14, PT = 24, PB = 34;
-      const maxV = 30, th = 25; // 警戒线 25%
-      const n = wh.years.length;
-      const X = i => PL + i * (W - PL - PR) / (n - 1);
-      const Y = v => PT + (maxV - v) * (H - PT - PB) / maxV;
-      const pts = s => s.data.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
-      let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="中美日历史利息支出占比折线图">`;
-      // 网格 + Y 轴刻度（0~30%，每 5%）
-      for (let v = 0; v <= maxV; v += 5) {
-        const y = Y(v);
-        svg += `<line x1="${PL}" y1="${y}" x2="${W - PR}" y2="${y}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
-        svg += `<text x="${PL - 8}" y="${y + 4}" text-anchor="end" font-size="10.5" fill="#8b93a7">${v}%</text>`;
-      }
-      // 警戒线：红色虚线 + 标签
-      const yTh = Y(th);
-      svg += `<line x1="${PL}" y1="${yTh}" x2="${W - PR}" y2="${yTh}" stroke="#ff5470" stroke-width="1.6" stroke-dasharray="7 5"/>`;
-      svg += `<rect x="${W - PR - 98}" y="${yTh - 18}" width="98" height="17" rx="8.5" fill="#ff5470" opacity=".92"/>`;
-      svg += `<text x="${W - PR - 49}" y="${yTh - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">警戒线 ${th}%</text>`;
-      // 三条折线 + 数据点（hover 有原生提示）
-      // 注意：SVG 属性不支持 CSS 变量 var()，必须用具体色值
-      const CHART_COLORS = { '美国': '#ff5470', '日本': '#ff8a3d', '中国': '#00e0ff' };
-      wh.series.forEach(s => {
-        const col = CHART_COLORS[s.name] || '#00e0ff';
-        svg += `<polyline points="${pts(s)}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`;
-        s.data.forEach((v, i) => {
-          svg += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.2" fill="${col}"><title>${s.name} ${wh.years[i]}：${v}%</title></circle>`;
-        });
+    if (wh && wh.years && wh.series) {
+      const th = 25;
+      initEChart('warn-chart-box', {
+        backgroundColor: 'transparent',
+        color: wh.series.map(s => CHART_COLORS[s.name] || '#00e0ff'),
+        tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => v + '%' }, TOOLTIP_STYLE),
+        legend: { top: 0, textStyle: { color: '#aab4c5' }, itemWidth: 18, itemHeight: 3 },
+        grid: { left: 46, right: 18, top: 34, bottom: 26 },
+        xAxis: {
+          type: 'category', boundaryGap: false, data: wh.years,
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,.18)' } },
+          axisTick: { show: false }, axisLabel: { color: AXIS_TXT }
+        },
+        yAxis: {
+          type: 'value', min: 0, max: 30, interval: 5,
+          axisLabel: { color: AXIS_TXT, formatter: '{value}%' },
+          axisLine: { show: false }, axisTick: { show: false },
+          splitLine: { lineStyle: { color: GRID_LINE } }
+        },
+        series: wh.series.map(s => {
+          const col = CHART_COLORS[s.name] || '#00e0ff';
+          return {
+            name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 5,
+            lineStyle: { width: 2.2 }, itemStyle: { color: col },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: hexToRgba(col, .30) },
+                { offset: 1, color: hexToRgba(col, .02) }
+              ])
+            },
+            emphasis: { focus: 'series' },
+            data: s.data,
+            markLine: {
+              silent: true, symbol: 'none',
+              lineStyle: { color: '#ff5470', type: 'dashed', width: 1.6 },
+              label: { show: true, position: 'insideEndTop', formatter: '警戒线 ' + th + '%', color: '#ff5470', fontSize: 11, fontWeight: 'bold' },
+              data: [{ yAxis: th }]
+            }
+          };
+        })
       });
-      // X 轴年份（隔年标注）
-      wh.years.forEach((y, i) => {
-        if (i % 2 === 0) svg += `<text x="${X(i).toFixed(1)}" y="${H - 13}" text-anchor="middle" font-size="10.5" fill="#8b93a7">${y}</text>`;
+    }
+
+    // 03 三国债务健康度雷达图（占GDP比例 / 利息支出占比 / 距警戒线空间）
+    const dc = resp.debt && resp.debt.countries;
+    const wc = resp.warning && resp.warning.countries;
+    if (dc && wc) {
+      initEChart('debt-health-box', {
+        backgroundColor: 'transparent',
+        tooltip: Object.assign({
+          trigger: 'item',
+          valueFormatter: function (v) { return Array.isArray(v) ? v.join(' / ') : v; }
+        }, TOOLTIP_STYLE),
+        legend: { bottom: 0, textStyle: { color: '#aab4c5' } },
+        radar: {
+          indicator: [
+            { name: '占GDP比例(%)', max: 280 },
+            { name: '利息支出占比(%)', max: 30 },
+            { name: '距警戒线空间(%)', max: 100 }
+          ],
+          radius: '62%', splitNumber: 4,
+          axisName: { color: '#aab4c5', fontSize: 11 },
+          splitLine: { lineStyle: { color: GRID_LINE } },
+          splitArea: { areaStyle: { color: ['rgba(255,255,255,.015)', 'rgba(255,255,255,.03)'] } },
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,.14)' } }
+        },
+        series: [{
+          type: 'radar', symbol: 'circle', symbolSize: 4,
+          lineStyle: { width: 2 }, areaStyle: { opacity: .18 },
+          data: dc.map(c => {
+            const w = wc.find(x => x.name === c.name);
+            const ratio = w ? parseFloat(String(w.ratio).replace('%', '')) || 0 : 0;
+            const gdp = parseFloat(String(c.gdp_ratio).replace('%', '')) || 0;
+            return {
+              name: c.name,
+              value: [gdp, ratio, Math.max(0, +(25 - ratio).toFixed(1))],
+              itemStyle: { color: CHART_COLORS[c.name] || '#00e0ff' }
+            };
+          })
+        }]
       });
-      svg += '</svg>';
-      wchart.innerHTML = svg;
+    }
+
+    // 04 债务规模走势（ECharts 折线图，下方表格保留）
+    const hh = resp.history;
+    if (hh && hh.years && hh.series) {
+      initEChart('debt-chart-box', {
+        backgroundColor: 'transparent',
+        color: hh.series.map(s => CHART_COLORS[s.name] || '#00e0ff'),
+        tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => v + ' 万亿美元' }, TOOLTIP_STYLE),
+        legend: { top: 0, textStyle: { color: '#aab4c5' }, itemWidth: 18, itemHeight: 3 },
+        grid: { left: 46, right: 18, top: 34, bottom: 26 },
+        xAxis: {
+          type: 'category', boundaryGap: false, data: hh.years,
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,.18)' } },
+          axisTick: { show: false }, axisLabel: { color: AXIS_TXT }
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: { color: AXIS_TXT }, axisLine: { show: false }, axisTick: { show: false },
+          splitLine: { lineStyle: { color: GRID_LINE } }
+        },
+        series: hh.series.map(s => {
+          const col = CHART_COLORS[s.name] || '#00e0ff';
+          return {
+            name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 4,
+            lineStyle: { width: 2.2 }, itemStyle: { color: col },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: hexToRgba(col, .25) },
+                { offset: 1, color: hexToRgba(col, .02) }
+              ])
+            },
+            emphasis: { focus: 'series' },
+            data: s.data
+          };
+        })
+      });
     }
     
     // 05 历史走势表
