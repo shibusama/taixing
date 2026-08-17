@@ -36,6 +36,14 @@ API_HEADERS = {
     "Accept": "application/json",
 }
 
+# 关注的公司/机构名单（LL2 与备用源共用）
+WATCH_AGENCIES = [
+    "SpaceX", "Blue Origin", "Rocket Lab", "CASC",
+    "LandSpace", "Galactic Energy", "Space Pioneer", "iSpace",
+    "ExPace", "Isar Aerospace", "Rocket Factory", "Firefly",
+    "OrienSpace", "CAS Space", "Deep Blue", "Rocket Pi",
+]
+
 # LL2 返回的机构名 → 中文（仅翻译中国企业；SpaceX/Blue Origin/Rocket Lab 等国外公司
 # 按中文媒体惯例保留英文原名，不在此列表中）
 AGENCY_ZH_MAP = [
@@ -172,74 +180,190 @@ def generate_news_id(url):
     return hashlib.sha256(url.encode()).hexdigest()[:16]
 
 
+def _nested_get(obj, *path, default=""):
+    """从嵌套 dict 中安全取字段，避免 None/非 dict 时报错"""
+    cur = obj
+    for key in path:
+        if not isinstance(cur, dict):
+            return default
+        cur = cur.get(key)
+        if cur is None:
+            return default
+    return cur if cur is not None else default
+
+
+def _build_launch_item(l):
+    """把不同来源的单个发射对象统一成 rocket_launch_timeline 需要的结构。
+
+    兼容 LL2 v2.2、LL2 v2.1（spacelaunchnow.me）以及部分公开 JSON API 的常见字段差异。
+    """
+    if not isinstance(l, dict):
+        return None
+
+    # 机构名兼容：launch_service_provider / provider / agency
+    provider = l.get("launch_service_provider")
+    if not isinstance(provider, dict):
+        provider = l.get("provider")
+    agency = provider.get("name", "") if isinstance(provider, dict) else (l.get("agency", "") or "")
+    if not any(w.lower() in str(agency).lower() for w in WATCH_AGENCIES):
+        return None
+
+    # URL / 唯一键
+    launch_url = l.get("url", "") or l.get("slug", "") or ""
+    name = l.get("name", "") or l.get("mission_name", "") or ""
+    timeline_id = generate_news_id(launch_url) if launch_url else generate_news_id(name)
+
+    # 火箭名称兼容：rocket.configuration.name / vehicle.name / rocket_name
+    rocket_obj = l.get("rocket")
+    if not isinstance(rocket_obj, dict):
+        rocket_obj = l.get("vehicle")
+    rocket_name = ""
+    if isinstance(rocket_obj, dict):
+        rocket_name = _nested_get(rocket_obj, "configuration", "name") or rocket_obj.get("name", "")
+    if not rocket_name:
+        rocket_name = l.get("rocket_name", "")
+
+    # 任务名兼容：mission.name / mission.description / mission_name
+    mission_obj = l.get("mission")
+    mission_name = ""
+    if isinstance(mission_obj, dict):
+        mission_name = mission_obj.get("name", "") or mission_obj.get("description", "")
+    if not mission_name:
+        mission_name = l.get("mission_name", "")
+
+    # 发射场兼容：pad.location.name / pad.name / location
+    pad_obj = l.get("pad")
+    zh_site = ""
+    if isinstance(pad_obj, dict):
+        zh_site = zh_launch_site(_nested_get(pad_obj, "location", "name") or pad_obj.get("name", ""))
+    else:
+        zh_site = zh_launch_site(str(l.get("location", "")))
+
+    # 发射时间兼容：net / window_start / start
+    raw_time = l.get("net") or l.get("window_start") or l.get("start") or ""
+    launch_time = str(raw_time)[:10] if raw_time else ""
+
+    # 状态兼容：status.name（dict）或 status（字符串）
+    status_obj = l.get("status")
+    status_name = status_obj.get("name", "") if isinstance(status_obj, dict) else str(status_obj or "")
+    if "Go" in status_name or "TBC" in status_name:
+        outcome = "计划中"
+    elif "Success" in status_name:
+        outcome = "成功"
+    elif "Partial" in status_name:
+        outcome = "部分成功"
+    elif "Failure" in status_name:
+        outcome = "失败"
+    else:
+        outcome = status_name or "计划中"
+
+    zh_agency = zh_agency_name(str(agency))
+    zh_rocket = zh_rocket_name(rocket_name)
+    zh_mission = zh_mission_name(mission_name)
+    title_zh = f"{zh_agency} {zh_rocket}" + (f" · {zh_mission}" if zh_mission else "")
+    brief_desc = f"{zh_agency} {zh_rocket} 执行 {zh_mission}" if zh_mission else f"{zh_agency} {zh_rocket}"
+
+    return {
+        "timeline_id": timeline_id,
+        "rocket_id": None,
+        "mission_name": title_zh,
+        "launch_time": launch_time,
+        "launch_site": zh_site,
+        "payload": zh_mission,
+        "outcome": outcome,
+        "reuse_status": "",
+        "brief_desc": brief_desc,
+        "related_news_ids": [],
+        "create_time": datetime.now().isoformat(),
+        "update_time": datetime.now().isoformat(),
+    }
+
+
+def _extract_launch_list(data):
+    """兼容不同 API 返回结构：list / {results:[...]} / {result:[...]} / {launches:[...]} / {data:[...]}"""
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        for key in ("results", "result", "launches", "data"):
+            val = data.get(key)
+            if isinstance(val, list):
+                return val
+    return []
+
+
+def _crawl_rocket_launches_backup():
+    """LL2 主源无数据/被限流时，尝试其他公开真实数据源。
+
+    当前备用源：
+      1. spacelaunchnow.me 提供的 Launch Library 2.1.0 API（同源镜像，测试可用）
+      2. fdo.rocketlaunch.live 公开 JSON API（测试可用）
+    若备用源也没有数据，则返回空列表（不编造数据）。
+    """
+    print("\n[火箭发射] LL2 主源无数据，尝试备用真实数据源...")
+    backup_sources = [
+        ("https://spacelaunchnow.me/api/ll/2.1.0/launch/upcoming/", {"limit": 50}),
+        ("https://fdo.rocketlaunch.live/json/launches/upcoming/50", None),
+    ]
+
+    for url, params in backup_sources:
+        try:
+            data = fetch_json(url, params=params, headers=API_HEADERS, timeout=15)
+            if data is None:
+                print(f"  [备用源] {url} 无响应，跳过")
+                continue
+            launches = _extract_launch_list(data)
+            print(f"  [备用源] {url} 返回原始发射 {len(launches)} 条")
+            if not launches:
+                continue
+
+            items = []
+            for l in launches:
+                item = _build_launch_item(l)
+                if item:
+                    items.append(item)
+
+            print(f"  [备用源] 过滤后获得 {len(items)} 条关注发射")
+            if items:
+                return items
+        except Exception as e:
+            print(f"  [备用源] {url} 抓取失败: {e}")
+            continue
+
+    print("  [备用源] 均未获取到关注发射，保持空数据")
+    return []
+
+
 def crawl_rocket_launches():
-    """火箭发射日历（Launch Library 2 API）"""
+    """火箭发射日历（Launch Library 2 API + 备用真实数据源）"""
     print("\n[火箭发射] 抓取 Launch Library 2 API...")
     try:
         data = fetch_json("https://ll.thespacedevs.com/2.2.0/launch/upcoming/",
                           params={"limit": 50, "ordering": "net"}, headers=API_HEADERS)
         if data is None:
-            print("  LL2 API 被限流，跳过")
-            return []
-        launches = data.get("results", [])
-        WATCH = ["SpaceX", "Blue Origin", "Rocket Lab", "CASC",
-                 "LandSpace", "Galactic Energy", "Space Pioneer", "iSpace",
-                 "ExPace", "Isar Aerospace", "Rocket Factory", "Firefly",
-                 "OrienSpace", "CAS Space", "Deep Blue", "Rocket Pi"]
+            print("  LL2 API 被限流/无响应，尝试备用源...")
+            return _crawl_rocket_launches_backup()
 
+        launches = data.get("results", [])
         items = []
         for l in launches:
-            agency = l.get("launch_service_provider", {}).get("name", "")
-            if not any(w.lower() in agency.lower() for w in WATCH):
-                continue
-            
-            launch_url = l.get("url", "")
-            timeline_id = generate_news_id(launch_url) if launch_url else generate_news_id(l.get("name", ""))
-            
-            # 判断发射结果
-            status_name = l.get("status", {}).get("name", "") if l.get("status") else ""
-            if "Go" in status_name or "TBC" in status_name:
-                outcome = "计划中"
-            elif "Success" in status_name:
-                outcome = "成功"
-            elif "Partial" in status_name:
-                outcome = "部分成功"
-            elif "Failure" in status_name:
-                outcome = "失败"
-            else:
-                outcome = status_name or "计划中"
-            
-            # 构建简短描述（机构/火箭型号翻成中文，任务/卫星专有名词按映射翻译，未收录保留英文原文）
-            rocket_name = l.get("rocket", {}).get("configuration", {}).get("name", "")
-            mission_name = l.get("mission", {}).get("name", "") if l.get("mission") else ""
-            zh_agency = zh_agency_name(agency)
-            zh_rocket = zh_rocket_name(rocket_name)
-            zh_site = zh_launch_site(l.get("pad", {}).get("location", {}).get("name", "") if l.get("pad") else "")
-            zh_mission = zh_mission_name(mission_name)
-            title_zh = f"{zh_agency} {zh_rocket}" + (f" · {zh_mission}" if zh_mission else "")
-            brief_desc = f"{zh_agency} {zh_rocket} 执行 {zh_mission}" if zh_mission else f"{zh_agency} {zh_rocket}"
-
-            items.append({
-                "timeline_id": timeline_id,
-                "rocket_id": None,
-                "mission_name": title_zh,
-                "launch_time": l.get("net", "")[:10],
-                "launch_site": zh_site,
-                "payload": zh_mission,
-                "outcome": outcome,
-                "reuse_status": "",
-                "brief_desc": brief_desc,
-                "related_news_ids": [],
-                "create_time": datetime.now().isoformat(),
-                "update_time": datetime.now().isoformat(),
-            })
+            item = _build_launch_item(l)
+            if item:
+                items.append(item)
 
         print(f"  获取 {len(items)} 条关注火箭发射")
         for item in items[:8]:
             print(f"    {item['launch_time']} | {item['outcome']:<6} | {item['mission_name'][:50]}")
+
+        if not items:
+            print("  LL2 主源未匹配到关注发射，尝试备用源...")
+            return _crawl_rocket_launches_backup()
         return items
     except Exception as e:
         print(f"  [火箭发射] API失败: {e}")
+        print("  [火箭发射] 尝试备用真实数据源...")
+        backup_items = _crawl_rocket_launches_backup()
+        if backup_items:
+            return backup_items
         print("  [AI兜底] 尝试用 DeepSeek 补充数据...")
         return fetch_ai_fallback("可回收火箭和商业航天发射", count=15)
 
