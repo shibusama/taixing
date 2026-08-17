@@ -25,7 +25,7 @@ BOARD_IDS: list[str] = list(CRAWLER_MODULES.keys())
 # ============ 爬虫函数注册表 ============
 # 显式导入并注册，保持可追踪性
 
-from crawlers.rocket import crawl_rocket_launches, crawl_rocket_news_snapi, crawl_spacechina_launches
+from crawlers.rocket import crawl_rocket_launches, crawl_rocket_news_snapi, crawl_spacechina_launches, crawl_landspace_news
 from crawlers.moon import crawl_nasa_artemis
 from crawlers.controlled_fusion import crawl_iter, crawl_cfs, crawl_asipp
 from crawlers.semiconductor import crawl_smic, crawl_smee
@@ -37,6 +37,7 @@ CRAWLER_FUNCTIONS: Dict[str, Callable] = {
     "crawl_rocket_launches": crawl_rocket_launches,
     "crawl_rocket_news_snapi": crawl_rocket_news_snapi,
     "crawl_spacechina_launches": crawl_spacechina_launches,
+    "crawl_landspace_news": crawl_landspace_news,
     "crawl_nasa_artemis": crawl_nasa_artemis,
     "crawl_iter": crawl_iter,
     "crawl_cfs": crawl_cfs,

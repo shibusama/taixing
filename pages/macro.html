@@ -61,7 +61,11 @@
 .debt-value{font-weight:700;font-family:var(--mono)}
 .debt-value .green{color:var(--green)}
 .debt-value .red{color:var(--red)}
-.debt-value .orange{color:var(--orange)}
+.debt-value .orange{color:var(--amber)}
+.debt-value.safe{color:var(--green)}
+.debt-value.watch{color:var(--amber)}
+.debt-value.danger{color:var(--red)}
+.debt-note{font-size:12px;color:var(--txt-2);line-height:1.5}
 
 /* ---- 利率卡片 ---- */
 .rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
@@ -94,16 +98,17 @@
 .warn-card .warn-name{font-size:14px;font-weight:700;margin-bottom:8px}
 .warn-card .warn-ratio{font-size:32px;font-weight:900;font-family:var(--mono);margin-bottom:6px}
 .warn-card .warn-ratio.safe{color:var(--green)}
-.warn-card .warn-ratio.watch{color:var(--orange)}
+.warn-card .warn-ratio.watch{color:var(--amber)}
 .warn-card .warn-ratio.danger{color:var(--red)}
 .warn-card .warn-note{font-size:12px;color:var(--txt-2);line-height:1.5}
 
 /* ---- 利息警戒线历史图表 ---- */
-.warn-chart{border:1px solid var(--line);border-radius:14px;padding:18px 16px 10px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);margin:0 0 30px}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 30px}
+.warn-chart{border:1px solid var(--line);border-radius:14px;padding:18px 16px 10px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);margin:0}
 .warn-chart .echart-box{width:100%;height:340px}
 .warn-chart-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
 .warn-chart-title h3{font-size:14px;font-weight:700;margin:0}
-.warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
+.warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 26px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
 .warn-threshold strong{font-size:18px}
 
 /* ---- 历史走势 ---- */
@@ -114,7 +119,7 @@
 .history-table tr:last-child td{border-bottom:none}
 .history-table .series-name{font-weight:700}
 .history-table .series-name.us{color:var(--red)}
-.history-table .series-name.jp{color:var(--orange)}
+.history-table .series-name.jp{color:var(--amber)}
 .history-table .series-name.cn{color:var(--cyan)}
 
 /* ---- 数据更新说明 ---- */
@@ -124,6 +129,7 @@
 @media(max-width:768px){
   .debt-grid,.rate-grid,.warn-grid{grid-template-columns:1fr}
   .com-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-row{grid-template-columns:1fr}
   .warn-chart .echart-box{height:300px}
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
   .bd-hero .meta{gap:10px;font-size:11px}
@@ -164,32 +170,27 @@
         <h2>中日美债务规模</h2>
         <div class="bd-sec-desc">各国政府债务总规模及占GDP比例，每年更新</div>
       </div>
+      <div class="warn-threshold" id="warn-threshold"></div>
       <div class="debt-grid" id="debt-grid"></div>
 
       <div class="bd-sec-head">
         <span class="bd-sec-idx">02</span>
-        <h2>利息支出警戒线</h2>
-        <div class="bd-sec-desc">年利息占财政支出比例监控</div>
+        <h2>三国债务健康度</h2>
+        <div class="bd-sec-desc">占GDP比例 · 利息支出占比 · 距警戒线空间 三维对比</div>
       </div>
-      <div class="warn-grid" id="warn-grid"></div>
-      <div class="warn-threshold" id="warn-threshold"></div>
-      <div class="warn-chart" id="warn-chart">
-        <div class="warn-chart-title"><h3>中美日历史利息支出占比趋势</h3></div>
-        <div id="warn-chart-box" class="echart-box"></div>
+      <div class="chart-row">
+        <div class="warn-chart" id="warn-chart">
+          <div class="warn-chart-title"><h3>中美日历史利息支出占比趋势</h3></div>
+          <div id="warn-chart-box" class="echart-box"></div>
+        </div>
+        <div class="warn-chart">
+          <div class="warn-chart-title"><h3>中日美债务健康度雷达图</h3></div>
+          <div id="debt-health-box" class="echart-box"></div>
+        </div>
       </div>
 
       <div class="bd-sec-head">
         <span class="bd-sec-idx">03</span>
-        <h2>三国债务健康度</h2>
-        <div class="bd-sec-desc">占GDP比例 · 利息支出占比 · 距警戒线空间 三维对比</div>
-      </div>
-      <div class="warn-chart">
-        <div class="warn-chart-title"><h3>中日美债务健康度雷达图</h3></div>
-        <div id="debt-health-box" class="echart-box"></div>
-      </div>
-
-      <div class="bd-sec-head">
-        <span class="bd-sec-idx">04</span>
         <h2>债务规模走势</h2>
         <div class="bd-sec-desc">中日美年度债务规模（万亿美元）</div>
       </div>
@@ -257,16 +258,24 @@
     const ut = document.getElementById('update-time');
     if (ut && resp.meta && resp.meta.updated) ut.textContent = '更新时间：' + String(resp.meta.updated).slice(0, 10);
     
-    // 01 债务规模
-    const debtHtml = resp.debt.countries.map(c => `
+    // 01 债务规模（合并利息占比 + 备注，来自 warning.countries）
+    const warnMap = {};
+    (resp.warning && resp.warning.countries || []).forEach(w => warnMap[w.name] = w);
+    const debtHtml = resp.debt.countries.map(c => {
+      const w = warnMap[c.name];
+      const ratioCls = w ? (w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe') : '';
+      return `
       <div class="debt-card">
         <div class="debt-flag">${c.flag}</div>
         <h3>${c.name}</h3>
         <div class="debt-row"><span class="debt-label">债务总额</span><span class="debt-value" style="color:${c.color}">${c.total}</span></div>
         <div class="debt-row"><span class="debt-label">占GDP</span><span class="debt-value">${c.gdp_ratio}</span></div>
         <div class="debt-row"><span class="debt-label">年增量</span><span class="debt-value" style="color:${c.color}">${c.annual_change}</span></div>
+        ${w ? `<div class="debt-row"><span class="debt-label">利息占比</span><span class="debt-value ${ratioCls}">${w.ratio}</span></div>
+        <div class="debt-row"><span class="debt-label">备注</span><span class="debt-note">${w.note}</span></div>` : ''}
       </div>
-    `).join('');
+    `;
+    }).join('');
     document.getElementById('debt-grid').innerHTML = debtHtml;
     
     // 02 利率
@@ -292,16 +301,7 @@
     }).join('');
     document.getElementById('com-grid').innerHTML = comHtml;
     
-    // 04 利息警戒线
-    const warnHtml = resp.warning.countries.map(w => {
-      const cls = w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe';
-      return `<div class="warn-card">
-        <div class="warn-name">${w.name}</div>
-        <div class="warn-ratio ${cls}">${w.ratio}</div>
-        <div class="warn-note">${w.note}</div>
-      </div>`;
-    }).join('');
-    document.getElementById('warn-grid').innerHTML = warnHtml;
+    // 警戒线说明条（置于债务卡片上方）
     document.getElementById('warn-threshold').innerHTML = 
       `<span>⚠️</span> 警戒线：年利息占财政支出 <strong>${resp.warning.threshold}</strong> ${resp.warning.threshold_desc}`;
 

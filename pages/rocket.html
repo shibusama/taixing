@@ -42,6 +42,23 @@
 .bd-tabs button:hover{color:var(--txt-1)}
 .bd-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
 
+/* ---- 发射计划时间线：固定高度内部滚动（方案B） ---- */
+#rocket-timeline-done,#rocket-timeline-upcoming{
+  max-height:520px;overflow-y:auto;padding-right:10px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent;
+  -webkit-overflow-scrolling:touch;
+}
+#rocket-timeline-done::-webkit-scrollbar,#rocket-timeline-upcoming::-webkit-scrollbar{width:6px}
+#rocket-timeline-done::-webkit-scrollbar-thumb,#rocket-timeline-upcoming::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+#rocket-timeline-done::-webkit-scrollbar-track,#rocket-timeline-upcoming::-webkit-scrollbar-track{background:transparent}
+/* 中间竖线改为跟随内容滚动：禁用容器固定竖线，改用内层容器竖线 */
+#rocket-timeline-done::before,#rocket-timeline-upcoming::before{display:none}
+#rocket-timeline-done .tlv-inner,#rocket-timeline-upcoming .tlv-inner{position:relative}
+#rocket-timeline-done .tlv-inner::before,#rocket-timeline-upcoming .tlv-inner::before{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;
+  background:var(--grad-line);transform:translateX(-50%);
+}
+
 /* ---- 响应式 ---- */
 @media(max-width:768px){
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
@@ -440,11 +457,11 @@
         <p>2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
 
         <h2>✓ 已完成</h2>
-        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸 美国</span></div>
+        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸美/🇯🇵日/🇪🇺欧/🇰🇷韩/🇮🇳印/🇩🇪德/🇷🇺俄</span></div>
         <div class="tl-versus" id="rocket-timeline-done"></div>
 
         <h2>即将发射</h2>
-        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸 美国</span></div>
+        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸美/🇯🇵日/🇪🇺欧/🇰🇷韩/🇮🇳印/🇩🇪德/🇷🇺俄</span></div>
         <div class="tl-versus" id="rocket-timeline-upcoming"></div>
       </div>
     </section>
@@ -526,25 +543,29 @@
       }).join('');
     }
 
-    // 中美对撞时间线渲染（中间共享竖线，中国事件挂左侧、美国事件挂右侧，按原始日期顺序合并排列）
+    // 中国 vs 除中国外 对撞时间线渲染（中间共享竖线，中国事件挂左侧、非中国事件挂右侧，按原始日期顺序合并排列）
     function renderVersusTL(items) {
-      return items.map(it => {
-        const us = isUS(it);
+      const rows = items.map(it => {
+        const cn = isChina(it);
         const badge = it.badge ? ` <span class="tl-badge ${it.badge==='国家队'?'badge-cn':'badge-private'}">${it.badge}</span>` : '';
         const done = it.done ? ' ✓ 已完成' : '';
         const card = `<div class="tlv-card ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
-        return `<div class="tlv-row ${us?'us-side':'cn-side'}">
-          <div class="tlv-side tlv-left">${us?'':card}</div>
+        return `<div class="tlv-row ${cn?'cn-side':'us-side'}">
+          <div class="tlv-side tlv-left">${cn?card:''}</div>
           <div class="tlv-dot ${it.color||''}"></div>
-          <div class="tlv-side tlv-right">${us?card:''}</div>
+          <div class="tlv-side tlv-right">${cn?'':card}</div>
         </div>`;
       }).join('');
+      return `<div class="tlv-inner">${rows}</div>`;
     }
-    function isUS(item) {
-      const usKeys = ['spacex', 'blue origin', 'rocket lab', 'nasa', 'relativity', 'stoke', 'ula', 'falcon', 'starship', 'newglenn', 'electron'];
+    // 判断是否中国发射任务（火箭型号/机构关键词命中即算中国；未命中归入"除中国外"）
+    function isChina(item) {
+      const cnKeys = ['长征','朱雀','智神','引力','双曲线','谷神','天龙','快舟','力箭','元行者',
+        '航天科技','蓝箭','星河','星际荣耀','东方空间','天兵','航天科工','中科宇航','箭元',
+        '嫦娥','神舟','天舟','梦舟','星网'];
       const title = (item.title || '').toLowerCase();
       const desc = (item.desc || '').toLowerCase();
-      return usKeys.some(k => title.includes(k) || desc.includes(k));
+      return cnKeys.some(k => title.includes(k) || desc.includes(k));
     }
     // 按时间分组
     const today = new Date();

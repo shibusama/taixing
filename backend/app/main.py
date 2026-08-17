@@ -28,7 +28,7 @@ from app.scheduler import start_scheduler, shutdown_scheduler
 async def lifespan(app: FastAPI):
     # 启动时
     init_db()
-    if os.environ.get("SCHEDULER_ENABLED", "true").lower() in ("1", "true", "yes"):
+    if os.environ.get("SCHEDULER_ENABLED", "false").lower() in ("1", "true", "yes"):
         start_scheduler()
     else:
         print("[scheduler] disabled by SCHEDULER_ENABLED=false")

@@ -43,6 +43,15 @@
           "description": "航天科技集团官网，国内长征系列发射记录（纯中文官方数据，不依赖 LL2，无限流风险；只有历史已完成记录，无未来计划）",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "landspace_news",
+          "name": "蓝箭航天官网新闻",
+          "crawler": "crawl_landspace_news",
+          "type": "html",
+          "description": "蓝箭航天官网新闻中心（朱雀系列发射/发动机试车等官方动态）",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },

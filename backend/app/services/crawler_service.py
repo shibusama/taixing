@@ -9,11 +9,23 @@ from app.db.board_data import upsert_launch_timeline
 from crawlers.crawler_registry import CRAWLER_MODULES
 
 
-def run_crawler(board_id: str) -> dict:
-    """复用现有爬虫 + 去重入库 + 状态记录"""
+def run_crawler(board_id: str, log_fn=None) -> dict:
+    """复用现有爬虫 + 去重入库 + 状态记录
+
+    log_fn: 可选回调（str -> None），每个数据源处理进度时调用，用于管理端实时日志
+    """
     root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     if root not in sys.path:
         sys.path.insert(0, root)
+
+    def _log(msg: str):
+        if log_fn:
+            try:
+                log_fn(msg)
+            except Exception:
+                pass
+        else:
+            print(msg)
 
     mod_name = CRAWLER_MODULES.get(board_id)
     if not mod_name:
@@ -32,12 +44,15 @@ def run_crawler(board_id: str) -> dict:
             continue
         total_sources += 1
         source_name = name.replace("crawl_", "", 1)
+        _log(f"[{source_name}] 开始抓取...")
         try:
             raw_result = getattr(mod, name)()
         except Exception as e:
             error_sources += 1
             sources_detail[source_name] = {"error": str(e), "new": 0}
+            _log(f"[{source_name}] 失败: {e}")
             continue
+        _log(f"[{source_name}] 抓取返回 {len(raw_result) if isinstance(raw_result, list) else 1} 条")
 
         # 2. 统一化 + 去重入库
         items = raw_result if isinstance(raw_result, list) else [raw_result]
@@ -79,6 +94,8 @@ def run_crawler(board_id: str) -> dict:
         sources_detail[source_name] = {"new": new_for_source, "total_items": len(items)}
         if timeline_for_source:
             sources_detail[source_name]["timeline_synced"] = timeline_for_source
+            _log(f"[{source_name}] 时间线同步 {timeline_for_source} 条")
+        _log(f"[{source_name}] 新增 {new_for_source} 条")
 
     # 3. 更新板块状态
     if total_new > 0:

@@ -1,35 +1,35 @@
 {
   "meta": {
-    "updated": "2026-08-13T23:30:00+08:00",
+    "updated": "2026-08-17T16:30:00+08:00",
     "module": "macro"
   },
   "debt": {
     "title": "中日美债务规模",
     "desc": "各国政府债务总规模及占GDP比例",
-    "updated": "2026年8月",
+    "updated": "2026年8月17日",
     "countries": [
       {
         "name": "美国",
         "flag": "🇺🇸",
-        "total": "36.2万亿美元",
+        "total": "39.9万亿美元",
         "gdp_ratio": "123%",
-        "annual_change": "+1.8万亿",
+        "annual_change": "+2.8万亿",
         "color": "var(--red)"
       },
       {
         "name": "日本",
         "flag": "🇯🇵",
-        "total": "1,306万亿日元",
-        "gdp_ratio": "255%",
-        "annual_change": "+15万亿",
-        "color": "var(--orange)"
+        "total": "约8.4万亿美元",
+        "gdp_ratio": "232%",
+        "annual_change": "+33万亿日元",
+        "color": "var(--amber)"
       },
       {
         "name": "中国",
         "flag": "🇨🇳",
-        "total": "52.5万亿元",
-        "gdp_ratio": "56%",
-        "annual_change": "+4.2万亿",
+        "total": "约14.8万亿美元",
+        "gdp_ratio": "71%",
+        "annual_change": "+13.2万亿",
         "color": "var(--cyan)"
       }
     ]
@@ -159,7 +159,7 @@
         },
         {
           "name": "日本",
-          "color": "var(--orange)",
+          "color": "var(--amber)",
           "data": [
             18.9,
             18.7,
@@ -216,7 +216,7 @@
           33.2,
           34.5,
           35.8,
-          36.2
+          39.9
         ],
         "color": "var(--red)"
       },
@@ -231,7 +231,7 @@
           13.3,
           13.5
         ],
-        "color": "var(--orange)"
+        "color": "var(--amber)"
       },
       {
         "name": "中国",

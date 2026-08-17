@@ -256,6 +256,11 @@ def api_crawl_board_async(board_id: str):
     from app.database import log_crawl
     from datetime import datetime
 
+    # 防重入：该板块已在抓取中则拒绝重复启动
+    existing = _crawl_logs.get(board_id)
+    if existing and existing.get("status") == "running":
+        return {"board_id": board_id, "status": "already_running", "message": f"{board_id} 正在抓取中，请勿重复启动"}
+
     _crawl_logs[board_id] = {
         "status": "running",
         "lines": [],
@@ -265,7 +270,7 @@ def api_crawl_board_async(board_id: str):
     def _run():
         try:
             _crawl_logs[board_id]["lines"].append(f"[{board_id}] starting...")
-            result = run_crawler(board_id)
+            result = run_crawler(board_id, log_fn=lambda msg: _crawl_logs[board_id]["lines"].append(f"[{board_id}] {msg}"))
             _crawl_logs[board_id]["lines"].append(f"[{board_id}] done: {result.get('message', 'OK')}")
             _crawl_logs[board_id]["status"] = "success"
             log_crawl(board_id, "success", result.get("message", "OK"))

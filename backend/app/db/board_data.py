@@ -1,6 +1,7 @@
 """
 各板块数据查询 — 全部 get_* 函数（按板块划分）
 """
+import re
 from datetime import datetime
 from typing import Optional, List, Dict
 from app.db.client import get_supabase
@@ -10,6 +11,24 @@ from app.db.board_ops import get_board_meta
 # ========================================================================
 # 1. 运载火箭 (rocket)
 # ========================================================================
+
+# 中文火箭型号正则（用于跨源查重：LL2 与航天官网对同一发射的型号表达不同，
+# 提取型号核心词做"同一天 + 型号互相包含"匹配）
+_ROCKET_CORE_RE = re.compile(
+    r"(长征[一二三四五六七八九十百零]+号[\w甲乙丙丁]*"
+    r"|朱雀[一二三]号[\w甲乙丙丁]*"
+    r"|智神星[一二]号|双曲线[一二三]号|引力[一二]号"
+    r"|谷神星[一二]号|天龙[二三]号|快舟[\w]*|力箭[一二]号|元行者[一二]号)"
+)
+
+
+def _rocket_core(mission_name: str) -> Optional[str]:
+    """从任务名提取中文火箭型号核心词；非中文型号返回 None（不启用跨源查重，避免误伤同天多次发射）"""
+    if not mission_name:
+        return None
+    m = _ROCKET_CORE_RE.search(mission_name)
+    return m.group(1) if m else None
+
 
 def get_rocket_companies() -> List[Dict]:
     sb = get_supabase()
@@ -75,7 +94,13 @@ def get_launch_timeline(limit: int = 50) -> List[Dict]:
 
 
 def upsert_launch_timeline(item: Dict) -> bool:
-    """写入/更新发射时间线（rocket_launch_timeline 表）"""
+    """写入/更新发射时间线（rocket_launch_timeline 表）
+
+    去重顺序：
+    1. 按 timeline_id（同源唯一键）— 存在则更新
+    2. 跨源查重（中文型号）：同一天 + 火箭型号核心词互相包含 → 视为同一发射，更新该行（保留原 timeline_id）
+    3. 均未命中 → 插入新行
+    """
     sb = get_supabase()
     timeline_id = item.get("timeline_id")
     if not timeline_id:
@@ -86,8 +111,23 @@ def upsert_launch_timeline(item: Dict) -> bool:
         update_data = {k: v for k, v in item.items() if k != "timeline_id"}
         update_data["update_time"] = datetime.now().isoformat()
         sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", timeline_id).execute()
-    else:
-        sb.table("rocket_launch_timeline").insert(item).execute()
+        return True
+
+    # 跨源查重：仅对中文型号启用（LL2 与航天官网对同一国家队/民营发射的 timeline_id 不同）
+    launch_time = item.get("launch_time", "")
+    mission_name = item.get("mission_name", "")
+    core = _rocket_core(mission_name) if launch_time and mission_name else None
+    if core:
+        same_day = sb.table("rocket_launch_timeline").select("*").eq("launch_time", launch_time).execute()
+        for row in same_day.data:
+            row_core = _rocket_core(row.get("mission_name", ""))
+            if row_core and (core in row_core or row_core in core):
+                update_data = {k: v for k, v in item.items() if k != "timeline_id"}
+                update_data["update_time"] = datetime.now().isoformat()
+                sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", row["timeline_id"]).execute()
+                return True
+
+    sb.table("rocket_launch_timeline").insert(item).execute()
     return True
 
 

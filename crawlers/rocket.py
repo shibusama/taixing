@@ -21,6 +21,13 @@ ROCKET_COMPANIES = {
     "Rocket Lab": "rocket_lab",
     "Relativity Space": "relativity",
     "Stoke Space": "stoke_space",
+    # 中国民营火箭公司（SNAPI 英文源，文章量少但能覆盖国际报道）
+    "LandSpace": "landspace",
+    "Galactic Energy": "galactic_energy",
+    "iSpace": "ispace",
+    "Orienspace": "orienspace",
+    "CAS Space": "cas_space",
+    "Deep Blue Aerospace": "deep_blue",
 }
 
 # API 请求头（Accept: application/json 确保返回 JSON）
@@ -39,6 +46,11 @@ AGENCY_ZH_MAP = [
     ("space pioneer", "天兵科技"),
     ("ispace", "星际荣耀"),
     ("expace", "航天科工"),
+    ("orienspace", "东方空间"),
+    ("orien space", "东方空间"),
+    ("cas space", "中科宇航"),
+    ("deep blue", "深蓝航天"),
+    ("rocket pi", "箭元科技"),
 ]
 
 # 火箭型号名 → 中文（覆盖 WATCH 名单里常见型号；未收录的新名词保留英文原文）
@@ -70,6 +82,13 @@ ROCKET_NAME_ZH_MAP = [
     ("hyperbola-3", "双曲线三号"),
     ("kuaizhou", "快舟"),
     ("kinetica", "引力"),
+    ("gravity-1", "引力一号"),
+    ("gravity 1", "引力一号"),
+    ("gravity-2", "引力二号"),
+    ("gravity 2", "引力二号"),
+    ("lijian", "力箭"),
+    ("shuangquxian", "双曲线"),
+    ("yuanxingzhe", "元行者"),
 ]
 
 # 发射场名 → 中文（未收录的保留英文原文）
@@ -111,6 +130,43 @@ def zh_launch_site(name):
     return _zh_lookup(name, LAUNCH_SITE_ZH_MAP)
 
 
+# LL2 任务名（mission.name）→ 中文（专有名词按中文媒体惯例翻译/保留，长条目在前优先匹配）
+MISSION_ZH_MAP = [
+    ("nancy grace roman space telescope", "罗曼空间望远镜任务"),
+    ("griffin mission one", "格里芬一号月球任务"),
+    ("the lightning god defends", "雷神守护任务（iQPS雷达卫星）"),
+    ("onward and upward", "勇往直前首飞任务"),
+    ("starlink group", "星链组网任务"),
+    ("sda tranche 1 tracking layer", "SDA第1代追踪层卫星"),
+    ("sda tranche 1 transport layer", "SDA第1代传输层卫星"),
+    ("hawkeye 360", "HawkEye 360电子侦察卫星"),
+    ("strix launch", "StriX雷达卫星发射"),
+    ("blacksky gen-3", "BlackSky第三代卫星"),
+    ("o3b mpower", "O3b mPower高通量卫星"),
+    ("transporter", "拼车发射任务"),
+    ("cygnus crs-2", "天鹅座货运飞船任务"),
+    ("dragon crs-2", "龙货运飞船任务"),
+    ("rivada", "Rivada通信卫星"),
+    ("loxsat", "LOXSAT液氧推进演示卫星"),
+    ("roman", "罗曼空间望远镜"),
+    ("amazon kuiper", "柯伊伯星座"),
+    ("demo flight", "演示飞行"),
+]
+
+
+def zh_mission_name(name):
+    """任务名翻译：Flight N → 第N次试飞、Crew-N → 载人龙飞船N号；其余按映射表子串匹配，找不到保留英文"""
+    if not name:
+        return name
+    m = re.match(r"^flight\s+(\d+)$", name, re.I)
+    if m:
+        return f"第{m.group(1)}次试飞"
+    m = re.match(r"^crew[- ](\d+)$", name, re.I)
+    if m:
+        return f"载人龙飞船{m.group(1)}号"
+    return _zh_lookup(name, MISSION_ZH_MAP)
+
+
 def generate_news_id(url):
     """根据 URL 生成唯一哈希 ID"""
     return hashlib.sha256(url.encode()).hexdigest()[:16]
@@ -128,7 +184,8 @@ def crawl_rocket_launches():
         launches = data.get("results", [])
         WATCH = ["SpaceX", "Blue Origin", "Rocket Lab", "CASC",
                  "LandSpace", "Galactic Energy", "Space Pioneer", "iSpace",
-                 "ExPace", "Isar Aerospace", "Rocket Factory", "Firefly"]
+                 "ExPace", "Isar Aerospace", "Rocket Factory", "Firefly",
+                 "OrienSpace", "CAS Space", "Deep Blue", "Rocket Pi"]
 
         items = []
         for l in launches:
@@ -152,14 +209,15 @@ def crawl_rocket_launches():
             else:
                 outcome = status_name or "计划中"
             
-            # 构建简短描述（机构/火箭型号翻成中文，任务/卫星专有名词保留英文原文）
+            # 构建简短描述（机构/火箭型号翻成中文，任务/卫星专有名词按映射翻译，未收录保留英文原文）
             rocket_name = l.get("rocket", {}).get("configuration", {}).get("name", "")
             mission_name = l.get("mission", {}).get("name", "") if l.get("mission") else ""
             zh_agency = zh_agency_name(agency)
             zh_rocket = zh_rocket_name(rocket_name)
             zh_site = zh_launch_site(l.get("pad", {}).get("location", {}).get("name", "") if l.get("pad") else "")
-            title_zh = f"{zh_agency} {zh_rocket}" + (f" · {mission_name}" if mission_name else "")
-            brief_desc = f"{zh_agency} {zh_rocket} 执行 {mission_name}" if mission_name else f"{zh_agency} {zh_rocket}"
+            zh_mission = zh_mission_name(mission_name)
+            title_zh = f"{zh_agency} {zh_rocket}" + (f" · {zh_mission}" if zh_mission else "")
+            brief_desc = f"{zh_agency} {zh_rocket} 执行 {zh_mission}" if zh_mission else f"{zh_agency} {zh_rocket}"
 
             items.append({
                 "timeline_id": timeline_id,
@@ -167,7 +225,7 @@ def crawl_rocket_launches():
                 "mission_name": title_zh,
                 "launch_time": l.get("net", "")[:10],
                 "launch_site": zh_site,
-                "payload": mission_name,
+                "payload": zh_mission,
                 "outcome": outcome,
                 "reuse_status": "",
                 "brief_desc": brief_desc,
@@ -244,6 +302,90 @@ def crawl_spacechina_launches():
         return items
     except Exception as e:
         print(f"  [长征发射记录] 抓取失败: {e}")
+        return []
+
+
+def crawl_landspace_news():
+    """蓝箭航天官网新闻中心（国内民营官方源）
+
+    抓取 news.html 的新闻列表（标题 + 日期 + 详情链接），入库 raw_articles（category=rocket）。
+    官网无正文摘要，仅标题/日期/链接；发射计划不在官网公布，仍依赖 LL2。
+    """
+    print("\n[蓝箭新闻] 抓取蓝箭航天官网新闻中心...")
+    url = "https://www.landspace.com/news.html"
+    try:
+        html = fetch_html(url)
+        if html is None:
+            return []
+        soup = BeautifulSoup(html, "lxml")
+        items = []
+        seen = set()
+        crawl_time = datetime.utcnow().isoformat() + "Z"
+
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if "news-detail.html" not in href or "itemid=" not in href:
+                continue
+            title = a.get_text(strip=True)
+            # 跳过 "Learn more" 等非新闻链接文本（同一链接的次要文本节点）
+            if not title or len(title) < 5 or title.lower() in ("learn more", "查看更多", "了解更多"):
+                continue
+            if title in seen:
+                continue
+            seen.add(title)
+
+            # 详情页 URL
+            if href.startswith("http"):
+                detail_url = href
+            else:
+                detail_url = "https://www.landspace.com/" + href.lstrip("/")
+
+            # 从标题解析日期并去除日期前缀：
+            # 支持 "2026-07-02标题" / "0906月2026标题" / "2026年9月6日标题"
+            publish_time = ""
+            m = re.match(r"^(\d{4})-(\d{2})-(\d{2})", title)
+            if m:
+                publish_time = f"{m.group(1)}-{m.group(2)}-{m.group(3)}T00:00:00"
+                title = re.sub(r"^\d{4}-\d{2}-\d{2}", "", title).strip()
+            else:
+                m2 = re.match(r"^(\d{2})(\d{2})月(\d{4})", title)
+                if m2:
+                    # "1405月2026" = 2026年5月14日（前两位日、后两位月）
+                    day, month, year = m2.group(1), m2.group(2), m2.group(3)
+                    if 1 <= int(month) <= 12:
+                        publish_time = f"{year}-{month}-{day}T00:00:00"
+                        title = re.sub(r"^\d{2}\d{2}月\d{4}", "", title).strip()
+                else:
+                    m3 = re.match(r"^(\d{4})年(\d{1,2})月(\d{1,2})日", title)
+                    if m3:
+                        publish_time = f"{m3.group(1)}-{m3.group(2).zfill(2)}-{m3.group(3).zfill(2)}T00:00:00"
+                        title = re.sub(r"^\d{4}年\d{1,2}月\d{1,2}日", "", title).strip()
+
+            items.append({
+                "news_id": generate_news_id(detail_url),
+                "source_name": "蓝箭航天",
+                "source_url": detail_url,
+                "crawl_time": crawl_time,
+                "publish_time": publish_time,
+                "title": title[:200],
+                "raw_content": "",
+                "summary": "",
+                "cover_image": "",
+                "images": "[]",
+                "tags": '["民营航天", "蓝箭航天"]',
+                "category": "rocket",
+                "hot_score": 0,
+                "sentiment": "neutral",
+                "language": "zh",
+                "status": "pending",
+            })
+
+        print(f"  获取 {len(items)} 条蓝箭新闻")
+        for item in items[:8]:
+            print(f"    {(item['publish_time'] or '?')[:10]:<12} | {item['title'][:50]}")
+        return items
+    except Exception as e:
+        print(f"  [蓝箭新闻] 抓取失败: {e}")
         return []
 
 
