@@ -18,6 +18,7 @@ def crawl_nasa_artemis():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         for article in soup.find_all(["article", "div"], class_=lambda c: c and any(
             w in str(c).lower() for w in ["card", "article", "post", "news", "mission"]
@@ -28,6 +29,9 @@ def crawl_nasa_artemis():
             title = title_elem.get_text(strip=True)
             if not title or len(title) < 10:
                 continue
+            if title in seen_titles:
+                continue
+            seen_titles.add(title)
 
             date_str = ""
             time_elem = article.find("time")
@@ -43,15 +47,14 @@ def crawl_nasa_artemis():
             if url and not url.startswith("http"):
                 url = "https://www.nasa.gov" + url
 
-            if not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "nasa_artemis",
-                    "board": "moon",
-                    "title": title,
-                    "date": date_str,
-                    "summary": article.get_text(strip=True)[:200],
-                    "url": url,
-                })
+            items.append({
+                "source": "nasa_artemis",
+                "board": "moon",
+                "title": title,
+                "date": date_str,
+                "summary": article.get_text(strip=True)[:200],
+                "url": url,
+            })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:

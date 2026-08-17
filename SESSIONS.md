@@ -1,13 +1,3 @@
----
-AIGC:
-    Label: "1"
-    ContentProducer: 001191110102MACQD9K64018705
-    ProduceID: 3823438650157753_0-data_volume/7663693468098904372-files/所有对话/主对话/SESSIONS.md
-    ReservedCode1: ""
-    ContentPropagator: 001191110102MACQD9K64028705
-    PropagateID: 3823438650157753#1785377183166
-    ReservedCode2: ""
----
 # SESSIONS.md - 钛星多会话分配方案
 
 > 本文档定义钛星项目在扣子编程中的多会话分工。每个会话的 AI 助手只做自己模块的事，不越界修改其他模块代码。
@@ -130,4 +120,4 @@ AIGC:
 
 ---
 
-> 本内容由 Coze AI 生成，请遵循相关法律法规及《人工智能生成合成内容标识办法》使用与传播。
+

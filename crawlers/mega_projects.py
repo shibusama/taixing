@@ -18,6 +18,7 @@ def crawl_china_railway():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         for a in soup.find_all("a", href=True):
             title = a.get_text(strip=True)
@@ -25,6 +26,9 @@ def crawl_china_railway():
                 continue
             if any(w in title for w in ["首页", "登录", "English", "更多", "搜索", "网站地图"]):
                 continue
+            if title in seen_titles:
+                continue
+            seen_titles.add(title)
 
             parent = a.find_parent()
             date_str = ""
@@ -37,15 +41,14 @@ def crawl_china_railway():
             if href and not href.startswith("http"):
                 href = "https://www.china-railway.com.cn" + href
 
-            if not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "china_railway",
-                    "board": "mega-projects",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": href,
-                })
+            items.append({
+                "source": "china_railway",
+                "board": "mega-projects",
+                "title": title,
+                "date": date_str,
+                "summary": "",
+                "url": href,
+            })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:

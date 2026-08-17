@@ -18,6 +18,7 @@ def crawl_anthropic():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         for article in soup.find_all(["article", "div"], class_=lambda c: c and any(
             w in str(c).lower() for w in ["news", "post", "card", "article", "item"]
@@ -41,12 +42,13 @@ def crawl_anthropic():
                 after_date = text[date_match.end():].strip()
                 title = after_date.split(".")[0][:150] if after_date else before_date[:150]
 
-            if title and not any(i["title"] == title for i in items):
+            if title and title not in seen_titles:
                 words = title.split()
                 if len(words) > 12 and not title[0].isupper():
                     continue
                 if re.match(r'^[A-Z][a-z]+ \d+ is a ', title):
                     continue
+                seen_titles.add(title)
                 items.append({
                     "source": "anthropic",
                     "board": "china-tech",
@@ -78,7 +80,7 @@ def crawl_deepseek():
             try:
                 html = fetch_html(url)
                 break
-            except:
+            except Exception:
                 continue
 
         if not html:
@@ -87,6 +89,7 @@ def crawl_deepseek():
 
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         NAV_WORDS = {"english", "中文", "search", "quick start", "api", "docs",
                      "platform", "models", "pricing", "token", "rate limit",
@@ -120,7 +123,8 @@ def crawl_deepseek():
             if href and not href.startswith("http"):
                 href = "https://api-docs.deepseek.com" + href
 
-            if not any(i["title"] == title for i in items):
+            if title not in seen_titles:
+                seen_titles.add(title)
                 items.append({
                     "source": "deepseek",
                     "board": "china-tech",
@@ -145,7 +149,8 @@ def crawl_deepseek():
                     href = a["href"]
                     if href and not href.startswith("http"):
                         href = "https://www.deepseek.com" + href
-                    if not any(i["title"] == title for i in items):
+                    if title not in seen_titles:
+                        seen_titles.add(title)
                         items.append({
                             "source": "deepseek",
                             "board": "china-tech",
@@ -154,7 +159,7 @@ def crawl_deepseek():
                             "summary": "",
                             "url": href,
                         })
-            except:
+            except Exception:
                 pass
 
         print(f"  解析到 {len(items)} 条新闻")
@@ -219,6 +224,7 @@ def crawl_openai():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         for article in soup.find_all(["article", "div"], class_=lambda c: c and any(
             w in str(c).lower() for w in ["post", "article", "card", "blog"]
@@ -229,6 +235,9 @@ def crawl_openai():
             title = title_elem.get_text(strip=True)
             if not title or len(title) < 5:
                 continue
+            if title in seen_titles:
+                continue
+            seen_titles.add(title)
 
             date_str = ""
             time_elem = article.find("time")
@@ -240,15 +249,14 @@ def crawl_openai():
             if url and not url.startswith("http"):
                 url = "https://openai.com" + url
 
-            if not any(i["title"] == title for i in items):
-                items.append({
-                    "source": "openai",
-                    "board": "china-tech",
-                    "title": title,
-                    "date": date_str,
-                    "summary": "",
-                    "url": url,
-                })
+            items.append({
+                "source": "openai",
+                "board": "china-tech",
+                "title": title,
+                "date": date_str,
+                "summary": "",
+                "url": url,
+            })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:

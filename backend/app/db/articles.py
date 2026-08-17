@@ -34,23 +34,39 @@ def upsert_news_article(article: Dict) -> bool:
 
 
 def upsert_article(board_id: str, source: str, title: str, url: str, summary: str, date: str, raw_json: str) -> bool:
-    """按 dedup_key（URL 的 MD5）去重写入 raw_articles。返回 True 表示新增"""
+    """按 news_id（URL 的 SHA256 前16位）去重写入 raw_articles。返回 True 表示新增。
+
+    统一使用 news_id 作为去重键（与 upsert_news_article 一致），
+    同时写入 dedup_key 保持向后兼容。
+    """
     sb = get_supabase()
     dedup_key = hashlib.md5(url.encode("utf-8")).hexdigest()
+    news_id = hashlib.sha256(url.encode("utf-8")).hexdigest()[:16] if url else ""
 
-    existing = sb.table("raw_articles").select("id").eq("dedup_key", dedup_key).limit(1).execute()
-    if existing.data:
-        return False
+    # 优先按 news_id 去重，fallback 到 dedup_key
+    if news_id:
+        existing = sb.table("raw_articles").select("news_id").eq("news_id", news_id).limit(1).execute()
+        if existing.data:
+            return False
+    elif dedup_key:
+        existing = sb.table("raw_articles").select("id").eq("dedup_key", dedup_key).limit(1).execute()
+        if existing.data:
+            return False
 
     sb.table("raw_articles").insert({
+        "news_id": news_id,
         "board_id": board_id,
         "source": source,
+        "source_name": source,
         "title": title,
         "url": url,
+        "source_url": url,
         "summary": summary,
         "date": date,
         "raw_json": raw_json,
         "dedup_key": dedup_key,
+        "category": board_id,
+        "status": "pending",
         "created_at": datetime.now().isoformat(),
     }).execute()
     return True

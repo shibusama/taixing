@@ -22,13 +22,7 @@ from backend.app.main import app as backend_app
 # 使用后端应用作为基础
 app = backend_app
 
-# 添加 CORS 中间件（如果还没有）
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# preview_server 复用 main.py 中已配置的 CORS 中间件，不再重复添加
 
 # 挂载静态文件服务（放在最后，这样 API 路由优先匹配）
 # HTML 文件在 pages/ 目录，其他静态文件（css/js/data）在根目录

@@ -1,7 +1,13 @@
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 from fastapi import APIRouter, HTTPException
 from app.database import get_board, get_board_full, list_boards, log_crawl
 from app.services.crawler_service import run_crawler
 from crawlers.crawler_registry import CRAWLER_MODULES, BOARD_IDS
+
+# 线程池：将同步爬虫放到独立线程执行，避免阻塞 async event loop
+_crawl_executor = ThreadPoolExecutor(max_workers=4)
 
 router = APIRouter(prefix="/api")
 
@@ -42,9 +48,10 @@ def api_get_board_full(board_id: str):
     return data
 
 @router.post("/crawl/{board_id}")
-def api_crawl_board(board_id: str):
+async def api_crawl_board(board_id: str):
+    loop = asyncio.get_event_loop()
     try:
-        result = run_crawler(board_id)
+        result = await loop.run_in_executor(_crawl_executor, run_crawler, board_id)
         log_crawl(board_id, "success", result.get("message", "OK"))
         return {"board_id": board_id, "status": "success", "detail": result}
     except Exception as e:
@@ -52,11 +59,12 @@ def api_crawl_board(board_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/crawl")
-def api_crawl_all():
+async def api_crawl_all():
+    loop = asyncio.get_event_loop()
     results = {}
     for bid in CRAWLER_MODULES:
         try:
-            results[bid] = run_crawler(bid)
+            results[bid] = await loop.run_in_executor(_crawl_executor, run_crawler, bid)
         except Exception as e:
             results[bid] = {"error": str(e)}
     return {"status": "done", "results": results}
@@ -272,7 +280,7 @@ def api_crawl_board_async(board_id: str):
         try:
             _crawl_logs[board_id]["lines"].append(f"[{board_id}] starting...")
             result = run_crawler(board_id)
-            _crawl_logs[board_id]["lines"].append(f"[{board_id}] done: {result.get("message", "OK")}")
+            _crawl_logs[board_id]["lines"].append(f"[{board_id}] done: {result.get('message', 'OK')}")
             _crawl_logs[board_id]["status"] = "success"
             log_crawl(board_id, "success", result.get("message", "OK"))
         except Exception as e:
@@ -292,10 +300,14 @@ def api_get_crawl_logs(board_id: str):
 # ---- AI extract ----
 
 @router.post("/ai/extract")
-def api_ai_extract(category: str = None, limit: int = 10):
+async def api_ai_extract(category: str = None, limit: int = 10):
+    loop = asyncio.get_event_loop()
     try:
         from app.ai_extractor import process_pending_articles
-        result = process_pending_articles(category=category, limit=limit, auto_insert=True)
+        result = await loop.run_in_executor(
+            _crawl_executor,
+            lambda: process_pending_articles(category=category, limit=limit, auto_insert=True)
+        )
         return result
     except Exception as e:
         # 失败也写入提取历史（容错：表不存在时忽略）

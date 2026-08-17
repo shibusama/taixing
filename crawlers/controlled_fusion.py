@@ -18,6 +18,7 @@ def crawl_iter():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         skip_words = {"Newsline archive", "Subscribe to the newsletter", "2026", "2025", "2024",
                       "Home", "News & Media", "Newsroom"}
@@ -29,6 +30,9 @@ def crawl_iter():
                     continue
                 if any(sw in title for sw in skip_words):
                     continue
+                if title in seen_titles:
+                    continue
+                seen_titles.add(title)
 
                 parent = h.find_parent()
                 date_str = ""
@@ -39,15 +43,14 @@ def crawl_iter():
                         if date_match:
                             date_str = parse_date(date_match.group(1))
 
-                if not any(i["title"] == title for i in items):
-                    items.append({
-                        "source": "iter",
-                        "board": "controlled-fusion",
-                        "title": title,
-                        "date": date_str,
-                        "summary": "",
-                        "url": "https://www.iter.org/newsline",
-                    })
+                items.append({
+                    "source": "iter",
+                    "board": "controlled-fusion",
+                    "title": title,
+                    "date": date_str,
+                    "summary": "",
+                    "url": "https://www.iter.org/newsline",
+                })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:
@@ -67,6 +70,7 @@ def crawl_cfs():
             return []
         soup = BeautifulSoup(html, "lxml")
         items = []
+        seen_titles = set()
 
         skip_words = {"CFS in the News", "Join the power movement", "Press",
                       "Commonwealth Fusion Systems"}
@@ -76,21 +80,23 @@ def crawl_cfs():
                 title = h.get_text(strip=True)
                 if not title or len(title) < 15 or title in skip_words:
                     continue
+                if title in seen_titles:
+                    continue
+                seen_titles.add(title)
 
                 link = h.find("a")
                 url = link.get("href", "") if link else ""
                 if url and not url.startswith("http"):
                     url = "https://cfs.energy" + url
 
-                if not any(i["title"] == title for i in items):
-                    items.append({
-                        "source": "cfs",
-                        "board": "controlled-fusion",
-                        "title": title,
-                        "date": "",
-                        "summary": "",
-                        "url": url or "https://cfs.energy/news-and-media",
-                    })
+                items.append({
+                    "source": "cfs",
+                    "board": "controlled-fusion",
+                    "title": title,
+                    "date": "",
+                    "summary": "",
+                    "url": url or "https://cfs.energy/news-and-media",
+                })
 
         print(f"  解析到 {len(items)} 条新闻")
         for item in items[:5]:

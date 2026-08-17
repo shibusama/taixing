@@ -34,7 +34,7 @@ def crawl_exchange_rates():
             prev = fetch_json(f"https://api.frankfurter.app/{yesterday}",
                               params={"from": "USD", "to": "JPY"})
             prev_jpy = prev.get("rates", {}).get("JPY", jpy)
-        except:
+        except Exception:
             pass
 
         change_pct = ((jpy - prev_jpy) / prev_jpy * 100) if prev_jpy else 0
@@ -60,7 +60,7 @@ def crawl_exchange_rates():
                 if vals:
                     finance["fx_highlights"][1]["num"] = f"{max(vals):.2f}"
                     finance["fx_highlights"][2]["num"] = f"{min(vals):.2f}"
-        except:
+        except Exception:
             pass
 
         # 年涨幅
@@ -71,7 +71,7 @@ def crawl_exchange_rates():
             year_jpy = year_data.get("rates", {}).get("JPY", jpy)
             year_change = ((jpy - year_jpy) / year_jpy * 100)
             finance["fx_highlights"][3]["num"] = f"{'+' if year_change>=0 else ''}{year_change:.2f}<span class='unit'>%</span>"
-        except:
+        except Exception:
             pass
 
         # 当日汇率行
