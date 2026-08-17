@@ -16,7 +16,6 @@ from app.db.admin import (
 )
 from app.db.board_data import (
     get_rocket_companies, get_rocket_timeline, get_rocket_intro, set_rocket_intro,
-    sync_launch_api_to_timeline, sync_rocket_companies,
     get_launch_timeline, upsert_launch_timeline,
     get_moon_highlights, get_moon_comparison,
     get_semiconductor_highlights, get_semiconductor_tab_highlights, get_semiconductor_tab_progress,
@@ -45,7 +44,6 @@ __all__ = [
     "get_latest_news", "get_all_latest_news",
     "create_latest_news", "update_latest_news", "delete_latest_news",
     "get_rocket_companies", "get_rocket_timeline", "get_rocket_intro", "set_rocket_intro",
-    "sync_launch_api_to_timeline", "sync_rocket_companies",
     "get_launch_timeline", "upsert_launch_timeline",
     "get_moon_highlights", "get_moon_comparison",
     "get_semiconductor_highlights", "get_semiconductor_tab_highlights", "get_semiconductor_tab_progress",

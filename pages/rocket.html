@@ -440,28 +440,12 @@
         <p>2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
 
         <h2>✓ 已完成</h2>
-        <div class="rocket-compare-tl">
-          <div class="rocket-tl-col">
-            <h3 class="tl-col-title">🇨🇳 中国</h3>
-            <div class="tl" id="rocket-timeline-cn-done"></div>
-          </div>
-          <div class="rocket-tl-col">
-            <h3 class="tl-col-title">🇺🇸 美国</h3>
-            <div class="tl" id="rocket-timeline-us-done"></div>
-          </div>
-        </div>
+        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸 美国</span></div>
+        <div class="tl-versus" id="rocket-timeline-done"></div>
 
         <h2>即将发射</h2>
-        <div class="rocket-compare-tl">
-          <div class="rocket-tl-col">
-            <h3 class="tl-col-title">🇨🇳 中国</h3>
-            <div class="tl" id="rocket-timeline-cn-upcoming"></div>
-          </div>
-          <div class="rocket-tl-col">
-            <h3 class="tl-col-title">🇺🇸 美国</h3>
-            <div class="tl" id="rocket-timeline-us-upcoming"></div>
-          </div>
-        </div>
+        <div class="tlv-head"><span>🇨🇳 中国</span><span>🇺🇸 美国</span></div>
+        <div class="tl-versus" id="rocket-timeline-upcoming"></div>
       </div>
     </section>
 
@@ -533,7 +517,7 @@
       `<tr><td data-rocket="${r.key}">${r.rocket}</td><td>${r.company}</td><td>${r.country}</td><td>${r.fuel}</td><td>${r.diameter}</td><td>${r.thrust}</td><td class="${clsMap[r.rocket]||''}">${r.leo}</td><td class="${r.key==='cz10b'?'hi':''}">${r.recovery}</td><td>${r.status}</td></tr>`
     ).join('');
 
-    // 时间线渲染
+    // 时间线渲染（单列，用于"未来展望"Tab）
     function renderTL(items) {
       return items.map(it => {
         const badge = it.badge ? ` <span class="tl-badge ${it.badge==='国家队'?'badge-cn':'badge-private'}">${it.badge}</span>` : '';
@@ -541,8 +525,23 @@
         return `<div class="tl-item ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
       }).join('');
     }
+
+    // 中美对撞时间线渲染（中间共享竖线，中国事件挂左侧、美国事件挂右侧，按原始日期顺序合并排列）
+    function renderVersusTL(items) {
+      return items.map(it => {
+        const us = isUS(it);
+        const badge = it.badge ? ` <span class="tl-badge ${it.badge==='国家队'?'badge-cn':'badge-private'}">${it.badge}</span>` : '';
+        const done = it.done ? ' ✓ 已完成' : '';
+        const card = `<div class="tlv-card ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
+        return `<div class="tlv-row ${us?'us-side':'cn-side'}">
+          <div class="tlv-side tlv-left">${us?'':card}</div>
+          <div class="tlv-dot ${it.color||''}"></div>
+          <div class="tlv-side tlv-right">${us?card:''}</div>
+        </div>`;
+      }).join('');
+    }
     function isUS(item) {
-      const usKeys = ['SpaceX', 'Blue Origin', 'Rocket Lab', 'NASA', 'Relativity', 'Stoke', 'ULA', 'falcon', 'starship', 'newglenn', 'electron'];
+      const usKeys = ['spacex', 'blue origin', 'rocket lab', 'nasa', 'relativity', 'stoke', 'ula', 'falcon', 'starship', 'newglenn', 'electron'];
       const title = (item.title || '').toLowerCase();
       const desc = (item.desc || '').toLowerCase();
       return usKeys.some(k => title.includes(k) || desc.includes(k));
@@ -571,12 +570,9 @@
       return d.getFullYear() === 2027;
     });
     
-    // 已完成
-    document.getElementById('rocket-timeline-cn-done').innerHTML = renderTL(doneItems.filter(it => !isUS(it)));
-    document.getElementById('rocket-timeline-us-done').innerHTML = renderTL(doneItems.filter(it => isUS(it)));
-    // 即将发射
-    document.getElementById('rocket-timeline-cn-upcoming').innerHTML = renderTL(upcomingItems.filter(it => !isUS(it)));
-    document.getElementById('rocket-timeline-us-upcoming').innerHTML = renderTL(upcomingItems.filter(it => isUS(it)));
+    // 已完成 / 即将发射：中美合并为一条中心线时间线（data/rocket.json 中原始条目已按日期顺序排列）
+    document.getElementById('rocket-timeline-done').innerHTML = renderVersusTL(doneItems);
+    document.getElementById('rocket-timeline-upcoming').innerHTML = renderVersusTL(upcomingItems);
     document.getElementById('rocket-timeline-2027').innerHTML = renderTL(items2027);
   } catch(e) { console.error('Rocket data load failed:', e); }
 

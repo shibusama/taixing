@@ -42,7 +42,7 @@ def _rate_limit():
 
 
 def _request_with_retry(method, url, **kwargs):
-    """带限流和 429 自动重试的请求"""
+    """带限流的请求；429 自动延迟重试（最多重试 2 次，逐次拉长等待），仍失败则跳过"""
     max_retries = kwargs.pop("retries", 3)
     req_headers = kwargs.pop("headers", None) or HEADERS
     req_timeout = kwargs.pop("timeout", 15)
@@ -52,8 +52,13 @@ def _request_with_retry(method, url, **kwargs):
         try:
             resp = requests.request(method, url, timeout=req_timeout, headers=req_headers, verify=False, **kwargs)
             if resp.status_code == 429:
-                print(f"[429] {url} 被限流，跳过")
-                return None
+                if attempt == max_retries - 1:
+                    print(f"[429] {url} 被限流，已重试 {attempt} 次仍失败，跳过")
+                    return None
+                wait = 10 * (attempt + 1)
+                print(f"[429] {url} 被限流，{wait}s 后自动重试（{attempt + 1}/{max_retries - 1}）")
+                time.sleep(wait)
+                continue
             resp.raise_for_status()
             return resp
         except requests.exceptions.RequestException as e:

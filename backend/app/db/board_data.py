@@ -37,16 +37,6 @@ def set_rocket_intro(intro: str):
     sb.table("board_status").update({"rocket_intro": intro}).eq("board_id", "rocket").execute()
 
 
-def sync_launch_api_to_timeline():
-    """手动同步 Launch API 数据到 rocket_timeline 表"""
-    return 0
-
-
-def sync_rocket_companies():
-    """手动同步 LL2 API 数据到 rocket_companies 表"""
-    return 0
-
-
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
     """获取发射时间线（动态计算 color/badge/done）"""
     sb = get_supabase()

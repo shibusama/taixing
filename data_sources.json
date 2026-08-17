@@ -34,6 +34,15 @@
           "description": "Spaceflight News API (SNAPI)，聚合 SpaceX/Blue Origin/Rocket Lab/Relativity/Stoke Space 新闻（20+ 权威来源）",
           "enabled": true,
           "sleep_after": 1
+        },
+        {
+          "id": "spacechina_launches",
+          "name": "长征系列运载火箭发射记录",
+          "crawler": "crawl_spacechina_launches",
+          "type": "html",
+          "description": "航天科技集团官网，国内长征系列发射记录（纯中文官方数据，不依赖 LL2，无限流风险；只有历史已完成记录，无未来计划）",
+          "enabled": true,
+          "sleep_after": 1
         }
       ]
     },

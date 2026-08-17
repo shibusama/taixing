@@ -18,7 +18,7 @@ REPORT_DIR = DATA_DIR / "_reports"
 # 尝试导入数据库模块
 sys.path.insert(0, str(BASE_DIR / "backend"))
 try:
-    from app.database import upsert_news_article, log_crawl
+    from app.database import upsert_news_article, upsert_launch_timeline, log_crawl
     DB_AVAILABLE = True
 except ImportError as e:
     print(f"[警告] 数据库模块导入失败：{e}")
@@ -66,7 +66,11 @@ def run_crawler(src_cfg):
         for item in result:
             if DB_AVAILABLE:
                 try:
-                    if "news_id" in item:
+                    if "timeline_id" in item:
+                        # 火箭发射日历条目（LL2 API）：直接写入 rocket_launch_timeline 表，
+                        # 结构与该表字段一一对应，不再套壳塞进 raw_articles 通用新闻池
+                        upsert_launch_timeline(item)
+                    elif "news_id" in item:
                         upsert_news_article(item)
                     else:
                         url = item.get("url", "")

@@ -94,7 +94,7 @@ python3 fetch_data.py --rocket           # 只爬可回收火箭
 python3 fetch_data.py --dry-run          # 预览模式（不写入）
 
 # AI 提取
-curl -X POST "http://localhost:5000/api/ai/extract?category=航空航天&limit=10"
+curl -X POST "http://localhost:5000/api/ai/extract?category=rocket&limit=10"
 
 # 预览服务器
 python3 scripts/preview_server.py        # 启动预览（端口 5000）

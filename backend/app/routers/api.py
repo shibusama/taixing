@@ -11,20 +11,6 @@ _crawl_executor = ThreadPoolExecutor(max_workers=4)
 
 router = APIRouter(prefix="/api")
 
-@router.post("/sync/rocket")
-def api_sync_rocket_timeline():
-    from app.database import sync_launch_api_to_timeline
-    from app.database import sync_rocket_companies
-    timeline_count = sync_launch_api_to_timeline()
-    companies_count = sync_rocket_companies()
-    return {"status": "ok", "timeline_synced": timeline_count, "companies_synced": companies_count}
-
-@router.post("/sync/rocket-companies")
-def api_sync_rocket_companies_only():
-    from app.database import sync_rocket_companies
-    count = sync_rocket_companies()
-    return {"status": "ok", "companies_synced": count}
-
 @router.get("/health")
 def health():
     return {"status": "ok"}

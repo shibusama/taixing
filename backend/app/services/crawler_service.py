@@ -5,6 +5,7 @@ import sys, os, json, importlib
 from app.db.articles import upsert_article, _classify_crawled_item
 from app.db.board_ops import update_board_status
 from app.db.admin import log_crawl
+from app.db.board_data import upsert_launch_timeline
 from crawlers.crawler_registry import CRAWLER_MODULES
 
 
@@ -21,6 +22,7 @@ def run_crawler(board_id: str) -> dict:
     # 1. 运行所有爬虫函数
     mod = importlib.import_module(mod_name)
     total_new = 0
+    timeline_new = 0
     total_sources = 0
     error_sources = 0
     sources_detail = {}
@@ -40,10 +42,22 @@ def run_crawler(board_id: str) -> dict:
         # 2. 统一化 + 去重入库
         items = raw_result if isinstance(raw_result, list) else [raw_result]
         new_for_source = 0
+        timeline_for_source = 0
 
         for item in items:
             if not isinstance(item, dict):
                 continue
+
+            if "timeline_id" in item:
+                # 火箭发射日历条目（LL2 API）：结构与 rocket_launch_timeline 表字段一一对应，
+                # 直接 upsert 到该表，不走通用新闻去重入库
+                try:
+                    if upsert_launch_timeline(item):
+                        timeline_for_source += 1
+                except Exception as e:
+                    print(f"[crawler_service] 写入 rocket_launch_timeline 失败：{e}")
+                continue
+
             title, url, summary, date, raw_json = _classify_crawled_item(item)
             if not title.strip():
                 continue  # 跳过无标题的条目
@@ -61,7 +75,10 @@ def run_crawler(board_id: str) -> dict:
                 new_for_source += 1
 
         total_new += new_for_source
+        timeline_new += timeline_for_source
         sources_detail[source_name] = {"new": new_for_source, "total_items": len(items)}
+        if timeline_for_source:
+            sources_detail[source_name]["timeline_synced"] = timeline_for_source
 
     # 3. 更新板块状态
     if total_new > 0:
@@ -73,18 +90,14 @@ def run_crawler(board_id: str) -> dict:
     # 4. 写 crawl_log
     log_crawl(board_id, "success", msg)
 
-    # 5. 后处理：火箭板块 → 同步结构化表
-    timeline_new = 0
+    # 5. 后处理：火箭板块 → 公司对比表（人工维护于 data/rocket.json）同步进数据库
+    #    发射时间线（rocket_launch_timeline）已在上面抓取循环中随 crawl_rocket_launches 结果实时写入
     companies_new = 0
     if board_id == "rocket":
         try:
-            from app.db.board_data import sync_launch_api_to_timeline
-            timeline_new = sync_launch_api_to_timeline()
-        except Exception:
-            pass
-        try:
-            from app.db.board_data import sync_rocket_companies
-            companies_new = sync_rocket_companies()
+            from app.db.json_sync import sync_board_from_json
+            result = sync_board_from_json("rocket")
+            companies_new = result.get("rocket", {}).get("rocket_companies", 0)
         except Exception:
             pass
         # 6. LLM 更新引言
