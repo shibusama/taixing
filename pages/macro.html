@@ -79,7 +79,59 @@
 .rate-trend.down{background:var(--red)}
 .rate-trend.stable{background:var(--txt-2)}
 
-/* ---- 大宗商品 ---- */
+/* ---- 国债收益率 ---- */
+.bond-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
+.bond-card{border:1px solid var(--line);border-radius:14px;padding:20px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.bond-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.bond-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.bond-head .bond-flag{font-size:26px;line-height:1}
+.bond-head h3{font-size:15px;font-weight:700;margin:0;color:var(--txt-1)}
+.bond-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px}
+.bond-row:last-of-type{border-bottom:none}
+.bond-label{color:var(--txt-2)}
+.bond-value{font-weight:800;font-family:var(--mono);font-size:16px}
+.bond-note{font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.5}
+
+/* ---- 外汇汇率 ---- */
+.fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0 0 30px}
+.fx-card{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
+.fx-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.fx-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.fx-icon{font-size:30px;line-height:1}
+.fx-name{font-size:14.5px;font-weight:700;color:var(--txt-0)}
+.fx-pair{font-size:11.5px;color:var(--txt-2);font-family:var(--mono);margin-top:2px}
+.fx-value{font-size:30px;font-weight:900;font-family:var(--mono);margin-bottom:4px}
+.fx-change{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px}
+.fx-change.up{color:var(--green);background:rgba(46,204,113,.12)}
+.fx-change.down{color:var(--red);background:rgba(255,84,112,.12)}
+.fx-note{font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.5}
+
+/* ---- FOMC 会议日程表 ---- */
+.fomc-table-wrap{overflow-x:auto;margin:0 0 30px;border:1px solid var(--line);border-radius:14px;padding:4px}
+.fomc-table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+.fomc-table th{text-align:left;padding:10px 14px;color:var(--txt-2);font-weight:600;border-bottom:1px solid var(--line);font-size:12px}
+.fomc-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
+.fomc-table tr:last-child td{border-bottom:none}
+.fomc-table .fomc-no{font-family:var(--mono);color:var(--accent);font-weight:700}
+.fomc-tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.fomc-tag.yes{color:var(--green);background:rgba(46,204,113,.12)}
+.fomc-tag.no{color:var(--txt-2);background:rgba(255,255,255,.06)}
+
+/* ---- 美联储成员卡片 ---- */
+.member-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:0 0 30px}
+.member-card{border:1px solid var(--line);border-radius:14px;padding:20px 18px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans);display:flex;flex-direction:column;gap:6px}
+.member-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.member-avatar{font-size:32px;line-height:1;margin-bottom:4px}
+.member-name{font-size:14px;font-weight:700;color:var(--txt-0);line-height:1.4}
+.member-tag{display:inline-block;align-self:flex-start;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid var(--line)}
+.member-role{font-size:12px;color:var(--txt-1);line-height:1.5}
+.member-term{font-size:11.5px;color:var(--txt-2);font-family:var(--mono)}
+.member-note{font-size:12px;color:var(--txt-2);line-height:1.5;margin-top:2px}
+
+/* ---- 大宗商品与股指期货 ---- */
+.com-group-title{font-size:14px;font-weight:700;color:var(--txt-1);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.com-group-title::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--accent)}
+.com-group-title:nth-of-type(2){margin-top:6px}
 .com-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:0 0 30px}
 .com-card{border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
 .com-card:hover{border-color:var(--accent)}
@@ -111,24 +163,14 @@
 .warn-threshold{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 26px;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--accent-soft);font-size:13px;color:var(--accent)}
 .warn-threshold strong{font-size:18px}
 
-/* ---- 历史走势 ---- */
-.history-table-wrap{overflow-x:auto;margin:0 0 30px;border:1px solid var(--line);border-radius:14px;padding:4px}
-.history-table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
-.history-table th{text-align:left;padding:10px 14px;color:var(--txt-2);font-weight:600;border-bottom:1px solid var(--line);font-size:12px}
-.history-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--mono)}
-.history-table tr:last-child td{border-bottom:none}
-.history-table .series-name{font-weight:700}
-.history-table .series-name.us{color:var(--red)}
-.history-table .series-name.jp{color:var(--amber)}
-.history-table .series-name.cn{color:var(--cyan)}
-
 /* ---- 数据更新说明 ---- */
 .macro-note{color:var(--txt-2);font-size:13px;margin-top:16px;line-height:1.7;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
 
 /* ---- 响应式 ---- */
 @media(max-width:768px){
-  .debt-grid,.rate-grid,.warn-grid{grid-template-columns:1fr}
+  .debt-grid,.rate-grid,.warn-grid,.bond-grid,.fx-grid{grid-template-columns:1fr}
   .com-grid{grid-template-columns:repeat(2,1fr)}
+  .member-grid{grid-template-columns:repeat(2,1fr)}
   .chart-row{grid-template-columns:1fr}
   .warn-chart .echart-box{height:300px}
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
@@ -137,6 +179,7 @@
 }
 @media(max-width:480px){
   .com-grid{grid-template-columns:1fr}
+  .member-grid{grid-template-columns:1fr}
   .bd-hero h1{font-size:23px}
 }
 </style>
@@ -151,7 +194,7 @@
     <div class="bd-hero">
       <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>宏观指标监控</span></div>
       <div class="kicker">MACRO MONITOR · 2026</div>
-      <h1><span class="glow">宏观指标监控：债务、利率与大商品</span></h1>
+      <h1><span class="glow">宏观指标监控：债务、利率与大宗商品</span></h1>
       <p class="sub">追踪中日美三国债务规模、主要经济体利率走势、关键大宗商品价格，设置年利息占财政支出1/4警戒线，为科技投资提供宏观视角。</p>
       <div class="meta"><span>数据来源：各国财政部、央行及交易所公开信息</span><span id="update-time">更新时间：--</span></div>
     </div>
@@ -160,7 +203,7 @@
     <nav class="tab-nav bd-tabs" id="macroTabs">
       <button class="active" data-tab="tab-debt">📊 债务与利息</button>
       <button data-tab="tab-rate">🏦 利率监控</button>
-      <button data-tab="tab-commodity">🛢️ 大宗商品</button>
+      <button data-tab="tab-commodity">📊 大类期货</button>
     </nav>
 
     <!-- Tab 1：债务与利息（默认） -->
@@ -198,32 +241,61 @@
         <div class="warn-chart-title"><h3>中日美年度债务规模趋势</h3></div>
         <div id="debt-chart-box" class="echart-box"></div>
       </div>
-      <div class="history-table-wrap">
-        <table class="history-table" id="history-table">
-          <thead><tr><th>年份</th><th class="series-name us">美国</th><th class="series-name jp">日本</th><th class="series-name cn">中国</th></tr></thead>
-          <tbody id="history-body"></tbody>
-        </table>
-      </div>
-    </section>
+      </section>
 
     <!-- Tab 2：利率监控 -->
     <section class="tab-panel" id="tab-rate">
       <div class="bd-sec-head" style="margin-top:22px">
         <span class="bd-sec-idx">01</span>
-        <h2>利率监控</h2>
-        <div class="bd-sec-desc">主要经济体央行利率</div>
+        <h2>央行基准利率</h2>
+        <div class="bd-sec-desc">主要经济体央行政策利率（中美日）</div>
       </div>
       <div class="rate-grid" id="rate-grid"></div>
+
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">02</span>
+        <h2>国债收益率</h2>
+        <div class="bd-sec-desc">中美日 2 / 10 / 20 / 30 年期国债收益率</div>
+      </div>
+      <div class="bond-grid" id="bond-grid"></div>
+
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">03</span>
+        <h2>外汇汇率</h2>
+        <div class="bd-sec-desc">日元、人民币对美元汇率</div>
+      </div>
+      <div class="fx-grid" id="fx-grid"></div>
+
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">04</span>
+        <h2>美联储议息会议（FOMC）</h2>
+        <div class="bd-sec-desc">2026 年度 FOMC 会议日程（决议公布时间为北京时间）</div>
+      </div>
+      <div class="fomc-table-wrap">
+        <table class="fomc-table">
+          <thead>
+            <tr><th>场次</th><th>会议日期</th><th>决议公布</th><th>新闻发布会</th><th>经济预测(SEP)</th></tr>
+          </thead>
+          <tbody id="fomc-body"></tbody>
+        </table>
+      </div>
+
+      <div class="bd-sec-head">
+        <span class="bd-sec-idx">05</span>
+        <h2>美联储决策成员</h2>
+        <div class="bd-sec-desc">FOMC 投票成员：7 名理事会成员 + 5 名地区联储主席（纽约常任 + 4 名轮值）</div>
+      </div>
+      <div class="member-grid" id="member-grid"></div>
     </section>
 
     <!-- Tab 3：大宗商品 -->
     <section class="tab-panel" id="tab-commodity">
       <div class="bd-sec-head" style="margin-top:22px">
         <span class="bd-sec-idx">01</span>
-        <h2>大宗商品</h2>
-        <div class="bd-sec-desc">关键战略资源价格</div>
+        <h2>大类期货</h2>
+        <div class="bd-sec-desc">大宗商品与主要股指期货行情</div>
       </div>
-      <div class="com-grid" id="com-grid"></div>
+      <div class="com-groups" id="com-groups"></div>
     </section>
 
     <div class="macro-note" id="macro-note">
@@ -278,8 +350,8 @@
     }).join('');
     document.getElementById('debt-grid').innerHTML = debtHtml;
     
-    // 02 利率
-    const rateHtml = resp.rates.items.map(r => `
+    // 02 利率（央行基准利率）
+    const rateHtml = resp.rates.policy_rates.map(r => `
       <div class="rate-card">
         <div class="rate-label">${r.label}</div>
         <div class="rate-value">${r.value}</div>
@@ -288,18 +360,73 @@
     `).join('');
     document.getElementById('rate-grid').innerHTML = rateHtml;
     
-    // 03 大宗商品
-    const comHtml = resp.commodities.items.map(c => {
-      const cls = c.trend === 'up' ? 'up' : 'down';
-      return `<div class="com-card">
-        <div class="com-icon">${c.icon}</div>
-        <div class="com-name">${c.name}</div>
-        <div class="com-price">${c.price}</div>
-        <div class="com-unit">${c.unit}</div>
-        <div class="com-change ${cls}">${c.change}</div>
+    // 02b 国债收益率（2Y / 10Y / 20Y / 30Y）
+    const bondHtml = resp.rates.bonds.map(b => `
+      <div class="bond-card">
+        <div class="bond-head"><span class="bond-flag">${b.flag}</span><h3>${b.country}</h3></div>
+        <div class="bond-row"><span class="bond-label">2 年期</span><span class="bond-value">${b.y2}</span></div>
+        <div class="bond-row"><span class="bond-label">10 年期</span><span class="bond-value">${b.y10}</span></div>
+        <div class="bond-row"><span class="bond-label">20 年期</span><span class="bond-value">${b.y20}</span></div>
+        <div class="bond-row"><span class="bond-label">30 年期</span><span class="bond-value">${b.y30}</span></div>
+        ${b.note ? `<div class="bond-note">${b.note}</div>` : ''}
+      </div>
+    `).join('');
+    document.getElementById('bond-grid').innerHTML = bondHtml;
+    
+    // 02c 外汇汇率
+    const fxHtml = resp.rates.fx.map(f => {
+      const cls = f.trend === 'up' ? 'up' : 'down';
+      return `<div class="fx-card">
+        <div class="fx-head"><span class="fx-icon">${f.icon}</span><div><div class="fx-name">${f.name}</div><div class="fx-pair">${f.pair}</div></div></div>
+        <div class="fx-value">${f.value}</div>
+        <div class="fx-change ${cls}">${f.change}</div>
+        ${f.note ? `<div class="fx-note">${f.note}</div>` : ''}
       </div>`;
     }).join('');
-    document.getElementById('com-grid').innerHTML = comHtml;
+    document.getElementById('fx-grid').innerHTML = fxHtml;
+    
+    // 02d FOMC 会议日程表
+    const fomcRows = resp.rates.fomc.meetings.map(m => `
+      <tr>
+        <td class="fomc-no">${m.no}</td>
+        <td>${m.date}</td>
+        <td>${m.decision}</td>
+        <td><span class="fomc-tag ${m.press === '有' ? 'yes' : 'no'}">${m.press}</span></td>
+        <td><span class="fomc-tag ${m.sep === '有' ? 'yes' : 'no'}">${m.sep}</span></td>
+      </tr>
+    `).join('');
+    document.getElementById('fomc-body').innerHTML = fomcRows;
+    
+    // 02e 美联储决策成员
+    const memberHtml = resp.rates.members.map(m => `
+      <div class="member-card">
+        <div class="member-avatar">${m.avatar}</div>
+        <div class="member-name">${m.name}</div>
+        <span class="member-tag">${m.tag}</span>
+        <div class="member-role">${m.role}</div>
+        <div class="member-term">${m.term}</div>
+        <div class="member-note">${m.note}</div>
+      </div>
+    `).join('');
+    document.getElementById('member-grid').innerHTML = memberHtml;
+    
+    // 03 大类期货（分组渲染：大宗商品 / 股指期货）
+    const groupHtml = resp.commodities.groups.map(g => `
+      <h3 class="com-group-title">${g.name}</h3>
+      <div class="com-grid">
+        ${g.items.map(c => {
+          const cls = c.trend === 'up' ? 'up' : 'down';
+          return `<div class="com-card">
+            <div class="com-icon">${c.icon}</div>
+            <div class="com-name">${c.name}</div>
+            <div class="com-price">${c.price}</div>
+            <div class="com-unit">${c.unit}</div>
+            <div class="com-change ${cls}">${c.change}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    `).join('');
+    document.getElementById('com-groups').innerHTML = groupHtml;
     
     // 警戒线说明条（置于债务卡片上方）
     document.getElementById('warn-threshold').innerHTML = 
@@ -461,17 +588,6 @@
         })
       });
     }
-    
-    // 05 历史走势表
-    const years = resp.history.years;
-    const series = resp.history.series;
-    const rowsHtml = years.map((y, i) => {
-      const usVal = series[0].data[i];
-      const jpVal = series[1].data[i];
-      const cnVal = series[2].data[i];
-      return `<tr><td style="font-weight:600">${y}</td><td>${usVal}</td><td>${jpVal}</td><td>${cnVal}</td></tr>`;
-    }).join('');
-    document.getElementById('history-body').innerHTML = rowsHtml;
     
     // 数据说明
     document.getElementById('macro-note').innerHTML = 
