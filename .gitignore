@@ -10,6 +10,11 @@ data/_backups/
 
 # Environment variables (敏感信息，不传)
 .env
+.env.local
+
+# Database connection strings (含密码，绝不提交)
+db_connections.json
+scripts/.db_connections
 
 # OS files
 .DS_Store

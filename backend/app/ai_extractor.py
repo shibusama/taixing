@@ -227,7 +227,7 @@ def process_pending_articles(
 
         if auto_insert and confidence >= confidence_threshold:
             # 高置信度，检查是否已存在（按 title + board 去重）
-            existing = sb.table("latest_news").select("id").eq("title", news_data["title"]).eq("board", news_data["board"]).limit(1).execute()
+            existing = sb.table("latest_news").select("title").eq("title", news_data["title"]).eq("board", news_data["board"]).limit(1).execute()
             if existing.data:
                 print(f"  [AI] → 已存在，跳过")
                 stats["skipped_duplicate"] += 1
