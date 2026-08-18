@@ -49,7 +49,7 @@ def upsert_article(board_id: str, source: str, title: str, url: str, summary: st
         if existing.data:
             return False
     elif dedup_key:
-        existing = sb.table("raw_articles").select("id").eq("dedup_key", dedup_key).limit(1).execute()
+        existing = sb.table("raw_articles").select("dedup_key").eq("dedup_key", dedup_key).limit(1).execute()
         if existing.data:
             return False
 
@@ -208,7 +208,7 @@ def get_recent_articles(board_id: str = None, limit: int = 10) -> List[Dict]:
 
 def get_articles_stats(board_id: str = None) -> Dict:
     sb = get_supabase()
-    query = sb.table("raw_articles").select("id")
+    query = sb.table("raw_articles").select("news_id")
     if board_id:
         query = query.eq("board_id", board_id)
     result = query.execute()
