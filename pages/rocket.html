@@ -465,7 +465,7 @@
     <!-- ======== Tab 3: 2026下半年发射计划 ======== -->
     <section class="tab-panel" id="tab-plan-h2">
       <div class="article-body" style="padding-top:0">
-        <p>2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
+        <p id="next-launch-intro">2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
 
         <h2>✓ 已完成</h2>
         <div class="tlv-head"><span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="16" fill="#DE2910"/><path d="M5 1.7 L5.52 3.29 L7.19 3.29 L5.84 4.27 L6.35 5.86 L5 4.88 L3.65 5.86 L4.16 4.27 L2.81 3.29 L4.48 3.29 Z" fill="#FFDE00"/></svg><em>中国</em></span></span><span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="16" fill="#fff"/><g fill="#B22234"><rect width="24" height="1.23"/><rect y="2.46" width="24" height="1.23"/><rect y="4.92" width="24" height="1.23"/><rect y="7.38" width="24" height="1.23"/><rect y="9.84" width="24" height="1.23"/><rect y="12.3" width="24" height="1.23"/><rect y="14.76" width="24" height="1.23"/></g><rect width="9.5" height="8.6" fill="#3C3B6E"/></svg><em>US</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="16" fill="#fff"/><circle cx="12" cy="8" r="4.5" fill="#BC002D"/></svg><em>JP</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="16" fill="#003399"/><g fill="#FFCC00"><circle cx="17" cy="8" r="0.9"/><circle cx="16.3" cy="10.5" r="0.9"/><circle cx="14.5" cy="12.3" r="0.9"/><circle cx="12" cy="13" r="0.9"/><circle cx="9.5" cy="12.3" r="0.9"/><circle cx="7.7" cy="10.5" r="0.9"/><circle cx="7" cy="8" r="0.9"/><circle cx="7.7" cy="5.5" r="0.9"/><circle cx="9.5" cy="3.7" r="0.9"/><circle cx="12" cy="3" r="0.9"/><circle cx="14.5" cy="3.7" r="0.9"/><circle cx="16.3" cy="5.5" r="0.9"/></g></svg><em>EU</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="16" fill="#fff"/><g transform="translate(12 8)"><circle r="5" fill="#CD2E3A"/><path d="M0 0 A5 5 0 0 0 0 -5 A2.5 2.5 0 0 1 0 0 Z" fill="#0047A0"/><path d="M0 0 A5 5 0 0 1 0 5 A2.5 2.5 0 0 1 0 0 Z" fill="#0047A0"/></g></svg><em>KR</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="5.33" fill="#FF9933"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.66" width="24" height="5.34" fill="#138808"/><circle cx="12" cy="8" r="2" fill="none" stroke="#000080" stroke-width="0.7"/></svg><em>IN</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="5.33" fill="#000"/><rect y="5.33" width="24" height="5.33" fill="#DD0000"/><rect y="10.66" width="24" height="5.34" fill="#FFCE00"/></svg><em>DE</em></span><span class="flag-sep">/</span><span class="flag-item"><svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="5.33" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0039A6"/><rect y="10.66" width="24" height="5.34" fill="#D52B1E"/></svg><em>RU</em></span></span></div>
@@ -518,6 +518,14 @@
   /* ===== 从 API 和 JSON 渲染数据 ===== */
   let rocketData, timelineData;
   try {
+    // 动态加载「下一次发射评价」引言（有则替换，无则保留静态文案）
+    try {
+      const ni = await fetch('/api/rocket-next-intro').then(r => r.ok ? r.json() : null);
+      const introEl = document.getElementById('next-launch-intro');
+      if (introEl && ni && ni.intro) {
+        introEl.textContent = ni.intro;
+      }
+    } catch (e) { /* 忽略，保留静态文案 */ }
     // 从 API（/api/boards/rocket/full，taixingData）获取对比表格数据，接口不可用时回退 data/rocket.json
     let d = await taixingData.loadData('rocket');
     if (!d || !Array.isArray(d.comparison_table) || !d.comparison_table.length || !d.comparison_table[0].rocket) {

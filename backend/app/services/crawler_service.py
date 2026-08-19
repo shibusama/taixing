@@ -123,6 +123,12 @@ def run_crawler(board_id: str, log_fn=None) -> dict:
             update_rocket_intro_if_needed()
         except Exception:
             pass
+        # 6.1 LLM 更新「下一次发射评价」引言（失败保留旧值，仅记日志）
+        try:
+            from app.llm import update_rocket_next_intro_if_needed
+            update_rocket_next_intro_if_needed()
+        except Exception as e:
+            print(f"[AI] rocket_next_intro 更新异常: {e}")
 
     return {
         "board_id": board_id,

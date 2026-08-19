@@ -165,6 +165,7 @@ def _sync_db(env, execute=True):
         conn.close()
         return
 
+    conn.commit()  # 结束 _diff_db 的只读事务，之后才能设 autocommit
     conn.autocommit = True
     cur = conn.cursor()
 

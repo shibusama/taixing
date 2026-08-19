@@ -77,6 +77,11 @@ def api_get_rocket_intro():
         intro = raw
     return {"intro": intro if isinstance(intro, str) else ""}
 
+@router.get("/rocket-next-intro")
+def api_get_rocket_next_intro():
+    from app.database import get_rocket_next_intro
+    return {"intro": get_rocket_next_intro() or ""}
+
 @router.get("/rocket-timeline")
 def api_get_rocket_timeline():
     from app.database import get_launch_timeline
