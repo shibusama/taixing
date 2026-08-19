@@ -465,6 +465,7 @@
     <!-- ======== Tab 3: 2026下半年发射计划 ======== -->
     <section class="tab-panel" id="tab-plan-h2">
       <div class="article-body" style="padding-top:0">
+        <p id="last-launch-review"></p>
         <p id="next-launch-intro">2026 年下半年是可回收火箭的"密集验证窗口"——中国民营火箭争相冲击回收闭环，SpaceX 星舰瞄准塔架捕获，Rocket Lab Neutron 等待首飞，以下均为公开报道的目标窗口。</p>
 
         <h2>✓ 已完成</h2>
@@ -518,6 +519,14 @@
   /* ===== 从 API 和 JSON 渲染数据 ===== */
   let rocketData, timelineData;
   try {
+    // 动态加载「最近一期发射总结」（有则显示，无则留空）
+    try {
+      const lr = await fetch('/api/rocket-last-review').then(r => r.ok ? r.json() : null);
+      const reviewEl = document.getElementById('last-launch-review');
+      if (reviewEl && lr && lr.review) {
+        reviewEl.textContent = lr.review;
+      }
+    } catch (e) { /* 忽略，留空 */ }
     // 动态加载「下一次发射评价」引言（有则替换，无则保留静态文案）
     try {
       const ni = await fetch('/api/rocket-next-intro').then(r => r.ok ? r.json() : null);

@@ -82,6 +82,11 @@ def api_get_rocket_next_intro():
     from app.database import get_rocket_next_intro
     return {"intro": get_rocket_next_intro() or ""}
 
+@router.get("/rocket-last-review")
+def api_get_rocket_last_review():
+    from app.database import get_rocket_last_review
+    return {"review": get_rocket_last_review() or ""}
+
 @router.get("/rocket-timeline")
 def api_get_rocket_timeline():
     from app.database import get_launch_timeline

@@ -71,6 +71,21 @@ def set_rocket_next_intro(intro: str):
     sb.table("board_status").update({"rocket_next_intro": intro}).eq("board_id", "rocket").execute()
 
 
+def get_rocket_last_review() -> Optional[str]:
+    """获取火箭发射计划页「最近一期发射总结」"""
+    sb = get_supabase()
+    result = sb.table("board_status").select("rocket_last_review").eq("board_id", "rocket").execute()
+    if result.data:
+        return result.data[0].get("rocket_last_review", "") or None
+    return None
+
+
+def set_rocket_last_review(review: str):
+    """写入火箭发射计划页「最近一期发射总结」"""
+    sb = get_supabase()
+    sb.table("board_status").update({"rocket_last_review": review}).eq("board_id", "rocket").execute()
+
+
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
     """获取发射时间线（动态计算 color/badge/done）"""
     sb = get_supabase()

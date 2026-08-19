@@ -50,6 +50,7 @@ TABLES: Dict[str, List[Tuple]] = {
         col("last_message", "TEXT"),
         col("rocket_intro", "TEXT"),
         col("rocket_next_intro", "TEXT"),
+        col("rocket_last_review", "TEXT"),
     ],
 
     # ---------------- 可回收火箭（schema.ts） ----------------

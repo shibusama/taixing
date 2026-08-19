@@ -241,3 +241,82 @@ def update_rocket_next_intro_if_needed() -> bool:
     set_rocket_next_intro(intro)
     print(f"[AI][{datetime.now().isoformat()}] rocket_next_intro 已更新: {intro[:60]}...")
     return True
+
+
+# ========================================================================
+# 「最近一期发射任务总结」（已发射，有结果）
+# ========================================================================
+
+def _build_last_review_prompt(launch: dict) -> str:
+    """根据最近一期已发射任务构建总结 prompt。"""
+    return f"""你是「钛星」科技媒体的航天分析师。请针对下面这次【最近一期已经发射的火箭任务】写一段中文总结（3-4 句话），放在「可回收火箭 → 发射计划」页面顶部、下一次发射评价的上方。
+
+要求覆盖：
+1. 这次发射的结果（成功 / 失败 / 部分成功）
+2. 成功意味着什么（里程碑 / 突破了什么技术 / 标志意义）；若失败则说明失败的影响与后续
+3. 这次发射验证了什么技术 / 工程能力
+4. 后续的愿景 / 影响（如进入工程化复用阶段、复飞计划、商业意义等）
+
+要求：
+- 语言精炼有力，客观专业，不堆砌数据
+- 围绕"这次发射"本身，不要泛泛而谈
+- 输出纯文本（1 段，不要 markdown、不要 <p> 标签）
+
+发射事件信息：
+- 火箭/任务：{launch.get('mission_name') or '未知'}
+- 发射时间：{launch.get('launch_time') or '未知'}
+- 发射场：{launch.get('launch_site') or '未知'}
+- 载荷：{launch.get('payload') or '未知'}
+- 结果：{launch.get('outcome') or '未知'}
+- 简介：{launch.get('brief_desc') or '无'}
+
+直接输出总结："""
+
+
+def generate_last_launch_review() -> str | None:
+    """基于 rocket_launch_timeline 里最近一期「已发射」事件（有明确结果），生成发射总结。
+
+    返回生成的文本，失败返回 None（不覆盖旧值）。
+    """
+    from app.database import get_launch_timeline
+    from datetime import datetime as _dt
+
+    timeline = get_launch_timeline(limit=300) or []
+    now = _dt.now()
+    done = []
+    for it in timeline:
+        lt = it.get("launch_time")
+        outcome = it.get("outcome") or ""
+        if not lt:
+            continue
+        try:
+            d = _dt.fromisoformat(lt.replace("T", " ")[:19])
+        except Exception:
+            continue
+        # 已发射且有明确结果（成功/失败/部分成功），时间 <= 今天
+        if d <= now and outcome in ("成功", "失败", "部分成功"):
+            done.append(it)
+    if not done:
+        print(f"[AI][{_dt.now().isoformat()}] rocket_last_review 生成失败: 没有找到已发射且有结果的事件")
+        return None
+    done.sort(key=lambda x: x["launch_time"])
+    target = done[-1]  # 最近一期（时间最新）
+    prompt = _build_last_review_prompt(target)
+    return _call_deepseek_text(prompt)
+
+
+def update_rocket_last_review_if_needed() -> bool:
+    """爬虫后调用：生成「最近一期发射总结」并写入 board_status.rocket_last_review。
+
+    生成失败时保留旧值（不覆盖），仅记录日志。返回 True 表示成功更新。
+    """
+    from app.database import set_rocket_last_review
+
+    review = generate_last_launch_review()
+    if not review:
+        print(f"[AI][{datetime.now().isoformat()}] rocket_last_review 未更新（保留旧值）")
+        return False
+
+    set_rocket_last_review(review)
+    print(f"[AI][{datetime.now().isoformat()}] rocket_last_review 已更新: {review[:60]}...")
+    return True
