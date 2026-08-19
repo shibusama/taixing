@@ -53,7 +53,8 @@
 .debt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
 .debt-card{border:1px solid var(--line);border-radius:14px;padding:22px 20px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
 .debt-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.debt-flag{font-size:28px;margin-bottom:8px}
+.debt-flag{display:flex;margin-bottom:10px}
+.debt-flag .flag-svg{width:46px;height:32px;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 2px 6px rgba(0,0,0,.3)}
 .debt-card h3{font-size:15px;font-weight:700;margin:0 0 12px;color:var(--txt-1)}
 .debt-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
 .debt-row:last-child{border-bottom:none}
@@ -331,6 +332,11 @@
     if (ut && resp.meta && resp.meta.updated) ut.textContent = '更新时间：' + String(resp.meta.updated).slice(0, 10);
     
     // 01 债务规模（合并利息占比 + 备注，来自 warning.countries）
+    const FLAG_SVG = {
+      '美国': '<svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#ffffff"/><g fill="#b22234"><rect width="24" height="1.23"/><rect y="2.46" width="24" height="1.23"/><rect y="4.92" width="24" height="1.23"/><rect y="7.38" width="24" height="1.23"/><rect y="9.84" width="24" height="1.23"/><rect y="12.3" width="24" height="1.23"/><rect y="14.76" width="24" height="1.23"/></g><rect width="9.6" height="8.61" fill="#3c3b6e"/><g fill="#ffffff"><circle cx="1.2" cy="1" r="0.28"/><circle cx="2.7" cy="1" r="0.28"/><circle cx="4.2" cy="1" r="0.28"/><circle cx="5.7" cy="1" r="0.28"/><circle cx="7.2" cy="1" r="0.28"/><circle cx="8.6" cy="1" r="0.28"/><circle cx="1.95" cy="2" r="0.28"/><circle cx="3.45" cy="2" r="0.28"/><circle cx="4.95" cy="2" r="0.28"/><circle cx="6.45" cy="2" r="0.28"/><circle cx="7.95" cy="2" r="0.28"/><circle cx="1.2" cy="3" r="0.28"/><circle cx="2.7" cy="3" r="0.28"/><circle cx="4.2" cy="3" r="0.28"/><circle cx="5.7" cy="3" r="0.28"/><circle cx="7.2" cy="3" r="0.28"/><circle cx="8.6" cy="3" r="0.28"/><circle cx="1.95" cy="4" r="0.28"/><circle cx="3.45" cy="4" r="0.28"/><circle cx="4.95" cy="4" r="0.28"/><circle cx="6.45" cy="4" r="0.28"/><circle cx="7.95" cy="4" r="0.28"/><circle cx="1.2" cy="5" r="0.28"/><circle cx="2.7" cy="5" r="0.28"/><circle cx="4.2" cy="5" r="0.28"/><circle cx="5.7" cy="5" r="0.28"/><circle cx="7.2" cy="5" r="0.28"/><circle cx="8.6" cy="5" r="0.28"/><circle cx="1.95" cy="6" r="0.28"/><circle cx="3.45" cy="6" r="0.28"/><circle cx="4.95" cy="6" r="0.28"/><circle cx="6.45" cy="6" r="0.28"/><circle cx="7.95" cy="6" r="0.28"/><circle cx="1.2" cy="7" r="0.28"/><circle cx="2.7" cy="7" r="0.28"/><circle cx="4.2" cy="7" r="0.28"/><circle cx="5.7" cy="7" r="0.28"/><circle cx="7.2" cy="7" r="0.28"/><circle cx="8.6" cy="7" r="0.28"/><circle cx="1.95" cy="8" r="0.28"/><circle cx="3.45" cy="8" r="0.28"/><circle cx="4.95" cy="8" r="0.28"/><circle cx="6.45" cy="8" r="0.28"/><circle cx="7.95" cy="8" r="0.28"/></g></svg>',
+      '日本': '<svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#ffffff"/><circle cx="12" cy="8" r="4.5" fill="#bc002d"/></svg>',
+      '中国': '<svg class="flag-svg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#de2910"/><path d="M5 1.7 L5.52 3.29 L7.19 3.29 L5.84 4.27 L6.35 5.86 L5 4.88 L3.65 5.86 L4.16 4.27 L2.81 3.29 L4.48 3.29 Z" fill="#ffde00"/></svg>'
+    };
     const warnMap = {};
     (resp.warning && resp.warning.countries || []).forEach(w => warnMap[w.name] = w);
     const debtHtml = resp.debt.countries.map(c => {
@@ -338,7 +344,7 @@
       const ratioCls = w ? (w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe') : '';
       return `
       <div class="debt-card">
-        <div class="debt-flag">${c.flag}</div>
+        <div class="debt-flag">${FLAG_SVG[c.name] || c.flag}</div>
         <h3>${c.name}</h3>
         <div class="debt-row"><span class="debt-label">债务总额</span><span class="debt-value" style="color:${c.color}">${c.total}</span></div>
         <div class="debt-row"><span class="debt-label">占GDP</span><span class="debt-value">${c.gdp_ratio}</span></div>
