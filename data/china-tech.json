@@ -18,5 +18,53 @@
     { "model": "盘古 6.0", "company": "华为", "params": "10万亿", "ctx": "-", "coding": "-", "math": "-", "arena": "-", "opensource": "-", "price": "端侧部署", "hi_fields": ["params"] },
     { "model": "MiMo-V2.5", "company": "小米", "params": "1.02T / 42B激活", "ctx": "1M", "coding": "编译器233/233", "math": "智能指数37", "arena": "Arena文本第80", "opensource": "开源", "price": "$0.01/任务", "hi_fields": ["opensource","price"] },
     { "model": "SenseNova U1", "company": "商汤", "params": "8B-MoT", "ctx": "-", "coding": "-", "math": "-", "arena": "-", "opensource": "8B开源", "price": "-", "hi_fields": [] }
-  ]
+  ],
+  "semiconductor": {
+    "highlights": [
+      { "num": "96%", "lbl": "上半年IC出口增速", "color": "green" },
+      { "num": "1024卡", "lbl": "昇腾950超节点规模", "color": "cyan" },
+      { "num": "5800亿", "lbl": "长鑫科技IPO市值", "color": "amber" },
+      { "num": "28nm", "lbl": "国产光刻机交付量产", "color": "purple" }
+    ],
+    "tabs": {
+      "tab-mfg": {
+        "progress": [
+          { "yr": "2024", "val": "7nm", "lbl": "中芯N+2量产", "cls": "done" },
+          { "yr": "2025", "val": "5nm", "lbl": "N+3风险试产", "cls": "done" },
+          { "yr": "2026", "val": "等效3nm", "lbl": "逻辑折叠首发", "cls": "cur" },
+          { "yr": "2031", "val": "等效1.4nm", "lbl": "韬定律远期目标", "cls": "next" }
+        ]
+      },
+      "tab-eda": {
+        "highlights": [
+          { "num": "600+亿", "lbl": "华大九天市值", "color": "purple" },
+          { "num": "5x", "lbl": "3DIC验证反超海外", "color": "cyan" },
+          { "num": "2周→2天", "lbl": "验证周期压缩", "color": "green" },
+          { "num": "唯一", "lbl": "3DIC全流程EDA提供商", "color": "amber" }
+        ]
+      },
+      "tab-litho": {
+        "highlights": [
+          { "num": "28nm", "lbl": "SSA800批量交付", "color": "cyan" },
+          { "num": "92~95%", "lbl": "量产良率", "color": "green" },
+          { "num": ">85%", "lbl": "整机国产化率", "color": "amber" },
+          { "num": "217%", "lbl": "出货量同比增速", "color": "purple" }
+        ]
+      },
+      "tab-subst": {
+        "highlights": [
+          { "num": "55%", "lbl": "成熟制程国产化率", "color": "green" },
+          { "num": "35%", "lbl": "芯片整体自给率", "color": "cyan" },
+          { "num": "30%", "lbl": "设备整体国产化率", "color": "amber" },
+          { "num": "29%", "lbl": "材料国产化率", "color": "purple" }
+        ],
+        "progress": [
+          { "yr": "2018", "val": "<12%", "lbl": "材料自给率", "cls": "done" },
+          { "yr": "2021", "val": "8%", "lbl": "设备国产化", "cls": "done" },
+          { "yr": "2026", "val": "29~55%", "lbl": "分层全面替代", "cls": "cur" },
+          { "yr": "2030", "val": "70%+", "lbl": "全链自主可控目标", "cls": "next" }
+        ]
+      }
+    }
+  }
 }

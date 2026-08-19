@@ -85,7 +85,8 @@
 .bond-card{border:1px solid var(--line);border-radius:14px;padding:20px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent);transition:var(--trans)}
 .bond-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .bond-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.bond-head .bond-flag{font-size:26px;line-height:1}
+.bond-head .bond-flag{display:flex;flex-shrink:0}
+.bond-head .bond-flag .flag-svg{width:30px;height:20px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 1px 4px rgba(0,0,0,.25)}
 .bond-head h3{font-size:15px;font-weight:700;margin:0;color:var(--txt-1)}
 .bond-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px}
 .bond-row:last-of-type{border-bottom:none}
@@ -369,7 +370,7 @@
     // 02b 国债收益率（2Y / 10Y / 20Y / 30Y）
     const bondHtml = resp.rates.bonds.map(b => `
       <div class="bond-card">
-        <div class="bond-head"><span class="bond-flag">${b.flag}</span><h3>${b.country}</h3></div>
+        <div class="bond-head"><span class="bond-flag">${FLAG_SVG[b.country] || b.flag}</span><h3>${b.country}</h3></div>
         <div class="bond-row"><span class="bond-label">2 年期</span><span class="bond-value">${b.y2}</span></div>
         <div class="bond-row"><span class="bond-label">10 年期</span><span class="bond-value">${b.y10}</span></div>
         <div class="bond-row"><span class="bond-label">20 年期</span><span class="bond-value">${b.y20}</span></div>

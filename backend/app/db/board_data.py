@@ -321,6 +321,38 @@ def _list(data):
 # 完整板块数据
 # ========================================================================
 
+def _normalize_hl(row: Dict) -> Dict:
+    """DB 高亮行 → 前端字段（label→lbl），保持 JSON 结构一致"""
+    return {"num": row.get("num", ""), "lbl": row.get("label") or row.get("lbl") or "", "color": row.get("color", "")}
+
+
+def _normalize_progress(row: Dict) -> Dict:
+    """DB 进度行 → 前端字段（year→yr / value→val）"""
+    return {
+        "yr": row.get("year") or row.get("yr") or "",
+        "val": row.get("value") or row.get("val") or "",
+        "lbl": row.get("label") or row.get("lbl") or "",
+        "cls": row.get("cls") or "",
+    }
+
+
+def _build_semiconductor_payload() -> Dict:
+    """组装半导体精简数据（高亮 + 各子 Tab 高亮/进度），供并入 china-tech"""
+    hl = [_normalize_hl(h) for h in get_semiconductor_highlights()]
+    tab_highlights = get_semiconductor_tab_highlights()
+    tab_progress = get_semiconductor_tab_progress()
+    tabs = {}
+    for h in tab_highlights:
+        tid = h.get("tab_id", "")
+        tabs.setdefault(tid, {"highlights": [], "progress": []})
+        tabs[tid]["highlights"].append(_normalize_hl(h))
+    for p in tab_progress:
+        tid = p.get("tab_id", "")
+        tabs.setdefault(tid, {"highlights": [], "progress": []})
+        tabs[tid]["progress"].append(_normalize_progress(p))
+    return {"highlights": hl, "tabs": tabs}
+
+
 def get_board_full(board_id: str) -> Optional[Dict]:
     """获取板块完整数据（匹配 JSON 文件结构）"""
     meta = get_board_meta(board_id)
@@ -359,6 +391,8 @@ def get_board_full(board_id: str) -> Optional[Dict]:
     elif board_id == "china-tech":
         result["highlights"] = get_china_tech_highlights()
         result["llm_table"] = get_china_tech_llm()
+        # 半导体板块已并入中国科技：作为子数据提供，供 china-tech 页「半导体」Tab 渲染
+        result["semiconductor"] = _build_semiconductor_payload()
 
     elif board_id == "mega-projects":
         result["highlights"] = get_mega_project_highlights()
