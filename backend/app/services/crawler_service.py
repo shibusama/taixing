@@ -9,6 +9,44 @@ from app.db.board_data import upsert_launch_timeline
 from crawlers.crawler_registry import CRAWLER_MODULES
 
 
+def _run_macro(board_id: str, log_fn) -> dict:
+    """宏观指标板块：仅运行 crawl_* 函数（各函数自行写入 data/macro.json），不入库"""
+    import importlib
+    mod = importlib.import_module("crawlers.macro")
+    total_sources = 0
+    error_sources = 0
+    sources_detail = {}
+    for name in dir(mod):
+        if not (name.startswith("crawl_") and callable(getattr(mod, name))):
+            continue
+        total_sources += 1
+        source_name = name.replace("crawl_", "", 1)
+        log_fn(f"[{source_name}] 开始抓取...")
+        try:
+            getattr(mod, name)()
+            sources_detail[source_name] = {"status": "ok"}
+            log_fn(f"[{source_name}] 完成 ✓")
+        except Exception as e:
+            error_sources += 1
+            sources_detail[source_name] = {"status": "error", "error": str(e)}
+            log_fn(f"[{source_name}] 失败: {e}")
+    msg = f"宏观指标已更新，{total_sources - error_sources}/{total_sources} 个数据源成功"
+    try:
+        from app.db.admin import log_crawl
+        log_crawl(board_id, "success" if error_sources == 0 else "partial", msg)
+    except Exception:
+        pass
+    return {
+        "board_id": board_id,
+        "sources": total_sources,
+        "errors": error_sources,
+        "new_items": 0,
+        "timeline_synced": 0,
+        "message": msg,
+        "detail": sources_detail,
+    }
+
+
 def run_crawler(board_id: str, log_fn=None) -> dict:
     """复用现有爬虫 + 去重入库 + 状态记录
 
@@ -30,6 +68,10 @@ def run_crawler(board_id: str, log_fn=None) -> dict:
     mod_name = CRAWLER_MODULES.get(board_id)
     if not mod_name:
         raise ValueError(f"Unknown board: {board_id}")
+
+    # 0. 宏观指标板块特判：爬虫自行写入 data/macro.json，不入库、不更新板块状态
+    if board_id == "macro":
+        return _run_macro(board_id, _log)
 
     # 1. 运行所有爬虫函数
     mod = importlib.import_module(mod_name)
@@ -117,24 +159,12 @@ def run_crawler(board_id: str, log_fn=None) -> dict:
             companies_new = result.get("rocket", {}).get("rocket_companies", 0)
         except Exception:
             pass
-        # 6. LLM 更新引言
+        # 6. LLM 更新引言（仅当出现新的已完成发射时才改写，见 maybe_trigger_rocket_ai）
         try:
-            from app.llm import update_rocket_intro_if_needed
-            update_rocket_intro_if_needed()
-        except Exception:
-            pass
-        # 6.1 LLM 更新「下一次发射评价」引言（失败保留旧值，仅记日志）
-        try:
-            from app.llm import update_rocket_next_intro_if_needed
-            update_rocket_next_intro_if_needed()
+            from app.llm import maybe_trigger_rocket_ai
+            maybe_trigger_rocket_ai()
         except Exception as e:
-            print(f"[AI] rocket_next_intro 更新异常: {e}")
-        # 6.2 LLM 更新「最近一期发射总结」（失败保留旧值，仅记日志）
-        try:
-            from app.llm import update_rocket_last_review_if_needed
-            update_rocket_last_review_if_needed()
-        except Exception as e:
-            print(f"[AI] rocket_last_review 更新异常: {e}")
+            print(f"[AI] rocket AI 更新异常: {e}")
 
     return {
         "board_id": board_id,

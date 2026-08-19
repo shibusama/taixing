@@ -22,7 +22,7 @@
 │   ├── rocket.html         # 可回收火箭
 │   ├── moon.html           # 中美登月
 │   ├── china-tech.html     # 中国科技AI（含半导体Tab）
-│   ├── mega-projects.html  # 中国大工程
+│   ├── mega-projects.html  # 中国超级工程
 │   ├── fusion.html         # 可控核聚变
 │   ├── finance.html        # 科技资本
 │   └── admin.html          # 管理后台
@@ -58,7 +58,7 @@
 │   ├── moon.py             # 中美登月
 │   ├── semiconductor.py    # 半导体
 │   ├── china_tech.py       # 中国科技AI
-│   ├── mega_projects.py    # 中国大工程
+│   ├── mega_projects.py    # 中国超级工程
 │   ├── controlled_fusion.py# 可控核聚变
 │   └── finance.py          # 科技资本
 │
@@ -144,12 +144,12 @@
 | `china_tech_llm` | 11 | 大模型对比 |
 | `china_tech_timeline` | 0 | 时间线（空） |
 
-### 中国大工程（mega_projects）（3 个）
+### 中国超级工程（mega_projects）（3 个）
 
 | 表名 | 行数 | 用途 |
 |------|------|------|
 | `mega_projects` | 13 | 工程项目列表 |
-| `mega_project_highlights` | 4 | 大工程亮点 |
+| `mega_project_highlights` | 4 | 超级工程亮点 |
 | `mega_project_milestones` | 28 | 里程碑 |
 
 ### 可控核聚变（fusion）（2 个）
@@ -193,7 +193,7 @@
 | 中美登月 | NASA/CNSA 等 | HTML 爬取 |
 | 半导体 | 各半导体媒体 | HTML 爬取 |
 | 中国科技AI | 科技媒体 | HTML 爬取 |
-| 中国大工程 | 基建新闻 | HTML 爬取 |
+| 中国超级工程 | 基建新闻 | HTML 爬取 |
 | 可控核聚变 | 核聚变新闻 | HTML 爬取 |
 | 科技资本 | 金融数据 | HTML 爬取 |
 

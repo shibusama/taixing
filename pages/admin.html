@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>钛星 · 内容管理后台</title>
-    <link rel="stylesheet" href="css/style.css?v=20260819">
+    <link rel="stylesheet" href="css/style.css?v=20260820">
 </head>
 <body>
     <div class="stars"></div>
@@ -34,12 +34,13 @@
                         <option value="moon">中美登月</option>
                         <option value="semiconductor">中国半导体</option>
                         <option value="china-tech">中国科技 AI</option>
-                        <option value="mega-projects">中国大工程</option>
+                        <option value="mega-projects">中国超级工程</option>
                         <option value="controlled-fusion">可控核聚变</option>
                         <option value="finance">科技资本</option>
                     </select>
                     <button onclick="startCrawl()">开始抓取</button>
                     <button onclick="startCrawlAll()" class="secondary">抓取全部</button>
+                    <button onclick="startMacroCrawl()" class="macro-btn" title="运行宏观指标爬虫（利率/国债/汇率/期货/商品），写入 data/macro.json">🪙 抓取宏观指标</button>
                     <button onclick="clearLogs()" class="secondary">清空日志</button>
                 </div>
                 <div class="log-container" id="log-container">
@@ -49,7 +50,7 @@
         </section>
     </div>
 
-    <script src="js/components.js?v=20260819"></script>
-    <script src="js/admin.js?v=20260819"></script>
+    <script src="js/components.js?v=20260820"></script>
+    <script src="js/admin.js?v=20260820"></script>
 </body>
 </html>

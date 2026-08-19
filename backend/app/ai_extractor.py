@@ -30,7 +30,7 @@ BOARD_MAP = {
     "controlled-fusion": "可控核聚变",
     "semiconductor": "中国半导体",
     "china-tech": "中国科技AI",
-    "mega-projects": "中国大工程",
+    "mega-projects": "中国超级工程",
     "finance": "科技资本",
 }
 

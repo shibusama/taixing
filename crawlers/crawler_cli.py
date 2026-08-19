@@ -3,8 +3,17 @@
 处理命令行参数解析，调度爬虫执行。
 """
 
+import os
 import sys
 from datetime import datetime
+
+# 加载项目根目录 .env（供爬虫读取 FRED_API_KEY 等环境变量）
+try:
+    from dotenv import load_dotenv
+    _env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    load_dotenv(_env_path)
+except ImportError:
+    pass
 
 from crawlers.crawler_registry import BOARD_IDS
 from crawlers.crawler_config import load_config, list_sources, CONFIG_FILE

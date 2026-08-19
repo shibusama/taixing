@@ -17,6 +17,7 @@ CRAWLER_MODULES: Dict[str, str] = {
     "mega-projects": "crawlers.mega_projects",
     "controlled-fusion": "crawlers.controlled_fusion",
     "finance": "crawlers.finance",
+    "macro": "crawlers.macro",
 }
 
 BOARD_IDS: list[str] = list(CRAWLER_MODULES.keys())
@@ -32,6 +33,7 @@ from crawlers.semiconductor import crawl_smic, crawl_smee
 from crawlers.china_tech import crawl_anthropic, crawl_deepseek, crawl_moonshot, crawl_openai
 from crawlers.mega_projects import crawl_china_railway
 from crawlers.finance import crawl_exchange_rates, crawl_fed_rate
+from crawlers.macro import crawl_fed_rate as macro_crawl_fed_rate, crawl_japan_rate, crawl_cn_lpr, crawl_treasury_yields, crawl_fx, crawl_commodities, crawl_futures
 
 CRAWLER_FUNCTIONS: Dict[str, Callable] = {
     "crawl_rocket_launches": crawl_rocket_launches,
@@ -51,6 +53,14 @@ CRAWLER_FUNCTIONS: Dict[str, Callable] = {
     "crawl_china_railway": crawl_china_railway,
     "crawl_exchange_rates": crawl_exchange_rates,
     "crawl_fed_rate": crawl_fed_rate,
+    # 宏观指标板块
+    "macro_crawl_fed_rate": macro_crawl_fed_rate,
+    "crawl_japan_rate": crawl_japan_rate,
+    "crawl_cn_lpr": crawl_cn_lpr,
+    "crawl_treasury_yields": crawl_treasury_yields,
+    "crawl_fx": crawl_fx,
+    "crawl_commodities": crawl_commodities,
+    "crawl_futures": crawl_futures,
 }
 
 

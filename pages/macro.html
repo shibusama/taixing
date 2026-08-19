@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 宏观指标监控</title>
-<link rel="stylesheet" href="css/style.css?v=20260819">
+<link rel="stylesheet" href="css/style.css?v=20260820">
 <style>
 /* ===== 宏观指标监控页面样式 ===== */
 .bd-page{--accent:#f0c060;--accent-soft:rgba(240,192,96,.14)}
@@ -27,7 +27,13 @@
 .bd-hero .meta span:first-child::before{display:none}
 
 /* ---- 指标 Tab 胶囊导航（复刻参考图：选中=纯青填充+发光，未选中=暗底+细描边） ---- */
-#macroTabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;border-bottom:none;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#macroTabs{
+  display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;border-bottom:none;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  position:sticky;top:60px;z-index:90;padding:4px 0 14px;
+  background:linear-gradient(180deg,rgba(7,11,20,.96) 60%,rgba(7,11,20,.86));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
 #macroTabs::-webkit-scrollbar{display:none}
 #macroTabs button{
   display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:999px;
@@ -42,6 +48,71 @@
 .tab-panel{display:none}
 .tab-panel.active{display:block;animation:tabFade .25s ease}
 @keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---- KPI 核心指标条（一进页面先看结论） ---- */
+.kpi-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:24px 0 6px;
+}
+.kpi-card{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  transition:var(--trans);
+}
+.kpi-card::before{content:"";position:absolute;inset:0;border-radius:14px;padding:1px;
+  background:linear-gradient(135deg,rgba(0,224,255,.55),rgba(155,123,255,.25) 45%,rgba(240,192,96,.4));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0;transition:opacity var(--trans)}
+.kpi-card:hover::before,.kpi-card.glow::before{opacity:1}
+.kpi-card:hover{border-color:transparent;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.kpi-card.glow{animation:kpiGlow 3.2s ease-in-out infinite}
+@keyframes kpiGlow{0%,100%{box-shadow:0 0 10px rgba(0,224,255,.10)}50%{box-shadow:0 0 26px rgba(0,224,255,.32)}}
+.kpi-card.glow-watch{animation:kpiGlowWatch 1.7s ease-in-out infinite}
+@keyframes kpiGlowWatch{
+  0%,100%{box-shadow:0 0 10px rgba(255,138,61,.14);border-color:rgba(255,138,61,.35)}
+  50%{box-shadow:0 0 24px rgba(255,138,61,.48);border-color:rgba(255,138,61,.75)}
+}
+.kpi-card::after{content:"";position:absolute;top:-40px;right:-40px;width:110px;height:110px;border-radius:50%;background:var(--accent);opacity:.08;filter:blur(34px);pointer-events:none}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.kpi-name{font-size:12px;color:var(--txt-2);font-weight:600;letter-spacing:.3px}
+.kpi-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.kpi-tag.safe{color:var(--green);background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.25)}
+.kpi-tag.watch{color:var(--amber);background:rgba(255,138,61,.12);border:1px solid rgba(255,138,61,.28);animation:tagPulse 1.7s ease-in-out infinite}
+.kpi-tag.danger{color:var(--red);background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.28)}
+.kpi-tag.line{color:var(--accent);background:var(--accent-soft);border:1px solid var(--line)}
+@keyframes tagPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,138,61,0)}50%{box-shadow:0 0 12px rgba(255,138,61,.4)}}
+.kpi-value{font-size:25px;font-weight:900;font-family:var(--mono);line-height:1.1;letter-spacing:-.5px}
+.kpi-value .unit{font-size:12px;font-weight:600;color:var(--txt-2);margin-left:3px}
+.kpi-sub{font-size:11.5px;color:var(--txt-2);margin-top:6px;line-height:1.5}
+
+/* ---- 数据新鲜度徽标 ---- */
+.fdata{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.fdata.auto{color:var(--green);background:rgba(61,220,132,.10);border:1px solid rgba(61,220,132,.22)}
+.fdata.manual{color:var(--amber);background:rgba(255,138,61,.10);border:1px solid rgba(255,138,61,.24)}
+.fdata.pending{color:var(--txt-2);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+.fdata-warn{font-size:11px;color:var(--amber);font-weight:600}
+
+/* ---- 卡片迷你趋势图（sparkline） ---- */
+.spark-wrap{display:flex;flex-direction:column;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
+.spark-label{font-size:11px;color:var(--txt-2)}
+.spark-svg{width:100%;height:30px;display:block;overflow:visible;filter:drop-shadow(0 0 4px rgba(0,224,255,.35))}
+
+/* ---- 滚动进入动画（页面卡片依次浮现） ---- */
+.macro-reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}
+.macro-reveal.in{opacity:1;transform:translateY(0)}
+
+/* ---- 浮动粒子层 ---- */
+.macro-particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.macro-particles i{
+  position:absolute;bottom:-12px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,224,255,.7),rgba(0,224,255,0) 70%);
+  animation:particleUp linear infinite;
+}
+@keyframes particleUp{
+  0%{transform:translateY(0) scale(1);opacity:0}
+  12%{opacity:.75}
+  85%{opacity:.5}
+  100%{transform:translateY(-108vh) scale(.4);opacity:0}
+}
 
 /* ---- 区块标题 ---- */
 .bd-sec-head{display:flex;align-items:center;gap:12px;margin:38px 0 18px;flex-wrap:wrap}
@@ -144,6 +215,7 @@
 .com-card .com-change{font-size:13px;font-weight:700;margin-top:6px}
 .com-card .com-change.up{color:var(--green)}
 .com-card .com-change.down{color:var(--red)}
+.com-card .com-change.stable{color:var(--txt-2)}
 
 /* ---- 警戒线 ---- */
 .warn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 30px}
@@ -169,6 +241,9 @@
 .macro-note{color:var(--txt-2);font-size:13px;margin-top:16px;line-height:1.7;padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
 
 /* ---- 响应式 ---- */
+@media(max-width:1024px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:768px){
   .debt-grid,.rate-grid,.warn-grid,.bond-grid,.fx-grid{grid-template-columns:1fr}
   .com-grid{grid-template-columns:repeat(2,1fr)}
@@ -178,16 +253,20 @@
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
   .bd-hero .meta{gap:10px;font-size:11px}
   .bd-hero .sub{font-size:13.5px}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+  #macroTabs{top:56px}
 }
 @media(max-width:480px){
   .com-grid{grid-template-columns:1fr}
   .member-grid{grid-template-columns:1fr}
   .bd-hero h1{font-size:23px}
+  .kpi-strip{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <div class="stars"></div>
+<div class="macro-particles" id="macro-particles"></div>
 <div class="progress-bar"></div>
 
 <div id="header-placeholder"></div>
@@ -207,6 +286,9 @@
       <button data-tab="tab-rate">🏦 利率监控</button>
       <button data-tab="tab-commodity">📊 大类期货</button>
     </nav>
+
+    <!-- KPI 核心指标条（一进页面先看结论） -->
+    <div class="kpi-strip" id="kpi-strip"></div>
 
     <!-- Tab 1：债务与利息（默认） -->
     <section class="tab-panel active" id="tab-debt">
@@ -307,9 +389,9 @@
 </article>
 
 <div id="footer-placeholder"></div>
-<script src="js/components.js?v=20260819"></script>
-<script src="js/app.js?v=20260819"></script>
-<script src="js/lib/echarts.min.js?v=20260819"></script>
+<script src="js/components.js?v=20260820"></script>
+<script src="js/app.js?v=20260820"></script>
+<script src="js/lib/echarts.min.js?v=20260820"></script>
 <script>
 // 指标 Tab 切换（不依赖数据，先初始化激活态）
 (function(){
@@ -331,6 +413,60 @@
     // 更新时间（数据驱动，与其他板块页一致）
     const ut = document.getElementById('update-time');
     if (ut && resp.meta && resp.meta.updated) ut.textContent = '更新时间：' + String(resp.meta.updated).slice(0, 10);
+
+    // ===== 工具函数：数据新鲜度徽标 + 迷你趋势图 =====
+    function freshnessBadge(src) {
+      const s = String(src || '');
+      if (/占位|待更新|待核实|待人工|待补充/.test(s)) return '<span class="fdata pending">⏳ 待更新</span>';
+      if (/人工/.test(s)) return '<span class="fdata manual">🧑 人工核对</span>';
+      if (/更新于|FRED|ECB|Yahoo|东方财富|COMEX|WTI|LPR/.test(s)) return '<span class="fdata auto">✓ 自动更新</span>';
+      return '';
+    }
+    function sparkSvg(values, color) {
+      const v = (values || []).map(x => parseFloat(String(x).replace(/[^0-9.\-]/g, '')));
+      if (!v.length || v.some(isNaN)) return '';
+      const min = Math.min.apply(null, v), max = Math.max.apply(null, v);
+      const rng = (max - min) || 1, W = 100, H = 34, pad = 3;
+      const pts = v.map((x, i) => {
+        const px = pad + (i / (v.length - 1)) * (W - pad * 2);
+        const py = H - pad - ((x - min) / rng) * (H - pad * 2 - 4);
+        return px.toFixed(1) + ',' + py.toFixed(1);
+      }).join(' ');
+      // 渐变面积填充：折线 + 底部闭合区域
+      const area = pts + ' ' + (W - pad).toFixed(1) + ',' + (H - pad).toFixed(1) + ' ' + pad.toFixed(1) + ',' + (H - pad).toFixed(1);
+      const gid = 'sparkGrad' + Math.random().toString(36).slice(2, 8);
+      return '<svg class="spark-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+        '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="' + color + '" stop-opacity=".38"/>' +
+        '<stop offset="100%" stop-color="' + color + '" stop-opacity=".02"/></linearGradient></defs>' +
+        '<polygon points="' + area + '" fill="url(#' + gid + ')" stroke="none"/>' +
+        '<polyline fill="none" stroke="' + color + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="' + pts + '"/>' +
+        '<circle cx="' + pts.split(' ').pop().split(',')[0] + '" cy="' + pts.split(' ').pop().split(',')[1] + '" r="2.2" fill="' + color + '" opacity=".9"/>' +
+        '</svg>';
+    }
+
+    // ===== KPI 核心指标条（一进页面先看结论） =====
+    function kpiValueHtml(raw) {
+      // 拆出数字 + 单位，用于滚动动画
+      const m = String(raw || '').match(/^([\d.,]+)(.*)$/);
+      if (!m) return '<span class="kpi-num" data-target="' + String(raw || 0).replace(/[^0-9.]/g, '') + '">' + raw + '</span>';
+      return '<span class="kpi-num" data-target="' + m[1].replace(/,/g, '') + '">0</span><span class="unit">' + m[2] + '</span>';
+    }
+    const kpiHtml = (function(){
+      const cards = [];
+      const th = resp.warning && resp.warning.threshold;
+      if (th) cards.push('<div class="kpi-card glow"><div class="kpi-top"><span class="kpi-name">利息警戒线</span><span class="kpi-tag line">基准</span></div><div class="kpi-value">' + kpiValueHtml(th) + '</div><div class="kpi-sub">' + (resp.warning.threshold_desc || '') + '</div></div>');
+      (resp.warning && resp.warning.countries || []).forEach(w => {
+        const tagCls = w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe';
+        const glowCls = w.status === 'watch' ? 'glow-watch' : 'glow';
+        cards.push('<div class="kpi-card ' + glowCls + '"><div class="kpi-top"><span class="kpi-name">' + w.name + ' 利息占比</span><span class="kpi-tag ' + tagCls + '">' + (w.status === 'danger' ? '危险' : w.status === 'watch' ? '警戒' : '安全') + '</span></div><div class="kpi-value">' + kpiValueHtml(w.ratio) + '</div><div class="kpi-sub">' + (w.note || '') + '</div></div>');
+      });
+      const us10y = (resp.rates && resp.rates.bonds || []).find(b => b.country === '美国');
+      if (us10y && us10y.y10) cards.push('<div class="kpi-card glow"><div class="kpi-top"><span class="kpi-name">美债 10Y 收益率</span><span class="kpi-tag ' + (parseFloat(us10y.y10) > 4 ? 'watch' : 'safe') + '">市场</span></div><div class="kpi-value">' + kpiValueHtml(us10y.y10) + '</div><div class="kpi-sub">' + (us10y.note || '') + '</div></div>');
+      return cards.join('');
+    })();
+    const kpiEl = document.getElementById('kpi-strip');
+    if (kpiEl && kpiHtml) kpiEl.innerHTML = kpiHtml;
     
     // 01 债务规模（合并利息占比 + 备注，来自 warning.countries）
     const FLAG_SVG = {
@@ -340,11 +476,15 @@
     };
     const warnMap = {};
     (resp.warning && resp.warning.countries || []).forEach(w => warnMap[w.name] = w);
+    // 历史序列（用于债务卡迷你趋势图：利息支出占比历史）
+    const historyMap = {};
+    (resp.warning && resp.warning.history && resp.warning.history.series || []).forEach(s => historyMap[s.name] = s.data);
     const debtHtml = resp.debt.countries.map(c => {
       const w = warnMap[c.name];
       const ratioCls = w ? (w.status === 'danger' ? 'danger' : w.status === 'watch' ? 'watch' : 'safe') : '';
+      const spark = historyMap[c.name] ? sparkSvg(historyMap[c.name], c.color.replace('var(--red)','#ff5470').replace('var(--amber)','#ff8a3d').replace('var(--cyan)','#00e0ff')) : '';
       return `
-      <div class="debt-card">
+      <div class="debt-card macro-reveal">
         <div class="debt-flag">${FLAG_SVG[c.name] || c.flag}</div>
         <h3>${c.name}</h3>
         <div class="debt-row"><span class="debt-label">债务总额</span><span class="debt-value" style="color:${c.color}">${c.total}</span></div>
@@ -352,6 +492,7 @@
         <div class="debt-row"><span class="debt-label">年增量</span><span class="debt-value" style="color:${c.color}">${c.annual_change}</span></div>
         ${w ? `<div class="debt-row"><span class="debt-label">利息占比</span><span class="debt-value ${ratioCls}">${w.ratio}</span></div>
         <div class="debt-row"><span class="debt-label">备注</span><span class="debt-note">${w.note}</span></div>` : ''}
+        ${spark ? `<div class="spark-wrap"><span class="spark-label">利息支出占比趋势 · ${resp.warning.history ? resp.warning.history.years[0] + '→' + resp.warning.history.years[resp.warning.history.years.length-1] : ''}</span>${spark}</div>` : ''}
       </div>
     `;
     }).join('');
@@ -359,8 +500,8 @@
     
     // 02 利率（央行基准利率）
     const rateHtml = resp.rates.policy_rates.map(r => `
-      <div class="rate-card">
-        <div class="rate-label">${r.label}</div>
+      <div class="rate-card macro-reveal">
+        <div class="rate-label">${r.label} ${freshnessBadge(r.sub)}</div>
         <div class="rate-value">${r.value}</div>
         <div class="rate-sub"><span class="rate-trend ${r.trend}"></span>${r.sub}</div>
       </div>
@@ -369,13 +510,13 @@
     
     // 02b 国债收益率（2Y / 10Y / 20Y / 30Y）
     const bondHtml = resp.rates.bonds.map(b => `
-      <div class="bond-card">
-        <div class="bond-head"><span class="bond-flag">${FLAG_SVG[b.country] || b.flag}</span><h3>${b.country}</h3></div>
+      <div class="bond-card macro-reveal">
+        <div class="bond-head"><span class="bond-flag">${FLAG_SVG[b.country] || b.flag}</span><h3>${b.country}</h3><span style="margin-left:auto">${freshnessBadge(b.note)}</span></div>
         <div class="bond-row"><span class="bond-label">2 年期</span><span class="bond-value">${b.y2}</span></div>
         <div class="bond-row"><span class="bond-label">10 年期</span><span class="bond-value">${b.y10}</span></div>
         <div class="bond-row"><span class="bond-label">20 年期</span><span class="bond-value">${b.y20}</span></div>
         <div class="bond-row"><span class="bond-label">30 年期</span><span class="bond-value">${b.y30}</span></div>
-        ${b.note ? `<div class="bond-note">${b.note}</div>` : ''}
+        ${b.note ? `<div class="bond-note ${b.note.indexOf('占位') > -1 ? 'fdata-warn' : ''}">${b.note}</div>` : ''}
       </div>
     `).join('');
     document.getElementById('bond-grid').innerHTML = bondHtml;
@@ -383,8 +524,8 @@
     // 02c 外汇汇率
     const fxHtml = resp.rates.fx.map(f => {
       const cls = f.trend === 'up' ? 'up' : 'down';
-      return `<div class="fx-card">
-        <div class="fx-head"><span class="fx-icon">${f.icon}</span><div><div class="fx-name">${f.name}</div><div class="fx-pair">${f.pair}</div></div></div>
+      return `<div class="fx-card macro-reveal">
+        <div class="fx-head"><span class="fx-icon">${f.icon}</span><div><div class="fx-name">${f.name} ${freshnessBadge(f.note)}</div><div class="fx-pair">${f.pair}</div></div></div>
         <div class="fx-value">${f.value}</div>
         <div class="fx-change ${cls}">${f.change}</div>
         ${f.note ? `<div class="fx-note">${f.note}</div>` : ''}
@@ -406,9 +547,9 @@
     
     // 02e 美联储决策成员
     const memberHtml = resp.rates.members.map(m => `
-      <div class="member-card">
+      <div class="member-card macro-reveal">
         <div class="member-avatar">${m.avatar}</div>
-        <div class="member-name">${m.name}</div>
+        <div class="member-name">${m.name} ${freshnessBadge(m.term + ' ' + m.note)}</div>
         <span class="member-tag">${m.tag}</span>
         <div class="member-role">${m.role}</div>
         <div class="member-term">${m.term}</div>
@@ -422,13 +563,14 @@
       <h3 class="com-group-title">${g.name}</h3>
       <div class="com-grid">
         ${g.items.map(c => {
-          const cls = c.trend === 'up' ? 'up' : 'down';
-          return `<div class="com-card">
+          const cls = c.trend === 'up' ? 'up' : c.trend === 'down' ? 'down' : 'stable';
+          return `<div class="com-card macro-reveal">
             <div class="com-icon">${c.icon}</div>
-            <div class="com-name">${c.name}</div>
+            <div class="com-name">${c.name} ${freshnessBadge(c.note)}</div>
             <div class="com-price">${c.price}</div>
             <div class="com-unit">${c.unit}</div>
             <div class="com-change ${cls}">${c.change}</div>
+            ${c.note ? `<div class="fx-note">${c.note}</div>` : ''}
           </div>`;
         }).join('')}
       </div>
@@ -499,11 +641,11 @@
           const col = CHART_COLORS[s.name] || '#00e0ff';
           return {
             name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 5,
-            lineStyle: { width: 2.2 }, itemStyle: { color: col },
+            lineStyle: { width: 2.2, shadowColor: col, shadowBlur: 10 }, itemStyle: { color: col },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: hexToRgba(col, .30) },
-                { offset: 1, color: hexToRgba(col, .02) }
+                { offset: 0, color: hexToRgba(col, .38) },
+                { offset: 1, color: hexToRgba(col, .03) }
               ])
             },
             emphasis: { focus: 'series' },
@@ -582,11 +724,11 @@
           const col = CHART_COLORS[s.name] || '#00e0ff';
           return {
             name: s.name, type: 'line', smooth: true, symbol: 'circle', symbolSize: 4,
-            lineStyle: { width: 2.2 }, itemStyle: { color: col },
+            lineStyle: { width: 2.2, shadowColor: col, shadowBlur: 9 }, itemStyle: { color: col },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: hexToRgba(col, .25) },
-                { offset: 1, color: hexToRgba(col, .02) }
+                { offset: 0, color: hexToRgba(col, .32) },
+                { offset: 1, color: hexToRgba(col, .03) }
               ])
             },
             emphasis: { focus: 'series' },
@@ -599,10 +741,92 @@
     // 数据说明
     document.getElementById('macro-note').innerHTML = 
       `<strong>📌 数据说明：</strong> 债务数据为年度更新，大宗商品及利率为近期数据。数据来源包括各国财政部、央行及交易所公开信息。 — 更新于 ${resp.meta.updated}`;
+
+    // 数据注入完成后触发滚动进入动画 + 数字滚动（修复：卡片 opacity:0 消失问题）
+    if (window.__macroBoot) window.__macroBoot();
+    if (window.__macroBoot) setTimeout(window.__macroBoot, 100);
     
   } catch(e) {
     console.error('Macro data load failed:', e);
     document.getElementById('debt-grid').innerHTML = '<p style="color:var(--txt-2)">数据加载失败</p>';
+  }
+})();
+
+// ===== 动效：KPI 数字滚动 + 卡片滚动进入 + 浮动粒子 =====
+(function(){
+  // --- KPI 数字滚动动画 ---
+  function animateCount(el, target, decimals) {
+    const dur = 900, start = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      const val = (target * eased).toFixed(decimals);
+      el.textContent = decimals > 0 ? val : Math.round(target * eased).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  function runKpiCounts() {
+    document.querySelectorAll('#kpi-strip .kpi-num[data-target]').forEach(n => {
+      const raw = n.dataset.target;
+      const target = parseFloat(raw);
+      if (isNaN(target)) { n.textContent = raw; return; }
+      const decimals = String(raw).includes('.') ? String(raw).split('.')[1].length : 0;
+      animateCount(n, target, decimals);
+    });
+  }
+  // 优先等数据渲染完；若已有则直接跑
+  if (document.querySelectorAll('#kpi-strip .kpi-num').length) runKpiCounts();
+  else setTimeout(runKpiCounts, 350);
+
+  // --- 卡片滚动进入动画（IntersectionObserver） ---
+  // 注意：卡片由异步数据渲染生成，必须在数据注入后再初始化观察器
+  function initReveal() {
+    var els = document.querySelectorAll('.macro-reveal');
+    if (!els.length) return;
+    if ('IntersectionObserver' in window) {
+      var ro = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e, i) {
+          if (e.isIntersecting) {
+            e.target.style.transitionDelay = (Math.min(i, 6) * 60) + 'ms';
+            e.target.classList.add('in');
+            ro.unobserve(e.target);
+          }
+        });
+      }, { threshold: .12, rootMargin: '0px 0px -30px 0px' });
+      els.forEach(function(el) { ro.observe(el); });
+    } else {
+      els.forEach(function(el) { el.classList.add('in'); });
+    }
+  }
+  // 统一启动入口：数据渲染完成后一次跑完数字滚动 + 卡片浮现
+  window.__macroBoot = function() {
+    runKpiCounts();
+    initReveal();
+  };
+  // 首次兜底（数据可能已渲染）
+  window.__macroBoot();
+  // 数据异步渲染的延迟兜底
+  setTimeout(window.__macroBoot, 800);
+  setTimeout(window.__macroBoot, 1500);
+
+  // --- 浮动粒子层（轻量，20 个） ---
+  var pLayer = document.getElementById('macro-particles');
+  if (pLayer && window.innerWidth > 640) {
+    var colors = ['#00e0ff', '#9b7bff', '#f0c060', '#3ddc84'];
+    for (var i = 0; i < 20; i++) {
+      var d = document.createElement('i');
+      var size = (Math.random() * 3 + 1.5).toFixed(1);
+      d.style.cssText = [
+        'left:' + (Math.random() * 100).toFixed(2) + '%',
+        'width:' + size + 'px',
+        'height:' + size + 'px',
+        'background:radial-gradient(circle,' + colors[i % colors.length] + '.7,' + colors[i % colors.length] + '0 70%)',
+        'animation-duration:' + (Math.random() * 14 + 12).toFixed(1) + 's',
+        'animation-delay:-' + (Math.random() * 20).toFixed(1) + 's'
+      ].join(';');
+      pLayer.appendChild(d);
+    }
   }
 })();
 </script>

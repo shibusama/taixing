@@ -92,6 +92,16 @@ def api_get_rocket_timeline():
     from app.database import get_launch_timeline
     return {"timeline": get_launch_timeline(limit=100)}
 
+
+@router.get("/rocket/ai-refresh")
+def api_rocket_ai_refresh():
+    """刷新页触发 AI 改写：仅当出现新的已完成发射时改写（无变动不触发）"""
+    from app.llm import maybe_trigger_rocket_ai
+    try:
+        return maybe_trigger_rocket_ai()
+    except Exception as e:
+        return {"triggered": False, "reason": str(e)}
+
 @router.get("/status/{board_id}")
 def api_get_board_status(board_id: str):
     from app.database import get_board_status

@@ -18,7 +18,7 @@
 
 钛星（taixing）科技新闻聚合网站，数据与页面分离，依靠 Python 爬虫自动抓取 + DeepSeek AI 提取结构化数据。
 
-**七大版块**：可回收火箭、中美登月、中国科技AI（含半导体Tab）、大工程、可控核聚变、科技资本、宏观指标监控。
+**七大版块**：可回收火箭、中美登月、中国科技AI（含半导体Tab）、超级工程、可控核聚变、科技资本、宏观指标监控。
 
 ## 技术栈
 
@@ -40,7 +40,7 @@
 │   ├── rocket.html         # 可回收火箭
 │   ├── moon.html           # 中美登月
 │   ├── china-tech.html     # 中国科技AI（含半导体Tab，半导体板块已并入）
-│   ├── mega-projects.html  # 中国大工程
+│   ├── mega-projects.html  # 中国超级工程
 │   ├── fusion.html         # 可控核聚变
 │   ├── finance.html        # 科技资本
 │   ├── macro.html           # 宏观指标监控
@@ -65,7 +65,7 @@
 │   ├── moon.py             # 中美登月
 │   ├── semiconductor.py    # 半导体
 │   ├── china_tech.py       # 中国科技AI
-│   ├── mega_projects.py    # 大工程
+│   ├── mega_projects.py    # 超级工程
 │   ├── controlled_fusion.py # 可控核聚变
 │   └── finance.py          # 科技资本
 ├── scripts/                # 部署/预览脚本
@@ -147,7 +147,7 @@ AI 提取（DeepSeek V4 Flash）
 - `china_tech_llm` - 大模型对比
 - `china_tech_timeline` - 时间线
 
-### 中国大工程（3 个）
+### 中国超级工程（3 个）
 - `mega_projects` - 工程项目
 - `mega_project_highlights` - 亮点
 - `mega_project_milestones` - 里程碑

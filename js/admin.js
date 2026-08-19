@@ -115,6 +115,36 @@
   }
   window.startCrawlAll = startCrawlAll;
 
+  // 宏观指标一键抓取（独立按钮，固定触发 macro 板块）
+  async function startMacroCrawl() {
+    if (crawlPollingTimer) {
+      alert('已有板块正在抓取中，请等待完成');
+      return;
+    }
+    var boardId = 'macro';
+    updateCrawlStatus('running');
+    setControlsDisabled(true);
+    addLog('log-container', '🪙 开始抓取宏观指标（利率/国债/汇率/期货/商品）...', 'info');
+    try {
+      var resp = await api('/api/crawl/' + boardId + '/start', { method: 'POST' });
+      if (resp.status === 'already_running') {
+        addLog('log-container', (resp.message || '宏观指标正在抓取中，请勿重复启动'), 'warn');
+        updateCrawlStatus('idle');
+        setControlsDisabled(false);
+        return;
+      }
+      addLog('log-container', '宏观爬虫已启动，等待完成...', 'success');
+      if (crawlPollingTimer) clearInterval(crawlPollingTimer);
+      crawlPolledLines = 0;
+      crawlPollingTimer = setInterval(function () { pollCrawlLogs(boardId); }, 1000);
+    } catch (e) {
+      addLog('log-container', '启动失败：' + e.message, 'error');
+      updateCrawlStatus('failed');
+      setControlsDisabled(false);
+    }
+  }
+  window.startMacroCrawl = startMacroCrawl;
+
   async function pollCrawlLogs(boardId) {
     try {
       var data = await api('/api/crawl/' + boardId + '/logs');

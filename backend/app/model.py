@@ -144,10 +144,10 @@ class ChinaTechTimeline(Base):
     )
 
 
-# ============ 中国大工程 ============
+# ============ 中国超级工程 ============
 
 class MegaProject(Base):
-    """大工程"""
+    """超级工程"""
     __tablename__ = "mega_projects"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, comment="项目名称")
@@ -164,7 +164,7 @@ class MegaProject(Base):
 
 
 class MegaProjectTimeline(Base):
-    """大工程时间线"""
+    """超级工程时间线"""
     __tablename__ = "mega_project_timeline"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     event_date: Mapped[str] = mapped_column(String(50), nullable=False, comment="事件日期")

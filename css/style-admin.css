@@ -79,6 +79,10 @@ body{min-height:100vh}
 .controls button:disabled:hover{background:var(--bg-2);color:var(--txt-3);border-color:var(--line);box-shadow:none}
 .controls button.secondary{background:var(--bg-2);color:var(--txt-1);border-color:var(--line);font-weight:600}
 .controls button.secondary:hover{color:var(--cyan);border-color:var(--cyan)}
+/* 宏观指标按钮（金色，呼应宏观页主题） */
+.controls button.macro-btn{background:rgba(240,192,96,.14);color:#f0c060;border-color:rgba(240,192,96,.5);font-weight:700}
+.controls button.macro-btn:hover{background:#f0c060;color:#1a1608;box-shadow:0 0 14px rgba(240,192,96,.4)}
+.controls button.macro-btn:disabled{background:var(--bg-2);color:var(--txt-3);border-color:var(--line);box-shadow:none;cursor:not-allowed;opacity:.55}
 
 /* ---- 日志区 ---- */
 .log-container{

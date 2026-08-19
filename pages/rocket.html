@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>钛星 · 可回收火箭</title>
-<link rel="stylesheet" href="css/style.css?v=20260819">
+<link rel="stylesheet" href="css/style.css?v=20260820">
 <style>
 /* =========================================================
    版块页重设计 · 可回收火箭（accent = 青色）
@@ -512,13 +512,17 @@
 <button class="back-to-top" aria-label="回到顶部" title="回到顶部">↑</button>
 
 <div id="footer-placeholder"></div>
-<script src="js/app.js?v=20260819"></script>
-<script src="js/data-loader.js?v=20260819"></script>
+<script src="js/app.js?v=20260820"></script>
+<script src="js/data-loader.js?v=20260820"></script>
 <script>
 (async function(){
   /* ===== 从 API 和 JSON 渲染数据 ===== */
   let rocketData, timelineData;
   try {
+    // 刷新页触发 AI 改写：仅当出现「新的已完成发射」时才改写；无变动则不触发
+    try {
+      await fetch('/api/rocket/ai-refresh');
+    } catch (e) { /* 忽略，不影响页面 */ }
     // 动态加载「最近一期发射总结」（有则显示，无则留空）
     try {
       const lr = await fetch('/api/rocket-last-review').then(r => r.ok ? r.json() : null);
@@ -533,6 +537,14 @@
       const introEl = document.getElementById('next-launch-intro');
       if (introEl && ni && ni.intro) {
         introEl.textContent = ni.intro;
+      }
+    } catch (e) { /* 忽略，保留静态文案 */ }
+    // 动态加载「全球进展」引言（HTML 片段，有则替换静态文案）
+    try {
+      const ri = await fetch('/api/rocket-intro').then(r => r.ok ? r.json() : null);
+      const introEl = document.getElementById('rocket-intro');
+      if (introEl && ri && ri.intro) {
+        introEl.innerHTML = ri.intro;
       }
     } catch (e) { /* 忽略，保留静态文案 */ }
     // 从 API（/api/boards/rocket/full，taixingData）获取对比表格数据，接口不可用时回退 data/rocket.json
@@ -623,6 +635,14 @@
     document.getElementById('rocket-timeline-done').innerHTML = renderVersusTL(doneItems);
     document.getElementById('rocket-timeline-upcoming').innerHTML = renderVersusTL(upcomingItems);
     document.getElementById('rocket-timeline-2027').innerHTML = renderTL(items2027);
+
+    // 刷新后自动滚动定位：已完成 → 最新（底部）；即将发射 → 最近一场（顶部）
+    try {
+      const doneBox = document.getElementById('rocket-timeline-done');
+      if (doneBox) doneBox.scrollTop = doneBox.scrollHeight;
+      const upBox = document.getElementById('rocket-timeline-upcoming');
+      if (upBox) upBox.scrollTop = 0;
+    } catch (e) { /* 忽略 */ }
   } catch(e) { console.error('Rocket data load failed:', e); }
 
   /* ===== Tab 切换 ===== */
@@ -638,6 +658,13 @@
       panels.forEach(function(p){
         p.classList.toggle('active',p.id===target);
       });
+      // 「发射计划」Tab 激活后自动滚动：已完成 → 最新（底部）；即将发射 → 最近一场（顶部）
+      if (target === 'tab-plan-h2') {
+        const doneBox = document.getElementById('rocket-timeline-done');
+        if (doneBox) doneBox.scrollTop = doneBox.scrollHeight;
+        const upBox = document.getElementById('rocket-timeline-upcoming');
+        if (upBox) upBox.scrollTop = 0;
+      }
     });
   });
 
@@ -731,6 +758,6 @@
   });
 })();
 </script>
-<script src="js/components.js?v=20260819"></script>
+<script src="js/components.js?v=20260820"></script>
 </body>
 </html>

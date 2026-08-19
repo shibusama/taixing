@@ -51,6 +51,7 @@ TABLES: Dict[str, List[Tuple]] = {
         col("rocket_intro", "TEXT"),
         col("rocket_next_intro", "TEXT"),
         col("rocket_last_review", "TEXT"),
+        col("rocket_ai_last_done_key", "TEXT"),
     ],
 
     # ---------------- 可回收火箭（schema.ts） ----------------
@@ -187,7 +188,7 @@ TABLES: Dict[str, List[Tuple]] = {
         col("created_at", "TEXT", "DEFAULT (datetime('now'))"),
     ],
 
-    # ---------------- 中国大工程（schema.ts） ----------------
+    # ---------------- 中国超级工程（schema.ts） ----------------
     "mega_projects": [
         col("id", "INTEGER", "PRIMARY KEY"),
         col("tab_id", "TEXT"),
@@ -384,7 +385,32 @@ def init_db(conn) -> None:
     """执行全部建表/建索引 SQL（幂等）"""
     for name in TABLES:
         conn.execute(build_create_sql(name))
+    _migrate_missing_columns(conn)
     for table, index_name, columns, unique in INDEXES:
         conn.execute(build_index_sql(table, index_name, columns, unique))
     conn.commit()
+
+
+def _migrate_missing_columns(conn) -> None:
+    """增量迁移：给已存在的旧表补充 schema 里新增的列。
+
+    CREATE TABLE IF NOT EXISTS 不会给旧表加列，因此这里对每个表做一次
+    PRAGMA table_info 比对，把 schema 中新增、且现有表缺失的普通列补上。
+    跳过带 PRIMARY KEY / NOT NULL / UNIQUE 的列（ALTER ADD COLUMN 有约束限制）。
+    """
+    for table, cols in TABLES.items():
+        try:
+            existing = {row[1] for row in conn.execute(f'PRAGMA table_info("{table}")').fetchall()}
+        except Exception:
+            continue
+        for cname, ctype, constraints, _flags in cols:
+            if cname in existing:
+                continue
+            upper = (constraints or "").upper()
+            if "PRIMARY KEY" in upper or "NOT NULL" in upper or "UNIQUE" in upper:
+                continue
+            try:
+                conn.execute(f'ALTER TABLE "{table}" ADD COLUMN "{cname}" {ctype}')
+            except Exception:
+                pass
 

@@ -161,7 +161,7 @@ export const chinaTechTimeline = pgTable("china_tech_timeline", {
   createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
 });
 
-// ============ 中国大工程 ============
+// ============ 中国超级工程 ============
 
 export const megaProjects = pgTable("mega_projects", {
   id: integer("id").primaryKey(),

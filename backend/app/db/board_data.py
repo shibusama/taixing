@@ -86,6 +86,21 @@ def set_rocket_last_review(review: str):
     sb.table("board_status").update({"rocket_last_review": review}).eq("board_id", "rocket").execute()
 
 
+def get_rocket_ai_last_done_key() -> Optional[str]:
+    """获取最近一次 AI 改写已处理过的「最后一条已完成发射」标记"""
+    sb = get_supabase()
+    result = sb.table("board_status").select("rocket_ai_last_done_key").eq("board_id", "rocket").execute()
+    if result.data:
+        return result.data[0].get("rocket_ai_last_done_key", "") or None
+    return None
+
+
+def set_rocket_ai_last_done_key(key: str):
+    """记录最近一次 AI 改写已处理过的「最后一条已完成发射」标记"""
+    sb = get_supabase()
+    sb.table("board_status").update({"rocket_ai_last_done_key": key}).eq("board_id", "rocket").execute()
+
+
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
     """获取发射时间线（动态计算 color/badge/done）"""
     sb = get_supabase()
@@ -234,7 +249,7 @@ def get_china_tech_timeline() -> List[Dict]:
 
 
 # ========================================================================
-# 5. 中国大工程 (mega-projects)
+# 5. 中国超级工程 (mega-projects)
 # ========================================================================
 
 def get_mega_projects() -> List[Dict]:

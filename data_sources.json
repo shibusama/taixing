@@ -9,7 +9,8 @@
     "semiconductor",
     "china-tech",
     "mega-projects",
-    "finance"
+    "finance",
+    "macro"
   ],
   "boards": {
     "rocket": {
@@ -270,7 +271,7 @@
       ]
     },
     "mega-projects": {
-      "name": "大工程",
+      "name": "超级工程",
       "name_en": "Mega Projects",
       "output_file": "mega-projects.json",
       "sources": [
@@ -358,6 +359,77 @@
           "enabled": true,
           "sleep_after": 1,
           "auto_write": false
+        }
+      ]
+    },
+    "macro": {
+      "name": "宏观指标监控",
+      "name_en": "Macro Monitor",
+      "output_file": "macro.json",
+      "auto_write": true,
+      "sources": [
+        {
+          "id": "fed_rate",
+          "name": "美联储利率",
+          "crawler": "macro_crawl_fed_rate",
+          "type": "api",
+          "description": "FRED API (FEDFUNDS)，写入 macro.json rates.policy_rates",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "japan_rate",
+          "name": "日本央行利率",
+          "crawler": "crawl_japan_rate",
+          "type": "api",
+          "description": "FRED 参考，写入 macro.json rates.policy_rates",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "cn_lpr",
+          "name": "中国LPR",
+          "crawler": "crawl_cn_lpr",
+          "type": "web",
+          "description": "LPR 每月公布一次（低频），免费接口不可用，人工维护 macro.json",
+          "enabled": false,
+          "sleep_after": 0
+        },
+        {
+          "id": "treasury_yields",
+          "name": "国债收益率",
+          "crawler": "crawl_treasury_yields",
+          "type": "api",
+          "description": "美日 FRED + 中国中债登，写入 macro.json rates.bonds",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "fx",
+          "name": "外汇汇率",
+          "crawler": "crawl_fx",
+          "type": "api",
+          "description": "Frankfurter API (ECB)，写入 macro.json rates.fx",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "commodities",
+          "name": "大宗商品",
+          "crawler": "crawl_commodities",
+          "type": "api",
+          "description": "FRED 原油/黄金，写入 macro.json commodities",
+          "enabled": true,
+          "sleep_after": 0
+        },
+        {
+          "id": "futures",
+          "name": "股指期货",
+          "crawler": "crawl_futures",
+          "type": "api",
+          "description": "Yahoo 美股期货 + 东方财富中国股指，写入 macro.json commodities",
+          "enabled": true,
+          "sleep_after": 0
         }
       ]
     }

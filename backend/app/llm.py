@@ -1,22 +1,15 @@
 """
 LLM 调用模块 — 爬虫后自动更新火箭板块引言
 
-使用 OpenAI 兼容 API（支持 OpenAI / DeepSeek / 豆包等），
-从环境变量读取凭据：
-  - OPENAI_API_KEY   (必填)
-  - OPENAI_BASE_URL  (可选，默认 https://api.openai.com/v1)
-  - OPENAI_MODEL     (可选，默认 gpt-4o-mini)
+统一使用 DSH 的大模型配置（DeepSeek）：
+  - DEEPSEEK_API_KEY：优先读环境变量，其次读 ~/.dsh/.credentials.yaml
+  - DEEPSEEK_BASE_URL / DEEPSEEK_API_URL / DEEPSEEK_MODEL：可选环境变量覆盖
 """
 
 import os
 import json
 import requests
 from app.database import get_rocket_companies
-
-# ---- 配置 ----
-API_KEY = os.environ.get("OPENAI_API_KEY", "")
-BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
 
 def _build_prompt(companies: list) -> str:
@@ -46,11 +39,11 @@ def _build_prompt(companies: list) -> str:
 
 
 def generate_rocket_intro() -> str | None:
-    """调用 LLM 根据最新 rocket_companies 数据生成引言。
+    """调用 DSH/DeepSeek 大模型，根据最新 rocket_companies 数据生成引言。
 
     返回生成的 HTML 文本，失败返回 None。
     """
-    if not API_KEY:
+    if not _get_deepseek_key():
         return None
 
     # 1. 读取火箭数据
@@ -62,42 +55,17 @@ def generate_rocket_intro() -> str | None:
     # 2. 构建 prompt
     prompt = _build_prompt(companies)
 
-    # 3. 调用 LLM
-    try:
-        resp = requests.post(
-            f"{BASE_URL}/chat/completions",
-            headers={
-                "Authorization": f"Bearer {API_KEY}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": MODEL,
-                "messages": [
-                    {"role": "system", "content": "你是钛星科技媒体的航天分析师，输出精炼的中文 HTML。"},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.7,
-                "max_tokens": 500,
-            },
-            timeout=30,
-        )
-        if resp.status_code != 200:
-            return None
-        text = resp.json()["choices"][0]["message"]["content"].strip()
-        # 清理可能的 markdown 标记
-        if text.startswith("```"):
-            text = text.split("\n", 1)[-1].rsplit("\n```", 1)[0].strip()
-        return text
-    except Exception:
-        return None
+    # 3. 调用 DeepSeek（DSH 大模型配置）
+    system = "你是钛星科技媒体的航天分析师，输出精炼的中文 HTML。"
+    return _call_deepseek_text(prompt, system=system, max_tokens=700, tag="rocket_intro")
 
 
 def update_rocket_intro_if_needed() -> bool:
-    """如果 OPENAI_API_KEY 已配置，调用 LLM 生成新引言并写入数据库。
+    """如果已配置 DeepSeek API Key（DSH 大模型配置），调用 LLM 生成新引言并写入数据库。
 
     返回 True 表示已更新。
     """
-    if not API_KEY:
+    if not _get_deepseek_key():
         return False
 
     intro = generate_rocket_intro()
@@ -143,11 +111,11 @@ def _get_deepseek_key() -> str:
     return key
 
 
-def _call_deepseek_text(prompt: str) -> str | None:
+def _call_deepseek_text(prompt: str, system: str = "你是钛星科技媒体的航天分析师，输出精炼的中文。", max_tokens: int = 500, tag: str = "intro") -> str | None:
     """调用 DeepSeek 返回纯文本（用于引言生成）。失败返回 None 并打印日志。"""
     key = _get_deepseek_key()
     if not key:
-        print(f"[AI][{datetime.now().isoformat()}] rocket_next_intro 生成失败: 未配置 DEEPSEEK_API_KEY")
+        print(f"[AI][{datetime.now().isoformat()}] {tag} 生成失败: 未配置 DEEPSEEK_API_KEY")
         return None
     try:
         resp = requests.post(
@@ -156,11 +124,11 @@ def _call_deepseek_text(prompt: str) -> str | None:
             json={
                 "model": DEEPSEEK_MODEL,
                 "messages": [
-                    {"role": "system", "content": "你是钛星科技媒体的航天分析师，输出精炼的中文。"},
+                    {"role": "system", "content": system},
                     {"role": "user", "content": prompt},
                 ],
                 "temperature": 0.7,
-                "max_tokens": 500,
+                "max_tokens": max_tokens,
             },
             timeout=30,
         )
@@ -172,7 +140,7 @@ def _call_deepseek_text(prompt: str) -> str | None:
             text = text.split("\n", 1)[-1].rsplit("\n```", 1)[0].strip()
         return text
     except Exception as e:
-        print(f"[AI][{datetime.now().isoformat()}] rocket_next_intro 生成失败: {e}")
+        print(f"[AI][{datetime.now().isoformat()}] {tag} 生成失败: {e}")
         return None
 
 
@@ -320,3 +288,50 @@ def update_rocket_last_review_if_needed() -> bool:
     set_rocket_last_review(review)
     print(f"[AI][{datetime.now().isoformat()}] rocket_last_review 已更新: {review[:60]}...")
     return True
+
+
+# ========================================================================
+# 刷新页触发：有「新的已完成发射」才改写
+# ========================================================================
+
+def _latest_done_launch_key() -> str | None:
+    """当前「最后一条已完成发射」的标记（launch_time|timeline_id），用于判断是否有变动"""
+    from app.database import get_launch_timeline
+    timeline = get_launch_timeline(limit=500) or []
+    done = [it for it in timeline
+            if it.get("outcome") in ("成功", "失败", "部分成功") and it.get("launch_time")]
+    if not done:
+        return None
+    done.sort(key=lambda x: x["launch_time"])
+    latest = done[-1]
+    return f"{latest['launch_time']}|{latest.get('timeline_id', '')}"
+
+
+def maybe_trigger_rocket_ai() -> dict:
+    """刷新页触发 AI 改写：仅当出现「新的已完成发射」时才改写三个引言。
+
+    返回 {"triggered": bool, ...}。没有新的已完成发射时返回 triggered=False，不调用大模型。
+    """
+    from app.database import get_rocket_ai_last_done_key, set_rocket_ai_last_done_key
+
+    key = _latest_done_launch_key()
+    if not key:
+        return {"triggered": False, "reason": "no completed launch"}
+
+    prev = get_rocket_ai_last_done_key()
+    if prev == key:
+        return {"triggered": False, "reason": "no change"}
+
+    ok_intro = update_rocket_intro_if_needed()
+    ok_next = update_rocket_next_intro_if_needed()
+    ok_last = update_rocket_last_review_if_needed()
+
+    if ok_intro or ok_next or ok_last:
+        set_rocket_ai_last_done_key(key)
+        return {
+            "triggered": True,
+            "rocket_intro": ok_intro,
+            "next_intro": ok_next,
+            "last_review": ok_last,
+        }
+    return {"triggered": False, "reason": "generation failed"}
