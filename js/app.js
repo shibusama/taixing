@@ -1,13 +1,5 @@
 // ===== 钛星 共享脚本（汉堡菜单 / 回到顶部 / 进度条已统一由 components.js 负责） =====
-(function(){
-  // --- 滚动动画 ---
-  const observer = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('anim-in');observer.unobserve(e.target)}});
-  },{threshold:.15});
-  document.querySelectorAll('.company,.card,.section-card,.route,.tl-item,.hl-card').forEach(el=>{
-    observer.observe(el);
-  });
-})();
+// --- 滚动入场动画已移交 js/effects.js（含 stagger 与动态渲染兜底），此处不再重复监听 ---
 
 // --- 动态数据日期 ---
 (function(){

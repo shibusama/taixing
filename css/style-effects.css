@@ -1,0 +1,114 @@
+/* ===== 钛星 · A档视觉动效层 =====
+   自定义光标 / Hero 视差光斑 / 3D tilt / 滚动入场(stagger) / 数字计数 / 流光边框 / 最新要闻跑马灯
+   仅增强观感，不改变布局与数据。prefers-reduced-motion 时全部动画由 style-base 全局禁用。
+   引入顺序：style-base -> style-nav -> style-pages -> style-effects -> style-admin */
+
+/* ---------- 滚动入场（增强：stagger 延迟由 effects.js 写 --d） ---------- */
+.anim-in{animation-delay:var(--d,0s)}
+
+/* ---------- 自定义光标（仅 fine pointer 桌面；由 effects.js 挂 html.custom-cursor） ---------- */
+html.custom-cursor,html.custom-cursor *{cursor:none !important}
+html.custom-cursor input,html.custom-cursor textarea,html.custom-cursor select,html.custom-cursor [contenteditable]{cursor:auto !important}
+.cursor-dot,.cursor-ring{
+  position:fixed;top:0;left:0;z-index:99999;pointer-events:none;
+  border-radius:50%;will-change:transform;opacity:1;
+}
+.cursor-dot{
+  width:6px;height:6px;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan),0 0 22px rgba(0,224,255,.45);
+}
+.cursor-ring{
+  width:36px;height:36px;border:1px solid rgba(0,224,255,.45);
+  transition:width .25s ease,height .25s ease,border-color .25s ease,background .25s ease,opacity .3s ease;
+}
+.cursor-ring.hover{
+  width:56px;height:56px;border-color:rgba(0,224,255,.9);
+  background:rgba(0,224,255,.07);box-shadow:0 0 24px rgba(0,224,255,.18) inset;
+}
+.cursor-ring.press{width:24px;height:24px;border-color:rgba(255,138,61,.9);background:rgba(255,138,61,.1)}
+body.cursor-idle .cursor-dot,body.cursor-idle .cursor-ring{opacity:0}
+
+/* ---------- Hero 视差光斑（--px/--py 由 effects.js 实时写入） ---------- */
+.hero{--px:0;--py:0}
+.hero::before{
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  transform:translate(calc(var(--px,0)*34px),calc(var(--py,0)*30px));
+}
+.hero::after{
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  transform:translate(calc(var(--px,0)*-26px),calc(var(--py,0)*-24px));
+}
+[data-parallax]{will-change:transform}
+
+/* ---------- 3D tilt（transform 由 effects.js 写入） ---------- */
+/* 仅给可点击卡片加上轻微的立体感，无需额外 class */
+
+/* ---------- 流光边框 & hover 辉光 ---------- */
+/* 扫光：新闻卡 / 版块卡 hover 时一道高光划过 */
+.section-card::before,.card::before{
+  content:"";position:absolute;top:-20%;left:-90%;width:55%;height:140%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.07),rgba(0,224,255,.06),transparent);
+  transform:skewX(-20deg);z-index:1;pointer-events:none;
+  transition:left .85s ease;
+}
+.section-card:hover::before,.card:hover::before{left:135%}
+
+/* hover 辉光：跟随各卡 accent 色（--accent 未定义时回落主青） */
+.section-card:hover,
+.card:hover,
+.company-card:hover,
+.route:hover,
+.pt-group:hover,
+.hl-card:hover{
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--accent,#00e0ff) 38%,transparent),
+    0 12px 44px color-mix(in srgb,var(--accent,#00e0ff) 16%,transparent),
+    0 8px 32px rgba(0,0,0,.45);
+}
+.section-card:hover{border-color:color-mix(in srgb,var(--accent,#00e0ff) 45%,transparent)}
+.card:hover{border-color:rgba(0,224,255,.4)}
+.kv:hover{box-shadow:0 0 0 1px rgba(0,224,255,.18),0 6px 22px rgba(0,224,255,.1)}
+
+/* ---------- 最新要闻跑马灯 ---------- */
+.ticker{
+  display:none;align-items:stretch;position:relative;overflow:hidden;
+  height:34px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(0,224,255,.06),rgba(7,11,20,.55) 40%,rgba(7,11,20,.75));
+}
+.ticker.ready{display:flex}
+.ticker-label{
+  display:flex;align-items:center;gap:7px;flex-shrink:0;
+  padding:0 15px;font-size:11px;font-weight:800;letter-spacing:2px;
+  color:#04121a;background:var(--grad-brand);white-space:nowrap;
+}
+.ticker-label .tk-live-dot{
+  width:6px;height:6px;border-radius:50%;background:#04121a;
+  animation:pulse 1.6s infinite;
+}
+.ticker-viewport{flex:1;overflow:hidden;position:relative}
+.ticker-track{
+  display:inline-flex;align-items:center;white-space:nowrap;
+  height:100%;will-change:transform;
+  animation:ticker-scroll 46s linear infinite;
+}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.tk-item{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:0 24px;font-size:12.5px;color:var(--txt-1);white-space:nowrap;
+}
+.tk-item .tk-board{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;
+  background:rgba(0,224,255,.14);color:var(--cyan);white-space:nowrap;
+}
+.tk-item a{color:var(--txt-1);text-decoration:none;transition:color var(--trans)}
+.tk-item a:hover{color:var(--cyan)}
+@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- 响应式 ---------- */
+@media(max-width:768px){
+  .ticker{height:30px}
+  .ticker-label{padding:0 11px;font-size:10px;letter-spacing:1px}
+  .tk-item{padding:0 16px;font-size:12px}
+  .tk-item .tk-board{display:none}
+  .cursor-dot,.cursor-ring{display:none}
+}
