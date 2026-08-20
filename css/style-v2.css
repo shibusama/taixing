@@ -1,0 +1,111 @@
+/* ===== 钛星 · 视觉V2 补充层（字体 / 渐变CTA / 工具类） =====
+   在 style-glass.css 之后加载。style-glass 负责玻璃/Aurora 视觉主体，
+   本文件只补充：Space Grotesk 标题字体、Hero 霓虹渐变 CTA、渐变文字工具类、
+   移动端毛玻璃性能降级。不改类名、不改数据、不影响 JS 逻辑。 */
+
+/* ---------- 标题字体：Space Grotesk（中文自动回落系统字体） ---------- */
+h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
+  font-family:"Space Grotesk","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+
+/* ---------- Hero 霓虹渐变 CTA 按钮 ---------- */
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0 30px}
+.btn-neon{
+  position:relative;display:inline-flex;align-items:center;gap:8px;
+  padding:12px 26px;border-radius:14px;font-weight:700;font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#22d3ee,#a855f7);
+  box-shadow:0 4px 20px rgba(168,85,247,.35),0 0 30px rgba(34,211,238,.18);
+  overflow:hidden;transition:transform var(--trans),box-shadow var(--trans);
+  white-space:nowrap;
+}
+.btn-neon:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 28px rgba(168,85,247,.5),0 0 40px rgba(34,211,238,.3);
+}
+.btn-ghost-neon{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 26px;border-radius:14px;font-weight:600;font-size:14px;
+  color:var(--txt-1);background:rgba(255,255,255,.03);
+  border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:var(--trans);white-space:nowrap;
+}
+.btn-ghost-neon:hover{color:var(--txt-0);border-color:rgba(34,211,238,.4);transform:translateY(-2px)}
+
+/* ---------- 渐变文字工具类 ---------- */
+.gradient-text{
+  background:linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.gradient-text-cyan{
+  background:linear-gradient(135deg,#22d3ee,#3b82f6);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+
+/* ---------- 移动端性能：大量毛玻璃卡片关闭 blur（保留半透明底色） ---------- */
+@media(max-width:768px){
+  .section-card,.card,.company-card,.route,.pt-group,.fusion-tl-col,.hl-card{
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+}
+
+/* ========== B档：预加载屏 ========== */
+.preloader{
+  position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;
+  background:radial-gradient(1200px 600px at 50% 30%,rgba(34,211,238,.07),transparent 60%),#050508;
+  transition:opacity .5s ease,visibility .5s ease;
+}
+.preloader.done{opacity:0;visibility:hidden}
+.preloader .pl-logo{
+  width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+  box-shadow:0 0 40px rgba(168,85,247,.4);
+  animation:pl-pulse 1.6s ease-in-out infinite;
+}
+.preloader .pl-name{
+  font-family:"Space Grotesk","PingFang SC","Microsoft YaHei",sans-serif;
+  font-weight:700;letter-spacing:6px;font-size:16px;
+  background:linear-gradient(135deg,#22d3ee,#a855f7);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+}
+.preloader .pl-bar{
+  width:180px;height:3px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.preloader .pl-bar i{
+  display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#22d3ee,#a855f7,#ec4899);
+  animation:pl-fill 1.4s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes pl-pulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(168,85,247,.35)}
+  50%{transform:scale(1.08);box-shadow:0 0 50px rgba(34,211,238,.45)}
+}
+@keyframes pl-fill{0%{width:0}100%{width:100%}}
+
+/* ========== B档：按钮流光 ========== */
+.btn-neon::after,.btn-primary::after{
+  content:"";position:absolute;top:0;left:-80%;width:45%;height:100%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:skewX(-20deg);animation:btn-shine 3.2s ease-in-out infinite;
+}
+.btn-primary{position:relative;overflow:hidden}
+@keyframes btn-shine{0%,60%{left:-80%}100%{left:130%}}
+
+/* ========== B档：Hero 标题渐变扫光 ========== */
+.hero h1 .glow{position:relative}
+.hero h1 .glow::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:220% 100%;
+  animation:title-shimmer 4.5s ease-in-out infinite;
+}
+@keyframes title-shimmer{0%,60%{background-position:220% 0}100%{background-position:-220% 0}}
+
+/* ========== B档：Three.js 粒子星空画布 ========== */
+#starfield{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}

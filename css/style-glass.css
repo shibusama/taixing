@@ -1,0 +1,528 @@
+/* ===== 钛星 · 流体玻璃风格覆盖层 =====
+   在 style-base/nav/pages/effects 之后加载，仅覆盖视觉层。
+   不改变任何类名、HTML结构、JS逻辑、数据。
+   核心：深空黑底 + Aurora极光 + 毛玻璃卡片 + 柔和光晕 */
+
+/* ========== 设计令牌覆盖 ========== */
+:root{
+  /* 背景 - 更深的近黑 */
+  --bg-0:#050508;
+  --bg-1:#0a0a10;
+  --bg-2:#12121c;
+  --bg-card:rgba(255,255,255,0.035);
+
+  /* 线条 - 更淡的白色玻璃边框 */
+  --line:rgba(255,255,255,0.08);
+  --line-hover:rgba(255,255,255,0.15);
+  --border:var(--line);
+
+  /* 文本 */
+  --txt-0:#f0f0f5;
+  --txt-1:#a8a8bc;
+  --txt-2:#6a6a80;
+  --txt-3:#4a4a60;
+
+  /* 强调色（保留七大版块色板，微调更亮） */
+  --cyan:#22d3ee;
+  --gold:#fbbf24;
+  --gold-2:#fcd34d;
+  --green:#34d399;
+  --purple:#a78bfa;
+  --amber:#fb923c;
+  --red:#f87171;
+  --cyan-20:rgba(34,211,238,.15);
+
+  /* 渐变 - 三色极光 */
+  --grad-brand:linear-gradient(135deg,var(--cyan),var(--purple));
+  --grad-glow:linear-gradient(135deg,var(--cyan),var(--purple),var(--amber));
+  --grad-line:linear-gradient(var(--cyan),var(--purple),var(--amber));
+
+  /* 圆角 - 加大 */
+  --radius-sm:10px;
+  --radius:18px;
+  --radius-lg:24px;
+
+  /* 阴影 - 更柔和的深色阴影 + 彩色光晕 */
+  --shadow-sm:0 2px 12px rgba(0,0,0,.3);
+  --shadow:0 8px 40px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 80px rgba(0,0,0,.6);
+
+  /* 动效 - 更丝滑 */
+  --trans:0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ========== Aurora 极光背景 ========== */
+.stars{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1.5px 1.5px at 20% 30%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1px 1px at 60% 70%,rgba(34,211,238,.3),transparent),
+    radial-gradient(1px 1px at 80% 20%,rgba(255,255,255,.25),transparent),
+    radial-gradient(2px 2px at 40% 80%,rgba(167,139,250,.25),transparent),
+    radial-gradient(1px 1px at 90% 50%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1.5px 1.5px at 10% 60%,rgba(34,211,238,.25),transparent);
+}
+.stars::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(34,211,238,.12) 0%,transparent 40%),
+    radial-gradient(circle at 85% 30%,rgba(167,139,250,.10) 0%,transparent 40%),
+    radial-gradient(circle at 50% 80%,rgba(248,113,113,.07) 0%,transparent 40%);
+  animation:aurora-drift-1 25s ease-in-out infinite;
+}
+.stars::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 80%);
+}
+@keyframes aurora-drift-1{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(3%,-4%) scale(1.05)}
+  66%{transform:translate(-2%,3%) scale(0.97)}
+}
+
+/* ========== body 背景 ========== */
+body{
+  background:var(--bg-0);
+}
+
+/* ========== 顶栏 - 悬浮玻璃药丸 ========== */
+.topbar{
+  backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  background:transparent;
+  border-bottom:none;
+  padding:12px 24px 0;
+}
+.topbar.scrolled{
+  background:transparent;
+  box-shadow:none;
+}
+.topbar::after{display:none}
+.topbar-in{
+  max-width:var(--container-wide);margin:0 auto;
+  height:52px;
+  background:rgba(10,10,16,.6);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:0 20px;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+  transition:background var(--trans),border-color var(--trans),box-shadow var(--trans);
+}
+.topbar.scrolled .topbar-in{
+  background:rgba(10,10,16,.75);
+  border-color:rgba(255,255,255,.12);
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(34,211,238,.06);
+}
+
+/* Logo */
+.logo .rk{
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple),var(--red));
+  box-shadow:0 0 16px rgba(167,139,250,.3);
+}
+
+/* 导航链接 */
+.nav a:hover{color:var(--cyan);background:rgba(34,211,238,.06)}
+.nav a.on{color:var(--cyan);background:rgba(34,211,238,.1)}
+
+/* 进度条 */
+.progress-bar{
+  top:0;height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple),var(--amber));
+  box-shadow:0 0 8px rgba(34,211,238,.5);
+}
+
+/* ========== Hero ========== */
+.hero{
+  padding:80px 0 0;
+  background:transparent;
+}
+.hero::before{
+  top:-20%;right:-5%;
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(34,211,238,.12),transparent 70%);
+  filter:blur(60px);
+  animation:aurora-drift-1 20s ease-in-out infinite;
+}
+.hero::after{
+  bottom:-30%;left:-5%;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(167,139,250,.10),transparent 70%);
+  filter:blur(60px);
+  animation:aurora-drift-2 25s ease-in-out infinite reverse;
+}
+@keyframes aurora-drift-2{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-4%,4%) scale(1.08)}
+}
+
+/* Hero 主卡片 - 强玻璃 */
+.hero .wrap{
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01) 60%);
+  backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);
+  padding:56px 56px 48px;
+  box-shadow:0 24px 80px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.hero .wrap::before{
+  top:-100px;right:-80px;width:400px;height:400px;
+  background:var(--cyan);opacity:.08;filter:blur(100px);
+}
+.hero .wrap::after{
+  bottom:-120px;left:-60px;width:340px;height:340px;
+  background:var(--purple);opacity:.06;filter:blur(100px);
+}
+
+/* Kicker badge */
+.hero .kicker{
+  padding:7px 16px;
+  border-radius:999px;
+  border:1px solid rgba(34,211,238,.2);
+  background:rgba(34,211,238,.06);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:var(--cyan);
+  font-size:11px;letter-spacing:2px;
+}
+
+/* 标题 */
+.hero h1{
+  font-size:clamp(32px,5.5vw,56px);
+  letter-spacing:-1.5px;
+}
+.hero h1 .glow{
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 50%,var(--red) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px rgba(167,139,250,.15));
+}
+.hero p.sub{
+  font-size:clamp(15px,1.8vw,17px);
+  color:var(--txt-1);
+  line-height:1.8;
+}
+
+/* 统计数字 - 独立玻璃小卡片 */
+.hero-stats{gap:16px}
+.hero-stat{
+  padding:16px 22px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  border-radius:16px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:var(--trans);
+  min-width:120px;
+}
+.hero-stat:hover{
+  background:rgba(255,255,255,.05);
+  border-color:rgba(34,211,238,.2);
+  transform:translateY(-2px);
+}
+.hero-stat .num{
+  font-size:clamp(24px,2.8vw,32px);
+  background:linear-gradient(135deg,var(--cyan),#67e8f9);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-stat .lbl{font-size:11px;color:var(--txt-2);margin-top:4px;letter-spacing:.3px}
+
+/* ========== 区块标题 ========== */
+.sec{padding:72px 0}
+.sec-head h2{
+  font-size:clamp(22px,3vw,30px);
+  letter-spacing:-.8px;
+}
+.sec-head h2 .bar{
+  width:4px;height:24px;
+  background:linear-gradient(180deg,var(--cyan),var(--purple));
+  border-radius:2px;
+}
+.sec-head .desc{font-size:14px;color:var(--txt-2);line-height:1.7}
+
+/* ========== 版块卡片 - 玻璃拟态 ========== */
+.section-grid{gap:20px}
+.section-card{
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:30px;
+  min-height:260px;
+  box-shadow:0 4px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04);
+  transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s,background .4s;
+}
+.section-card:hover{
+  transform:translateY(-6px);
+  background:rgba(255,255,255,.05);
+  box-shadow:0 20px 60px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.section-card::after{
+  width:200px;height:200px;
+  filter:blur(80px);
+  opacity:.10;
+}
+.section-card:hover::after{opacity:.16}
+
+/* 各版块卡片 hover 边框色（覆盖 effects.js 的辉光，用更柔和的玻璃色） */
+.section-card.moon:hover{border-color:rgba(251,191,36,.25)}
+.section-card.semi:hover{border-color:rgba(52,211,153,.25)}
+.section-card.tech:hover{border-color:rgba(167,139,250,.25)}
+.section-card.mega:hover{border-color:rgba(251,146,60,.25)}
+.section-card.fusion:hover{border-color:rgba(248,113,113,.25)}
+.section-card.rocket:hover{border-color:rgba(255,255,255,.2)}
+.section-card.finance:hover{border-color:rgba(77,159,255,.25)}
+.section-card.macro:hover{border-color:rgba(251,191,36,.25)}
+
+/* macro 卡片特殊样式覆盖 */
+.section-card.macro{
+  background:rgba(251,191,36,.04);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(251,191,36,.12);
+}
+
+.section-card .sc-icon{
+  width:52px;height:52px;margin-bottom:16px;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.3));
+}
+.section-card h3{font-size:20px;letter-spacing:-.3px}
+.section-card p{font-size:13.5px;line-height:1.75}
+.section-card .sc-link{
+  font-size:13px;
+  display:inline-flex;align-items:center;gap:4px;
+}
+
+/* ========== 新闻卡片 - 玻璃拟态 ========== */
+.news-grid{gap:20px}
+.card{
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 4px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04);
+  transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s;
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(34,211,238,.25);
+  box-shadow:0 16px 50px rgba(0,0,0,.4),0 0 0 1px rgba(34,211,238,.08);
+}
+.card-cover{
+  height:150px;
+  border-radius:19px 19px 0 0;
+}
+.card-body{padding:18px 20px 20px}
+.card-body h3{font-size:15.5px;line-height:1.45}
+.card-body p{font-size:13px;line-height:1.65}
+
+/* 新闻标签 - 玻璃药丸 */
+.card-tag{
+  top:14px;left:14px;
+  padding:4px 10px;
+  border-radius:8px;
+  font-size:10.5px;letter-spacing:.5px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+/* ========== 通用卡片/组件玻璃化 ========== */
+.company,.company-card,.route,.fusion-tl-col,.pt-group,.hl-card,.kv{
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);
+}
+.company:hover,.company-card:hover{border-color:rgba(34,211,238,.2)}
+.hl-card{
+  background:rgba(255,255,255,.04);
+  border-radius:16px;
+}
+.kv{
+  background:rgba(255,255,255,.02);
+  border-radius:12px;
+}
+.kv:hover{background:rgba(255,255,255,.05);border-color:rgba(34,211,238,.2)}
+
+/* 数据看板卡片 */
+.card-head{
+  background:rgba(255,255,255,.02);
+  border-bottom:1px solid var(--line);
+}
+.card-desc{border-bottom:1px solid var(--line)}
+.card-hl{border-top:1px solid var(--line)}
+
+/* 表格 */
+.cmp-wrap,.data-table-wrap{
+  border:1px solid var(--line);
+  border-radius:18px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(255,255,255,.02);
+}
+table.cmp thead th,table.data-table thead th{
+  background:rgba(255,255,255,.04);
+}
+table.cmp tbody tr:hover,table.data-table tbody tr:hover{
+  background:rgba(34,211,238,.04);
+}
+
+/* Tab 导航 */
+.tab-nav{border-bottom:2px solid var(--line)}
+.tab-nav button.active{
+  color:var(--cyan);
+  border-bottom-color:var(--cyan);
+}
+
+/* 时间线 */
+.tl::before{
+  background:linear-gradient(180deg,var(--cyan),var(--purple),var(--amber));
+  box-shadow:0 0 8px rgba(34,211,238,.2);
+}
+.tlv-versus::before{
+  background:linear-gradient(180deg,var(--cyan),var(--purple),var(--amber));
+}
+
+/* 模态框 */
+.modal-overlay{
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.modal-box{
+  background:rgba(15,15,22,.9);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+.modal-head{
+  background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);
+  border-bottom:1px solid var(--line);
+}
+
+/* 按钮 */
+.btn{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-radius:12px;
+}
+.btn:hover{border-color:var(--cyan);background:rgba(34,211,238,.06)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),#06b6d4);
+  border-color:transparent;
+  box-shadow:0 4px 20px rgba(34,211,238,.25);
+}
+.btn-primary:hover{
+  box-shadow:0 6px 28px rgba(34,211,238,.4);
+  transform:translateY(-1px);
+}
+
+/* 输入框 */
+.input,.select,.textarea{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  border-radius:12px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(34,211,238,.12);
+}
+
+/* 跑马灯 */
+.ticker{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(34,211,238,.04),rgba(5,5,8,.6) 40%,rgba(5,5,8,.8));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.ticker-label{
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+}
+
+/* 快速导航 */
+.quick-nav a{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-radius:12px;
+}
+.quick-nav a:hover{
+  background:rgba(255,255,255,.06);
+  transform:translateY(-2px);
+}
+.top-quick-nav{
+  border-bottom:1px solid var(--line);
+  background:rgba(5,5,8,.5);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+
+/* ========== 页脚 - 玻璃化 ========== */
+.footer{
+  border-top:1px solid var(--line);
+  padding:48px 0 32px;
+  margin-top:60px;
+  background:linear-gradient(180deg,transparent,rgba(34,211,238,.02));
+  position:relative;
+}
+.footer::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:60%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.3),rgba(167,139,250,.3),transparent);
+}
+.footer .fl{
+  font-size:14px;letter-spacing:.5px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* ========== 回到顶部 - 玻璃药丸 ========== */
+.back-to-top{
+  background:rgba(10,10,16,.6);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+.back-to-top:hover{
+  background:rgba(34,211,238,.08);
+  border-color:rgba(34,211,238,.3);
+  box-shadow:0 8px 28px rgba(34,211,238,.15);
+}
+
+/* 移动导航 */
+.mobile-nav{
+  background:rgba(10,10,16,.85);
+  backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);
+  border-left:1px solid var(--line);
+}
+.mobile-nav-overlay{
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+
+/* 选中文字 */
+::selection{background:rgba(167,139,250,.3);color:var(--txt-0)}
+
+/* 滚动条 */
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:8px;border:2px solid var(--bg-0)}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+
+/* ========== 响应式微调 ========== */
+@media(max-width:860px){
+  .topbar{padding:8px 16px 0}
+  .topbar-in{height:48px;border-radius:14px;padding:0 16px}
+  .hero .wrap{padding:36px 28px 32px;border-radius:22px}
+  .hero{padding:56px 0 0}
+}
+@media(max-width:768px){
+  .hero .wrap{padding:30px 24px 28px}
+  .section-card{padding:24px;border-radius:18px}
+  .card{border-radius:16px}
+  .sec{padding:48px 0}
+  .hero-stat{padding:12px 16px;min-width:100px}
+}
+@media(max-width:480px){
+  .hero .wrap{padding:24px 18px;border-radius:18px}
+  .hero-stats{gap:10px}
+  .hero-stat{padding:10px 14px;min-width:calc(50% - 5px)}
+  .section-card{padding:20px}
+}

@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="钛星（taixing）以 AI 聚合前沿科技新闻，只追踪七大精选领域：可回收火箭、中美登月、中国科技、超级工程、可控核聚变、科技资本、宏观指标。">
 <title>钛星 · AI 聚合前沿科技新闻</title>
-<link rel="stylesheet" href="css/style.css?v=20260821">
+<link rel="stylesheet" href="css/style.css?v=20260822">
 </head>
 <body>
+<div class="preloader" aria-hidden="true">
+  <div class="pl-logo">🔭</div>
+  <div class="pl-name">钛星 TAIXING</div>
+  <div class="pl-bar"><i></i></div>
+</div>
 <div class="stars"></div>
 
 <div id="header-placeholder"></div>
@@ -17,6 +22,10 @@
     <div class="kicker" data-parallax="6">TAIXING · AI FRONTIER · 2026</div>
     <h1 data-parallax="10"><span class="glow">科技浪潮汹涌 我们站在最前沿</span></h1>
     <p class="sub" data-parallax="4">从可回收火箭到可控核聚变，从中美登月竞速到中国前沿科技全景——钛星以 AI 自动抓取、解读全球前沿科技新闻，只追踪七大精选领域，数据与洞察实时更新。</p>
+    <div class="hero-cta" data-parallax="6">
+      <a href="#domains" class="btn-neon">探索前沿 →</a>
+      <a href="#news" class="btn-ghost-neon">查看要闻</a>
+    </div>
     <div class="hero-stats" data-parallax="8">
       <div class="hero-stat"><div class="num" data-count="7">7</div><div class="lbl">核心追踪领域</div></div>
       <div class="hero-stat"><div class="num" data-count="40" data-suffix="+">40+</div><div class="lbl">深度追踪企业与机构</div></div>
@@ -27,7 +36,7 @@
 </section>
 
 <!-- 版块导航：七大精选领域 -->
-<section class="sec">
+<section class="sec" id="domains">
   <div class="wrap">
     <div class="sec-head">
       <h2><span class="bar"></span>七大精选领域</h2>
@@ -88,7 +97,7 @@
 </section>
 
 <!-- 最新要闻 -->
-<section class="sec" style="padding-top:0">
+<section class="sec" id="news" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
       <h2><span class="bar"></span>最新要闻</h2>
@@ -514,8 +523,8 @@
       return loadHeadlinesFallback().then(renderHeadlines);
     })
     .catch(function(err) {
-      console.warn('[钛星] /api/latest-news 失败或 JSON 兜底加载失败:', err.message);
-      renderHeadlines([]);
+      console.warn('[钛星] /api/latest-news 失败，启用 JSON 兜底:', err.message);
+      return loadHeadlinesFallback().then(renderHeadlines);
     });
 })();
 
@@ -546,5 +555,10 @@
 </script>
 <script src="js/components.js?v=20260821"></script>
 <script src="js/effects.js?v=20260821"></script>
+<script src="js/lib/gsap.min.js?v=20260822"></script>
+<script src="js/lib/ScrollTrigger.min.js?v=20260822"></script>
+<script src="js/b-tier.js?v=20260822"></script>
+<script src="js/lib/three.min.js?v=20260822"></script>
+<script src="js/starfield.js?v=20260822"></script>
 </body>
 </html>

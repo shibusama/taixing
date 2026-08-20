@@ -1,6 +1,9 @@
 /* ===== 钛星 · 主样式表（模块化导入） ===== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import url("style-base.css");
 @import url("style-nav.css");
 @import url("style-pages.css");
 @import url("style-effects.css");
 @import url("style-admin.css");
+@import url("style-glass.css");
+@import url("style-v2.css");
