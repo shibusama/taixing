@@ -117,3 +117,22 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
   opacity:1;transition:opacity .4s ease;
 }
 @media(max-width:1359px){#planet3d{display:none}}
+
+/* ========== C档-13：交互式时间线 ========== */
+/* 滚动进度填充（--tlp 由 b-tier.js 写入，0→1 控制 scaleY） */
+.tl::after,.tl-versus::after{
+  content:"";position:absolute;top:4px;bottom:4px;width:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--purple));
+  box-shadow:0 0 10px rgba(34,211,238,.5),0 0 22px rgba(168,85,247,.35);
+  transform:scaleY(var(--tlp,0));
+  transform-origin:top;will-change:transform;
+}
+.tl::after{left:10px}
+.tl-versus::after{left:50%;transform:translateX(-50%) scaleY(var(--tlp,0))}
+
+/* 时间线条目：可点击 + 悬停/聚焦高亮 */
+.tl-item{cursor:pointer;transition:background var(--trans),padding-left var(--trans)}
+.tl-item:hover{background:rgba(34,211,238,.04);padding-left:6px}
+.tl-item.active{background:rgba(168,85,247,.07);border-radius:8px}
+.tl-item.active h4{color:var(--cyan)}
+.tl-item.active::before{transform:scale(1.4);box-shadow:0 0 14px rgba(34,211,238,.85),0 0 30px rgba(168,85,247,.5)}
