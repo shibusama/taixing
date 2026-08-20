@@ -145,6 +145,66 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 .spark{width:1em;height:1em;vertical-align:-.12em;display:inline-block;flex-shrink:0}
 .pl-logo svg{width:32px;height:32px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))}
 
+/* ========== 导航栏 V2：悬浮玻璃 + 版块色点 + 当前页胶囊高亮 ========== */
+.topbar-in{position:relative}
+.topbar-in::before{ /* 顶部渐变高光线 */
+  content:"";position:absolute;top:0;left:10%;right:10%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.5),rgba(168,85,247,.5),rgba(236,72,153,.4),transparent);
+  opacity:.55;
+}
+/* 导航链接：版块色小圆点 */
+.nav a{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:9px;
+  border:1px solid transparent;
+}
+.nav a::before{
+  content:"";width:5px;height:5px;border-radius:50%;flex-shrink:0;
+  background:var(--dot,#22d3ee);opacity:.22;
+  box-shadow:none;transition:opacity var(--trans),box-shadow var(--trans);
+}
+.nav a:hover::before,.nav a.on::before{opacity:1;box-shadow:0 0 7px var(--dot,#22d3ee)}
+.nav a:hover{color:var(--txt-0);background:rgba(255,255,255,.05)}
+/* 版块色映射（首页=青，其余对应板块色板） */
+.nav a:nth-child(1){--dot:#22d3ee}
+.nav a:nth-child(2){--dot:#22d3ee}
+.nav a:nth-child(3){--dot:#fbbf24}
+.nav a:nth-child(4){--dot:#a78bfa}
+.nav a:nth-child(5){--dot:#fb923c}
+.nav a:nth-child(6){--dot:#f87171}
+.nav a:nth-child(7){--dot:#60a5fa}
+.nav a:nth-child(8){--dot:#fbbf24}
+/* 当前页：该板块色的软填充胶囊 */
+.nav a.on{
+  background:color-mix(in srgb,var(--dot,#22d3ee) 13%,transparent);
+  border-color:color-mix(in srgb,var(--dot,#22d3ee) 34%,transparent);
+  color:var(--txt-0);
+}
+.nav a.on::after{width:18px;background:var(--dot,#22d3ee);box-shadow:0 0 6px var(--dot,#22d3ee)}
+/* CTA 按钮 */
+.nav-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 15px;border-radius:10px;font-size:13px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,#22d3ee,#a855f7);
+  box-shadow:0 4px 16px rgba(168,85,247,.3);
+  transition:var(--trans);white-space:nowrap;flex-shrink:0;
+}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(168,85,247,.45)}
+@media(max-width:1280px){.nav a::before{display:none}}
+@media(max-width:1200px){.nav-cta{display:none}}
+
+/* 移动端菜单链接：同样用版块色圆点 */
+.mobile-nav a::before{background:var(--dot,#22d3ee);box-shadow:none;transition:box-shadow var(--trans)}
+.mobile-nav a:hover::before,.mobile-nav a.on::before{box-shadow:0 0 8px var(--dot,#22d3ee)}
+.mobile-nav a:nth-of-type(1){--dot:#22d3ee}
+.mobile-nav a:nth-of-type(2){--dot:#22d3ee}
+.mobile-nav a:nth-of-type(3){--dot:#fbbf24}
+.mobile-nav a:nth-of-type(4){--dot:#a78bfa}
+.mobile-nav a:nth-of-type(5){--dot:#fb923c}
+.mobile-nav a:nth-of-type(6){--dot:#f87171}
+.mobile-nav a:nth-of-type(7){--dot:#60a5fa}
+.mobile-nav a:nth-of-type(8){--dot:#fbbf24}
+
 /* ========== C档-13：交互式时间线 ========== */
 /* 滚动进度填充（--tlp 由 b-tier.js 写入，0→1 控制 scaleY） */
 .tl::after,.tl-versus::after{
