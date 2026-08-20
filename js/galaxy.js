@@ -1,9 +1,10 @@
 /**
- * 钛星 · 星系 + 巨型转动球体背景（galaxy.js v2 - Shader 版）
- * - 螺旋星系：自定义 GLSL shader 渲染，柔光圆点 + 每颗星明暗闪烁
- * - 中心黑洞：暗核 + 吸积环 + 外发光，缓慢脉动
- * - 巨型球体：自转 + 光环 + 大气层边缘光（背向 Fresnel 发光）
- * 叠在 CSS Aurora 光晕之上、内容之下；鼠标移动整体微视差。
+ * 钛星 · 星系 + 巨型转动球体背景（galaxy.js v3）
+ * 技术参考：AmitDigga/threejs-galaxy-shader（自定义 GLSL shader）
+ * - 螺旋星系：15,000 颗星在 shader 内实时计算旋臂 + 随时间沿旋臂流动（自转）
+ * - 黑洞引力扭曲：黑洞半径内粒子被向中心拉伸（透镜效果）+ 暗核 + 吸积环
+ * - 颜色：青→紫→粉 按半径渐变，柔和圆点 + 距离淡出
+ * - 巨型球体：自转 + 光环 + 大气层边缘光（Fresnel）
  * 桌面端启用；移动端 / 减弱动效 / WebGL 不可用自动跳过（回落 CSS 极光背景）。
  */
 (function () {
@@ -23,6 +24,7 @@
   var galaxy, galaxyMat, bhRing, sphere, sphereGroup, ring, atm;
   var W = innerWidth, H = innerHeight;
   var time = 0;
+  var TOTAL_POINTS = 15000;
 
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
@@ -37,7 +39,7 @@
   camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 3000);
   camera.position.z = 60;
 
-  /* ==================== 工具：生成 Canvas 纹理 ==================== */
+  /* ==================== 工具 ==================== */
   function makeSphereTexture() {
     var c = document.createElement('canvas');
     c.width = c.height = 512;
@@ -79,111 +81,152 @@
     return new THREE.CanvasTexture(c);
   }
 
-  /* ==================== 螺旋星系（Shader 柔光点 + 闪烁） ==================== */
+  /* ==================== 螺旋星系（Shader：螺旋计算 + 流动 + 黑洞扭曲 + 渐变） ==================== */
+  var VERTEX = [
+    'uniform vec2 u_resolution;',
+    'uniform float u_pointSize;',
+    'uniform float u_totalPoints;',
+    'uniform float u_time;',
+    'uniform float u_blackHoleRadius;',
+    'uniform vec3 u_blackHolePosition;',
+    'uniform float u_spiralCount;',
+    'uniform float u_turnsPerSpiral;',
+    'attribute float a_index;',
+    'varying float v_index;',
+    'varying float vDistanceFromCamera;',
+    'varying float radius;',
+    'float randM1To1(vec2 co){ return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453) * 2.0 - 1.0; }',
+    'vec3 getNoiseM1To1(float index){ return vec3(randM1To1(vec2(index)), randM1To1(vec2(index + 1.0)), randM1To1(vec2(index + 2.0))); }',
+    'float getRand01(float index){ return randM1To1(vec2(index, index + 5.0)) / 2.0 + 0.5; }',
+    'vec3 getSpiralCoordinate(float originalIndex){',
+    '  v_index = originalIndex;',
+    '  float totalSpirals = u_spiralCount;',
+    '  float totalTurns = u_turnsPerSpiral;',
+    '  float pointsPerSpiral = floor(u_totalPoints / totalSpirals);',
+    '  float spiralIndex = floor(originalIndex / pointsPerSpiral);',
+    '  float angleOffset = spiralIndex / totalSpirals * 3.14159 * 2.0;',
+    '  float index = mod(originalIndex, pointsPerSpiral);',
+    '  float timeOffset = mod(u_time, 1.0);',
+    '  index = mod(index - timeOffset * pointsPerSpiral, pointsPerSpiral);',
+    '  float radiusInSpiral = index / pointsPerSpiral;',
+    '  radius = radiusInSpiral;',
+    '  float angleInSpiral = index / pointsPerSpiral * 3.14159 * 2.0 * totalTurns + angleOffset;',
+    '  vec3 noise = getNoiseM1To1(originalIndex) * 0.4;',
+    '  radius *= (1.0 + noise.x / 2.0);',
+    '  angleInSpiral += noise.y * 10.0 * 3.14159 / 180.0;',
+    '  float planeAngle = noise.z * 5.0 * 3.14159 / 180.0;',
+    '  float x = cos(angleInSpiral) * radius;',
+    '  float y = sin(angleInSpiral) * radius;',
+    '  float z = sin(planeAngle) * radius;',
+    '  vec3 fullRandom = getNoiseM1To1(originalIndex + 22.2) * 0.02;',
+    '  return vec3(x + fullRandom.x, y + fullRandom.y, z + fullRandom.z);',
+    '}',
+    'vec3 getCoordinateFromBlackHole(vec3 position){',
+    '  vec3 vecFromCenter = position - u_blackHolePosition;',
+    '  float distance = length(vecFromCenter);',
+    '  if (distance > u_blackHoleRadius || distance < 0.001) return position;',
+    '  float scale = u_blackHoleRadius / distance;',
+    '  return u_blackHolePosition + vecFromCenter * scale;',
+    '}',
+    'void main(){',
+    '  vec3 pos = getSpiralCoordinate(a_index);',
+    '  pos = getCoordinateFromBlackHole(pos);',
+    '  vec4 viewPosition = modelViewMatrix * vec4(pos, 1.0);',
+    '  gl_Position = projectionMatrix * viewPosition;',
+    '  vDistanceFromCamera = -viewPosition.z;',
+    '  float pointScale = 4.0 * pow(getRand01(a_index + 7.0) + 0.1, 3.0) * pow(getRand01(a_index + 9.0) + 0.1, 3.0);',
+    '  gl_PointSize = u_pointSize * pointScale * (u_resolution.y / 1200.0) * 2.0;',
+    '}'
+  ].join('\n');
+
+  var FRAGMENT = [
+    'uniform float u_fadeNear;',
+    'uniform float u_fadeFar;',
+    'uniform int u_colorMode;',
+    'uniform vec3 u_colorPalette[8];',
+    'uniform int u_paletteSize;',
+    'uniform float u_colorIntensity;',
+    'varying float v_index;',
+    'varying float vDistanceFromCamera;',
+    'varying float radius;',
+    'vec3 getColorByMode(float index, float rad){',
+    '  if (u_colorMode == 1) {',
+    '    float t = clamp(rad, 0.0, 1.0);',
+    '    int baseIndex = int(floor(t * float(u_paletteSize - 1)));',
+    '    int nextIndex = min(baseIndex + 1, u_paletteSize - 1);',
+    '    float blend = fract(t * float(u_paletteSize - 1));',
+    '    return mix(u_colorPalette[baseIndex], u_colorPalette[nextIndex], blend);',
+    '  }',
+    '  return vec3(1.0);',
+    '}',
+    'void main(){',
+    '  vec2 p = gl_PointCoord * 2.0 - 1.0;',
+    '  float d = dot(p, p);',
+    '  if (d > 1.0) discard;',
+    '  float soft = 1.0 - smoothstep(0.0, 0.5, sqrt(d));',
+    '  float cameraFade = 1.0 - smoothstep(u_fadeNear, u_fadeFar, vDistanceFromCamera);',
+    '  vec3 col = getColorByMode(v_index, radius) * u_colorIntensity;',
+    '  gl_FragColor = vec4(col, cameraFade * soft);',
+    '}'
+  ].join('\n');
+
   (function buildGalaxy() {
-    var count = 6000;
-    var arms = 3;
-    var radius = 130;
-    var spin = 1.6;
-    var randomness = 0.55;
-    var insideCount = Math.floor(count * 0.4);
-
-    var pos = new Float32Array(count * 3);
-    var col = new Float32Array(count * 3);
-    var scl = new Float32Array(count);
-    var pha = new Float32Array(count);
-    var cIn = new THREE.Color(0x22d3ee);
-    var cOut = new THREE.Color(0xa855f7);
-    var tmp = new THREE.Color();
-
-    for (var i = 0; i < count; i++) {
-      scl[i] = 0.4 + Math.random() * 1.1;
-      pha[i] = Math.random() * Math.PI * 2;
-      if (i < insideCount) {
-        var r = Math.random() * radius * 0.45;
-        var a = Math.random() * Math.PI * 2;
-        pos[i * 3] = Math.cos(a) * r;
-        pos[i * 3 + 1] = Math.sin(a) * r;
-        pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-        tmp.copy(cIn).lerp(cOut, Math.random());
-      } else {
-        var ra = Math.random() * radius;
-        var arm = (i - insideCount) % arms;
-        var rot = (ra / radius) * spin;
-        var angle = rot + arm * ((Math.PI * 2) / arms);
-        var radial = 1 + Math.random() * randomness;
-        pos[i * 3] = Math.cos(angle) * ra * radial;
-        pos[i * 3 + 1] = (Math.random() - 0.5) * 3.2;
-        pos[i * 3 + 2] = Math.sin(angle) * ra * radial;
-        tmp.copy(cIn).lerp(cOut, ra / radius);
-      }
-      col[i * 3] = tmp.r; col[i * 3 + 1] = tmp.g; col[i * 3 + 2] = tmp.b;
-    }
-
     var geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
-    geo.setAttribute('aScale', new THREE.BufferAttribute(scl, 1));
-    geo.setAttribute('aPhase', new THREE.BufferAttribute(pha, 1));
+    var positions = new Float32Array(TOTAL_POINTS * 3);
+    var indices = new Float32Array(TOTAL_POINTS);
+    for (var i = 0; i < TOTAL_POINTS; i++) {
+      positions[i * 3] = positions[i * 3 + 1] = positions[i * 3 + 2] = 0;
+      indices[i] = i;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('a_index', new THREE.BufferAttribute(indices, 1));
+    geo.computeBoundingSphere();
 
+    var c1 = new THREE.Color(0x22d3ee); // 青
+    var c2 = new THREE.Color(0xa855f7); // 紫
+    var c3 = new THREE.Color(0xec4899); // 粉
     galaxyMat = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
-        uTime: { value: 0 },
-        uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
-        uSize: { value: 26 }
+        u_resolution: { value: new THREE.Vector2(W, H) },
+        u_pointSize: { value: 16 },
+        u_totalPoints: { value: TOTAL_POINTS },
+        u_time: { value: 0 },
+        u_blackHoleRadius: { value: 0.14 },
+        u_blackHolePosition: { value: new THREE.Vector3(0, 0, 0) },
+        u_spiralCount: { value: 3 },
+        u_turnsPerSpiral: { value: 1.3 },
+        u_fadeNear: { value: 40 },
+        u_fadeFar: { value: 420 },
+        u_colorMode: { value: 1 },
+        u_colorPalette: { value: [c1, c2, c3] },
+        u_paletteSize: { value: 3 },
+        u_colorIntensity: { value: 1.15 }
       },
-      vertexShader: [
-        'uniform float uTime;',
-        'uniform float uPixelRatio;',
-        'uniform float uSize;',
-        'attribute float aScale;',
-        'attribute float aPhase;',
-        'attribute vec3 aColor;',
-        'varying vec3 vColor;',
-        'varying float vTwinkle;',
-        'void main(){',
-        '  vec4 modelPos = modelMatrix * vec4(position, 1.0);',
-        '  vec4 viewPos = viewMatrix * modelPos;',
-        '  gl_Position = projectionMatrix * viewPos;',
-        '  gl_PointSize = uSize * aScale * uPixelRatio * (240.0 / -viewPos.z);',
-        '  vColor = aColor;',
-        '  vTwinkle = 0.55 + 0.45 * sin(uTime * 1.4 + aPhase);',
-        '}'
-      ].join('\n'),
-      fragmentShader: [
-        'varying vec3 vColor;',
-        'varying float vTwinkle;',
-        'void main(){',
-        '  float d = distance(gl_PointCoord, vec2(0.5));',
-        '  float strength = smoothstep(0.5, 0.0, d);',
-        '  strength = pow(strength, 1.6);',
-        '  if (strength < 0.02) discard;',
-        '  gl_FragColor = vec4(vColor * vTwinkle, strength * 0.95);',
-        '}'
-      ].join('\n')
+      vertexShader: VERTEX,
+      fragmentShader: FRAGMENT
     });
 
     galaxy = new THREE.Points(geo, galaxyMat);
+    galaxy.scale.set(170, 170, 170);
     galaxy.rotation.x = Math.PI * 0.38;
     galaxy.rotation.z = Math.PI * 0.06;
     galaxy.position.set(12, 4, -120);
     scene.add(galaxy);
   })();
 
-  /* ==================== 中心黑洞（暗核 + 吸积环 + 外发光） ==================== */
+  /* ==================== 中心黑洞视觉（暗核 + 吸积环 + 外发光） ==================== */
   (function buildBlackHole() {
     var bh = new THREE.Group();
     var dark = new THREE.Mesh(
-      new THREE.SphereGeometry(2.4, 32, 32),
+      new THREE.SphereGeometry(10, 32, 32),
       new THREE.MeshBasicMaterial({ color: 0x000000 })
     );
     bh.add(dark);
-    // 吸积环（两条旋转亮环）
     bhRing = new THREE.Mesh(
-      new THREE.TorusGeometry(4.2, 0.35, 16, 64),
+      new THREE.TorusGeometry(16, 0.8, 16, 64),
       new THREE.MeshBasicMaterial({
         color: 0x22d3ee, transparent: true, opacity: 0.4,
         side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
@@ -192,9 +235,9 @@
     bhRing.rotation.x = Math.PI / 2;
     bh.add(bhRing);
     var bhRing2 = new THREE.Mesh(
-      new THREE.TorusGeometry(4.2, 0.2, 16, 64),
+      new THREE.TorusGeometry(16.5, 0.4, 16, 64),
       new THREE.MeshBasicMaterial({
-        color: 0xa855f7, transparent: true, opacity: 0.35,
+        color: 0xa855f7, transparent: true, opacity: 0.32,
         side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
       })
     );
@@ -204,7 +247,7 @@
     var glowS = new THREE.Sprite(
       new THREE.SpriteMaterial({ map: makeGlow(), transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
     );
-    glowS.scale.set(20, 20, 1);
+    glowS.scale.set(48, 48, 1);
     bh.add(glowS);
     bh.position.set(12, 4, -120);
     scene.add(bh);
@@ -219,7 +262,6 @@
     );
     sphereGroup.add(sphere);
 
-    // 大气层：背向 Fresnel 发光（反向法线 + 加色混合，模拟边缘大气）
     atm = new THREE.Mesh(
       new THREE.SphereGeometry(9.55, 64, 64),
       new THREE.ShaderMaterial({
@@ -298,9 +340,10 @@
     mx += (tx - mx) * 0.05;
     my += (ty - my) * 0.05;
 
-    galaxyMat.uniforms.uTime.value = time;
-    galaxy.rotation.y += 0.0012 + mx * 0.02;
-    galaxy.rotation.x = Math.PI * 0.38 + my * 0.02;
+    // 星系：沿旋臂流动（自转）+ 鼠标微视差
+    galaxyMat.uniforms.u_time.value = time * 0.045;
+    galaxy.rotation.y = mx * 0.05;
+    galaxy.rotation.x = Math.PI * 0.38 + my * 0.03;
 
     bhRing.rotation.z += 0.01;
     bhRing.rotation.y += 0.004;
@@ -323,5 +366,6 @@
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
     renderer.setSize(W, H);
+    galaxyMat.uniforms.u_resolution.value.set(W, H);
   });
 })();
