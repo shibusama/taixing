@@ -93,9 +93,11 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 .btn-primary{position:relative;overflow:hidden}
 @keyframes btn-shine{0%,60%{left:-80%}100%{left:130%}}
 
+/* ========== Hero 卡片上移一点（压缩与顶栏的间距，仅桌面端） ========== */
+@media(min-width:861px){.hero{padding-top:56px}}
+
 /* ========== B档：Hero 标题渐变扫光 ========== */
-.hero h1 .glow{position:relative}
-.hero h1 .glow::after{
+.hero h1 .glow{position:relative}.hero h1 .glow::after{
   content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
@@ -146,8 +148,7 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 .pl-logo svg{width:32px;height:32px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))}
 
 /* ========== 导航栏 V2：悬浮玻璃 + 版块色点 + 当前页胶囊高亮 ========== */
-.topbar-in{position:relative}
-.topbar-in::before{ /* 顶部渐变高光线 */
+.topbar-in{position:relative}.topbar-in::before{ /* 顶部渐变高光线 */
   content:"";position:absolute;top:0;left:10%;right:10%;height:1px;pointer-events:none;
   background:linear-gradient(90deg,transparent,rgba(34,211,238,.5),rgba(168,85,247,.5),rgba(236,72,153,.4),transparent);
   opacity:.55;
