@@ -118,10 +118,10 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
   z-index:0;pointer-events:none;
 }
 
-/* ========== C档：Hero 3D 星球（悬浮 Hero 右侧空白区，桌面大屏） ========== */
+/* ========== C档：Hero 巨型旋转球体（悬浮 Hero 右侧空白区，桌面大屏） ========== */
 #planet3d{
-  position:fixed;top:5vh;right:calc(50% - 640px);
-  width:420px;height:420px;z-index:0;pointer-events:none;
+  position:fixed;top:3vh;right:calc(50% - 620px);
+  width:560px;height:560px;z-index:0;pointer-events:none;
   opacity:1;transition:opacity .4s ease;
 }
 @media(max-width:1359px){#planet3d{display:none}}
