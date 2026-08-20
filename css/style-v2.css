@@ -118,16 +118,27 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 @media(max-width:1359px){#planet3d{display:none}}
 
-/* ========== 品牌 Logo：渐变方块 + 白色 sparkle 星星 ========== */
+/* ========== 品牌 Logo：完全对标原型（青紫粉渐变方块 + 白色 sparkle + 背后独立模糊光晕） ========== */
 .logo .rk{
-  width:36px;height:36px;border-radius:12px;
-  background:linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
-  box-shadow:0 0 18px rgba(168,85,247,.35),0 0 30px rgba(236,72,153,.18);
-  font-size:0;
-  transition:transform var(--trans),box-shadow var(--trans);
+  position:relative;width:36px;height:36px;display:block;font-size:0;
+  background:none;box-shadow:none;
 }
-.logo .rk svg{width:20px;height:20px;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
-.logo:hover .rk{transform:rotate(-8deg) scale(1.06);box-shadow:0 0 24px rgba(168,85,247,.5),0 0 44px rgba(236,72,153,.3)}
+.logo .rk-box{
+  position:relative;z-index:1;width:100%;height:100%;border-radius:12px;
+  background:linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+  box-shadow:0 10px 15px -3px rgba(168,85,247,.2),0 4px 6px -4px rgba(168,85,247,.2);
+  display:grid;place-items:center;
+  transition:box-shadow var(--trans);
+}
+.logo .rk-box svg{width:20px;height:20px;display:block}
+.logo .rk-glow{
+  position:absolute;inset:0;border-radius:12px;
+  background:linear-gradient(135deg,#22d3ee,#a855f7);
+  filter:blur(12px);opacity:.4;
+  transition:opacity var(--trans);
+}
+.logo:hover .rk-box{box-shadow:0 10px 15px -3px rgba(168,85,247,.4),0 4px 6px -4px rgba(168,85,247,.4)}
+.logo:hover .rk-glow{opacity:.6}
 .logo:hover .logo-sub{color:var(--cyan)}
 
 /* ========== C档-13：交互式时间线 ========== */
