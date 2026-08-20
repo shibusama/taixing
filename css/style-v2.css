@@ -126,6 +126,12 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 @media(max-width:1359px){#planet3d{display:none}}
 
+/* ========== 星系 + 巨型球体背景画布 ========== */
+#galaxy{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+
 /* ========== 品牌 Logo：完全对标原型（青紫粉渐变方块 + 白色 sparkle + 背后独立模糊光晕） ========== */
 .logo .rk{
   position:relative;width:36px;height:36px;display:block;font-size:0;
