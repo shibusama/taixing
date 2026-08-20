@@ -20,7 +20,6 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 .btn-neon:hover{
   transform:translateY(-2px);
-  box-shadow:0 6px 28px rgba(168,85,247,.5),0 0 40px rgba(34,211,238,.3);
 }
 .btn-ghost-neon{
   display:inline-flex;align-items:center;gap:8px;
@@ -84,8 +83,8 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 @keyframes pl-fill{0%{width:0}100%{width:100%}}
 
-/* ========== B档：按钮流光 ========== */
-.btn-neon::after,.btn-primary::after{
+/* ========== B档：按钮流光（仅 .btn-primary，探索前沿 .btn-neon 已去除特效） ========== */
+.btn-primary::after{
   content:"";position:absolute;top:0;left:-80%;width:45%;height:100%;
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
   transform:skewX(-20deg);animation:btn-shine 3.2s ease-in-out infinite;
@@ -103,14 +102,7 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 
 /* ========== B档：Hero 标题渐变扫光 ========== */
-.hero h1 .glow{position:relative}.hero h1 .glow::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  background-size:220% 100%;
-  animation:title-shimmer 4.5s ease-in-out infinite;
-}
-@keyframes title-shimmer{0%,60%{background-position:220% 0}100%{background-position:-220% 0}}
+.hero h1 .glow{position:relative}
 
 /* ========== B档：Three.js 粒子星空画布 ========== */
 #starfield{
@@ -236,3 +228,80 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 .tl-item.active{background:rgba(168,85,247,.07);border-radius:8px}
 .tl-item.active h4{color:var(--cyan)}
 .tl-item.active::before{transform:scale(1.4);box-shadow:0 0 14px rgba(34,211,238,.85),0 0 30px rgba(168,85,247,.5)}
+
+/* ========== 最新要闻跑马灯 · 双行行情机（覆盖旧版） ========== */
+.ticker{
+  display:none;align-items:stretch;position:relative;overflow:hidden;
+  height:68px;
+  max-width:var(--container);margin:14px auto 8px;
+  border-bottom:1px solid rgba(34,211,238,.16);
+  border-radius:14px;
+  background:linear-gradient(90deg,rgba(34,211,238,.05),rgba(7,11,20,.35) 30%,rgba(7,11,20,.6));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.ticker::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.4),transparent);
+}
+.ticker.ready{display:flex}
+/* LIVE 徽章 */
+.ticker-label{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  padding:0 18px;font-size:11px;font-weight:800;letter-spacing:2px;
+  color:var(--cyan);
+  background:linear-gradient(90deg,rgba(34,211,238,.16),rgba(34,211,238,.03));
+  border-right:1px solid rgba(34,211,238,.22);
+  white-space:nowrap;position:relative;z-index:1;
+}
+.ticker-label .tk-live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 0 3px rgba(34,211,238,.2),0 0 12px rgba(34,211,238,.7);
+  animation:tk-live 1.6s ease-in-out infinite;
+}
+@keyframes tk-live{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 3px rgba(34,211,238,.2),0 0 12px rgba(34,211,238,.7)}
+  50%{transform:scale(.78);box-shadow:0 0 0 6px rgba(34,211,238,.05),0 0 18px rgba(34,211,238,.95)}
+}
+/* 双行主体 */
+.ticker-body{flex:1;display:flex;flex-direction:column;min-width:0}
+.ticker-row{
+  flex:1;position:relative;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+}
+.ticker-row + .ticker-row{border-top:1px solid rgba(255,255,255,.06)}
+.ticker-track{
+  display:inline-flex;align-items:center;white-space:nowrap;height:100%;will-change:transform;
+}
+.tk-track-a{animation:ticker-scroll 46s linear infinite}
+.tk-track-b{animation:ticker-scroll-rev 38s linear infinite}
+.ticker:hover .tk-track-a,.ticker:hover .tk-track-b{animation-play-state:paused}
+@keyframes ticker-scroll-rev{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+/* 条目 */
+.tk-item{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:0 20px;font-size:12.5px;color:var(--txt-2);white-space:nowrap;
+}
+.tk-item + .tk-item{border-left:1px solid rgba(255,255,255,.07)}
+.tk-item .tk-board{
+  font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:99px;
+  background:rgba(34,211,238,.09);
+  border:1px solid rgba(34,211,238,.28);
+  color:var(--cyan);white-space:nowrap;letter-spacing:.5px;
+  transition:background var(--trans);
+}
+.tk-item:hover .tk-board{background:rgba(34,211,238,.18)}
+.tk-item a{
+  color:var(--txt-1);text-decoration:none;
+  transition:color var(--trans);
+}
+.tk-item a:hover{color:var(--cyan)}
+/* 响应式 */
+@media(max-width:768px){
+  .ticker{height:52px;margin:8px 12px 10px}
+  .ticker-label{padding:0 12px;font-size:10px;letter-spacing:1px}
+  .ticker-label .tk-live-dot{width:6px;height:6px}
+  .tk-item{padding:0 14px;font-size:11.5px;gap:7px}
+  .tk-item .tk-board{padding:2px 7px;font-size:9px}
+}

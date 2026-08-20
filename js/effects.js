@@ -233,35 +233,35 @@
       span.appendChild(a);
       return span;
     }
-    function fillFallback(track) {
-      FALLBACK_BOARDS.forEach(function (name) {
-        track.appendChild(buildItem(name, '前沿动态 · AI 实时聚合', ''));
-      });
-    }
     function populate(ticker) {
       if (ticker.__done) return;
       ticker.__done = true;
-      var track = ticker.querySelector('.ticker-track');
-      if (!track) return;
+      var trackA = ticker.querySelector('.tk-track-a');
+      var trackB = ticker.querySelector('.tk-track-b');
+      if (!trackA || !trackB) return;
+      function fill(items) {
+        if (!items.length) {
+          FALLBACK_BOARDS.forEach(function (name) {
+            trackA.appendChild(buildItem(name, '前沿动态 · AI 实时聚合', ''));
+            trackB.appendChild(buildItem(name, '前沿动态 · AI 实时聚合', ''));
+          });
+        } else {
+          items.forEach(function (it, idx) {
+            var item = buildItem(it.board_label || it.board || '要闻', it.title || '', it.link || '');
+            if (idx % 2 === 0) trackA.appendChild(item);
+            else trackB.appendChild(item);
+          });
+        }
+        trackA.innerHTML += trackA.innerHTML; // 复制一份，无缝循环
+        trackB.innerHTML += trackB.innerHTML;
+        ticker.classList.add('ready');
+      }
       fetch('/api/latest-news?limit=14&t=' + Date.now())
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (data) {
-          var items = (data && Array.isArray(data.items)) ? data.items : [];
-          if (items.length) {
-            items.forEach(function (it) {
-              track.appendChild(buildItem(it.board_label || it.board || '要闻', it.title || '', it.link || ''));
-            });
-          } else {
-            fillFallback(track);
-          }
-          track.innerHTML += track.innerHTML; // 复制一份，无缝循环
-          ticker.classList.add('ready');
+          fill((data && Array.isArray(data.items)) ? data.items : []);
         })
-        .catch(function () {
-          fillFallback(track);
-          track.innerHTML += track.innerHTML;
-          ticker.classList.add('ready');
-        });
+        .catch(function () { fill([]); });
     }
     var tk = document.querySelector('.ticker');
     if (tk) populate(tk);
@@ -298,7 +298,7 @@
    * 启动
    * ============================================================ */
   function boot() {
-    initCursor();
+    // initCursor(); // 自定义光标特效已按用户要求移除
     initParallax();
     initWatcher();
   }

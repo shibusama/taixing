@@ -39,28 +39,57 @@
     var c = document.createElement('canvas');
     c.width = c.height = 512;
     var g = c.getContext('2d');
-    g.fillStyle = '#0d0d18';
+
+    // 深色基底：两极略暗的纵向渐变
+    var base = g.createLinearGradient(0, 0, 0, 512);
+    base.addColorStop(0, '#080b14');
+    base.addColorStop(0.5, '#141b2e');
+    base.addColorStop(1, '#080b14');
+    g.fillStyle = base;
     g.fillRect(0, 0, 512, 512);
-    var cols = ['rgba(34,211,238,', 'rgba(168,85,247,', 'rgba(236,72,153,'];
-    for (var i = 0; i < 80; i++) {
+
+    // 横向云带（类土星气态，冷色调），柔和渐变带
+    var bands = [
+      { y: 0.10, h: 0.09, c: '34,211,238', a: 0.17 },
+      { y: 0.24, h: 0.05, c: '129,140,248', a: 0.21 },
+      { y: 0.36, h: 0.12, c: '168,85,247', a: 0.14 },
+      { y: 0.50, h: 0.07, c: '34,211,238', a: 0.18 },
+      { y: 0.63, h: 0.11, c: '129,140,248', a: 0.16 },
+      { y: 0.78, h: 0.06, c: '34,211,238', a: 0.13 },
+      { y: 0.90, h: 0.08, c: '168,85,247', a: 0.11 }
+    ];
+    bands.forEach(function (b) {
+      var yy = b.y * 512;
+      var hh = b.h * 512;
+      var bg = g.createLinearGradient(0, yy - hh, 0, yy + hh);
+      bg.addColorStop(0, 'rgba(' + b.c + ',0)');
+      bg.addColorStop(0.5, 'rgba(' + b.c + ',' + b.a + ')');
+      bg.addColorStop(1, 'rgba(' + b.c + ',0)');
+      g.fillStyle = bg;
+      g.fillRect(0, yy - hh, 512, hh * 2);
+    });
+
+    // 横向细波纹（增强云层流动感）
+    for (var i = 0; i < 70; i++) {
+      var wy = Math.random() * 512;
+      var wa = Math.random() * 0.05 + 0.01;
+      g.fillStyle = 'rgba(255,255,255,' + wa.toFixed(3) + ')';
+      g.fillRect(0, wy, 512, Math.random() * 2 + 0.5);
+    }
+
+    // 细腻颗粒噪声（云层质感）
+    for (var j = 0; j < 500; j++) {
+      var px = Math.random() * 512;
+      var py = Math.random() * 512;
+      var pr = Math.random() * 1.4 + 0.3;
+      g.fillStyle = 'rgba(255,255,255,' + (Math.random() * 0.05).toFixed(3) + ')';
       g.beginPath();
-      g.arc(60 + Math.random() * 392, 60 + Math.random() * 392, 18 + Math.random() * 56, 0, 7);
-      g.fillStyle = cols[i % 3] + (0.10 + Math.random() * 0.22).toFixed(2) + ')';
+      g.arc(px, py, pr, 0, 7);
       g.fill();
     }
-    g.strokeStyle = 'rgba(34,211,238,.10)';
-    g.lineWidth = 1;
-    for (var lat = 1; lat < 5; lat++) {
-      g.beginPath();
-      g.arc(256, 256, 40 + lat * 46, 0, 7);
-      g.stroke();
-    }
-    g.beginPath();
-    g.arc(256, 256, 230, 0, 7);
-    g.strokeStyle = 'rgba(168,85,247,.12)';
-    g.stroke();
+
     var t = new THREE.CanvasTexture(c);
-    t.anisotropy = 2;
+    t.anisotropy = 4;
     return t;
   }
   function makeGlow() {
@@ -75,13 +104,51 @@
     g.fillRect(0, 0, 256, 256);
     return new THREE.CanvasTexture(c);
   }
+  function makeRingTexture() {
+    // 径向多层环带 + 冰粒颗粒，模拟真实土星环（含 Cassini 缝 + 外缘渐隐）
+    var c = document.createElement('canvas');
+    c.width = c.height = 1024;
+    var g = c.getContext('2d');
+    g.clearRect(0, 0, 1024, 1024);
+    var cx = 512, cy = 512;
+
+    // 环带定义：[内半径px, 外半径px, 透明度]（内环→亮环→缝→A环→外淡环）
+    var bands = [
+      [134, 158, 0.30],
+      [160, 196, 0.62],
+      [199, 206, 0.04],
+      [209, 238, 0.44],
+      [241, 247, 0.08],
+      [250, 256, 0.14]
+    ];
+
+    // 用海量小颗粒绘制环带（真实土星环由无数冰粒组成）
+    for (var i = 0; i < 60000; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var rad = 130 + Math.random() * 130; // 130~260 px
+      var a = 0;
+      for (var b = 0; b < bands.length; b++) {
+        if (rad >= bands[b][0] && rad <= bands[b][1]) { a = bands[b][2]; break; }
+      }
+      if (a <= 0.01) continue;
+      a *= 0.35 + Math.random() * 0.65;
+      var x = cx + Math.cos(ang) * rad;
+      var y = cy + Math.sin(ang) * rad;
+      var sz = 0.6 + Math.random() * 1.6;
+      g.fillStyle = 'rgba(200,228,255,' + a.toFixed(3) + ')';
+      g.fillRect(x, y, sz, sz);
+    }
+    var t = new THREE.CanvasTexture(c);
+    t.anisotropy = 2;
+    return t;
+  }
 
   group = new THREE.Group();
 
   // 星球本体
   planet = new THREE.Mesh(
     new THREE.SphereGeometry(1.9, 64, 64),
-    new THREE.MeshStandardMaterial({ map: makeTexture(), roughness: 0.82, metalness: 0.06 })
+    new THREE.MeshStandardMaterial({ map: makeTexture(), roughness: 0.7, metalness: 0.05 })
   );
   group.add(planet);
 
@@ -122,16 +189,16 @@
   );
   group.add(atm);
 
-  // 光环
+  // 光环（多层渐隐环带 + 冰粒颗粒，类土星）
   ring = new THREE.Mesh(
-    new THREE.TorusGeometry(2.95, 0.05, 16, 120),
+    new THREE.RingGeometry(2.2, 4.2, 128),
     new THREE.MeshBasicMaterial({
-      color: 0x22d3ee, transparent: true, opacity: 0.25,
+      map: makeRingTexture(), transparent: true, opacity: 0.85,
       side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
     })
   );
-  ring.rotation.x = Math.PI / 2.4;
-  ring.rotation.y = 0.4;
+  ring.rotation.x = Math.PI / 2.35;
+  ring.rotation.y = 0.15;
   group.add(ring);
 
   // 外发光
@@ -143,6 +210,15 @@
 
   group.position.y = -0.1;
   scene.add(group);
+
+  // 光照：主光 + 冷色补光 + 环境光（让云纹有立体明暗）
+  var keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  keyLight.position.set(5, 3, 4);
+  scene.add(keyLight);
+  var rimLight = new THREE.DirectionalLight(0x22d3ee, 0.7);
+  rimLight.position.set(-4, -1, -3);
+  scene.add(rimLight);
+  scene.add(new THREE.AmbientLight(0x1a2540, 1.4));
 
   /* ---- 鼠标视差 ---- */
   var targetX = 0, targetY = 0, mx = 0, my = 0;
@@ -164,7 +240,6 @@
     planet.rotation.x += 0.0006;
     atm.rotation.y = planet.rotation.y;
     atm.rotation.x = planet.rotation.x;
-    ring.rotation.z += 0.0012;
     group.rotation.y = mx * 0.8;
     group.rotation.x = -my * 0.5;
     group.position.y = Math.sin(t * 0.5) * 0.14 - 0.1;
