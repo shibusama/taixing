@@ -118,6 +118,18 @@ h1,h2,h3,h4,.logo-name,.hero .kicker,.bd-hero h1{
 }
 @media(max-width:1359px){#planet3d{display:none}}
 
+/* ========== 品牌 Logo：渐变方块 + 白色 sparkle 星星 ========== */
+.logo .rk{
+  width:36px;height:36px;border-radius:12px;
+  background:linear-gradient(135deg,#22d3ee,#a855f7,#ec4899);
+  box-shadow:0 0 18px rgba(168,85,247,.35),0 0 30px rgba(236,72,153,.18);
+  font-size:0;
+  transition:transform var(--trans),box-shadow var(--trans);
+}
+.logo .rk svg{width:20px;height:20px;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.logo:hover .rk{transform:rotate(-8deg) scale(1.06);box-shadow:0 0 24px rgba(168,85,247,.5),0 0 44px rgba(236,72,153,.3)}
+.logo:hover .logo-sub{color:var(--cyan)}
+
 /* ========== C档-13：交互式时间线 ========== */
 /* 滚动进度填充（--tlp 由 b-tier.js 写入，0→1 控制 scaleY） */
 .tl::after,.tl-versus::after{
