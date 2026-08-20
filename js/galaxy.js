@@ -1,7 +1,8 @@
 /**
- * 钛星 · 星系 + 巨型转动球体背景（galaxy.js）
- * 替换原粒子星空：螺旋星系（青→紫旋臂星云，缓慢自转）+
- * 巨型星球（光环 + 外发光，持续自转，右侧大半出画营造巨型感）。
+ * 钛星 · 星系 + 巨型转动球体背景（galaxy.js v2 - Shader 版）
+ * - 螺旋星系：自定义 GLSL shader 渲染，柔光圆点 + 每颗星明暗闪烁
+ * - 中心黑洞：暗核 + 吸积环 + 外发光，缓慢脉动
+ * - 巨型球体：自转 + 光环 + 大气层边缘光（背向 Fresnel 发光）
  * 叠在 CSS Aurora 光晕之上、内容之下；鼠标移动整体微视差。
  * 桌面端启用；移动端 / 减弱动效 / WebGL 不可用自动跳过（回落 CSS 极光背景）。
  */
@@ -18,8 +19,10 @@
   canvas.id = 'galaxy';
   document.body.appendChild(canvas);
 
-  var renderer, scene, camera, galaxy, sphere, sphereGroup, ring;
+  var renderer, scene, camera;
+  var galaxy, galaxyMat, bhRing, sphere, sphereGroup, ring, atm;
   var W = innerWidth, H = innerHeight;
+  var time = 0;
 
   try {
     renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
@@ -34,107 +37,224 @@
   camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 3000);
   camera.position.z = 60;
 
-  /* ============ 螺旋星系 ============ */
+  /* ==================== 工具：生成 Canvas 纹理 ==================== */
+  function makeSphereTexture() {
+    var c = document.createElement('canvas');
+    c.width = c.height = 512;
+    var g = c.getContext('2d');
+    g.fillStyle = '#0d0d18';
+    g.fillRect(0, 0, 512, 512);
+    var cols = ['rgba(34,211,238,', 'rgba(168,85,247,', 'rgba(236,72,153,'];
+    for (var i = 0; i < 80; i++) {
+      g.beginPath();
+      g.arc(60 + Math.random() * 392, 60 + Math.random() * 392, 18 + Math.random() * 56, 0, 7);
+      g.fillStyle = cols[i % 3] + (0.10 + Math.random() * 0.22).toFixed(2) + ')';
+      g.fill();
+    }
+    g.strokeStyle = 'rgba(34,211,238,.10)';
+    g.lineWidth = 1;
+    for (var lat = 1; lat < 5; lat++) {
+      g.beginPath();
+      g.arc(256, 256, 40 + lat * 46, 0, 7);
+      g.stroke();
+    }
+    g.beginPath();
+    g.arc(256, 256, 230, 0, 7);
+    g.strokeStyle = 'rgba(168,85,247,.12)';
+    g.stroke();
+    var t = new THREE.CanvasTexture(c);
+    t.anisotropy = 2;
+    return t;
+  }
+  function makeGlow() {
+    var c = document.createElement('canvas');
+    c.width = c.height = 256;
+    var g = c.getContext('2d');
+    var grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    grad.addColorStop(0, 'rgba(34,211,238,.9)');
+    grad.addColorStop(0.35, 'rgba(168,85,247,.45)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 256, 256);
+    return new THREE.CanvasTexture(c);
+  }
+
+  /* ==================== 螺旋星系（Shader 柔光点 + 闪烁） ==================== */
   (function buildGalaxy() {
     var count = 6000;
-    var positions = new Float32Array(count * 3);
-    var colors = new Float32Array(count * 3);
     var arms = 3;
     var radius = 130;
     var spin = 1.6;
     var randomness = 0.55;
-    var colorInner = new THREE.Color(0x22d3ee);
-    var colorOuter = new THREE.Color(0xa855f7);
-    var insideCount = Math.floor(count * 0.42);
+    var insideCount = Math.floor(count * 0.4);
+
+    var pos = new Float32Array(count * 3);
+    var col = new Float32Array(count * 3);
+    var scl = new Float32Array(count);
+    var pha = new Float32Array(count);
+    var cIn = new THREE.Color(0x22d3ee);
+    var cOut = new THREE.Color(0xa855f7);
+    var tmp = new THREE.Color();
 
     for (var i = 0; i < count; i++) {
+      scl[i] = 0.4 + Math.random() * 1.1;
+      pha[i] = Math.random() * Math.PI * 2;
       if (i < insideCount) {
-        // 中心星团
         var r = Math.random() * radius * 0.45;
         var a = Math.random() * Math.PI * 2;
-        positions[i * 3] = Math.cos(a) * r;
-        positions[i * 3 + 1] = Math.sin(a) * r;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-        var c1 = colorInner.clone().lerp(colorOuter, Math.random());
-        colors[i * 3] = c1.r; colors[i * 3 + 1] = c1.g; colors[i * 3 + 2] = c1.b;
+        pos[i * 3] = Math.cos(a) * r;
+        pos[i * 3 + 1] = Math.sin(a) * r;
+        pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
+        tmp.copy(cIn).lerp(cOut, Math.random());
       } else {
-        // 旋臂
         var ra = Math.random() * radius;
         var arm = (i - insideCount) % arms;
         var rot = (ra / radius) * spin;
         var angle = rot + arm * ((Math.PI * 2) / arms);
         var radial = 1 + Math.random() * randomness;
-        positions[i * 3] = Math.cos(angle) * ra * radial;
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 3.2;
-        positions[i * 3 + 2] = Math.sin(angle) * ra * radial;
-        var t = ra / radius;
-        var c2 = colorInner.clone().lerp(colorOuter, t);
-        colors[i * 3] = c2.r; colors[i * 3 + 1] = c2.g; colors[i * 3 + 2] = c2.b;
+        pos[i * 3] = Math.cos(angle) * ra * radial;
+        pos[i * 3 + 1] = (Math.random() - 0.5) * 3.2;
+        pos[i * 3 + 2] = Math.sin(angle) * ra * radial;
+        tmp.copy(cIn).lerp(cOut, ra / radius);
       }
+      col[i * 3] = tmp.r; col[i * 3 + 1] = tmp.g; col[i * 3 + 2] = tmp.b;
     }
+
     var geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    var mat = new THREE.PointsMaterial({
-      size: 0.55, vertexColors: true, transparent: true, opacity: 0.85,
-      blending: THREE.AdditiveBlending, depthWrite: false
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+    geo.setAttribute('aScale', new THREE.BufferAttribute(scl, 1));
+    geo.setAttribute('aPhase', new THREE.BufferAttribute(pha, 1));
+
+    galaxyMat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        uTime: { value: 0 },
+        uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
+        uSize: { value: 26 }
+      },
+      vertexShader: [
+        'uniform float uTime;',
+        'uniform float uPixelRatio;',
+        'uniform float uSize;',
+        'attribute float aScale;',
+        'attribute float aPhase;',
+        'attribute vec3 aColor;',
+        'varying vec3 vColor;',
+        'varying float vTwinkle;',
+        'void main(){',
+        '  vec4 modelPos = modelMatrix * vec4(position, 1.0);',
+        '  vec4 viewPos = viewMatrix * modelPos;',
+        '  gl_Position = projectionMatrix * viewPos;',
+        '  gl_PointSize = uSize * aScale * uPixelRatio * (240.0 / -viewPos.z);',
+        '  vColor = aColor;',
+        '  vTwinkle = 0.55 + 0.45 * sin(uTime * 1.4 + aPhase);',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'varying vec3 vColor;',
+        'varying float vTwinkle;',
+        'void main(){',
+        '  float d = distance(gl_PointCoord, vec2(0.5));',
+        '  float strength = smoothstep(0.5, 0.0, d);',
+        '  strength = pow(strength, 1.6);',
+        '  if (strength < 0.02) discard;',
+        '  gl_FragColor = vec4(vColor * vTwinkle, strength * 0.95);',
+        '}'
+      ].join('\n')
     });
-    galaxy = new THREE.Points(geo, mat);
+
+    galaxy = new THREE.Points(geo, galaxyMat);
     galaxy.rotation.x = Math.PI * 0.38;
     galaxy.rotation.z = Math.PI * 0.06;
     galaxy.position.set(12, 4, -120);
     scene.add(galaxy);
   })();
 
-  /* ============ 巨型转动球体 ============ */
-  (function buildSphere() {
-    function makeTexture() {
-      var c = document.createElement('canvas');
-      c.width = c.height = 512;
-      var g = c.getContext('2d');
-      g.fillStyle = '#0d0d18';
-      g.fillRect(0, 0, 512, 512);
-      var cols = ['rgba(34,211,238,', 'rgba(168,85,247,', 'rgba(236,72,153,'];
-      for (var i = 0; i < 80; i++) {
-        g.beginPath();
-        g.arc(60 + Math.random() * 392, 60 + Math.random() * 392, 18 + Math.random() * 56, 0, 7);
-        g.fillStyle = cols[i % 3] + (0.10 + Math.random() * 0.22).toFixed(2) + ')';
-        g.fill();
-      }
-      g.strokeStyle = 'rgba(34,211,238,.10)';
-      g.lineWidth = 1;
-      for (var lat = 1; lat < 5; lat++) {
-        g.beginPath();
-        g.arc(256, 256, 40 + lat * 46, 0, 7);
-        g.stroke();
-      }
-      g.beginPath();
-      g.arc(256, 256, 230, 0, 7);
-      g.strokeStyle = 'rgba(168,85,247,.12)';
-      g.stroke();
-      var t = new THREE.CanvasTexture(c);
-      t.anisotropy = 2;
-      return t;
-    }
-    function makeGlow() {
-      var c = document.createElement('canvas');
-      c.width = c.height = 256;
-      var g = c.getContext('2d');
-      var grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
-      grad.addColorStop(0, 'rgba(34,211,238,.85)');
-      grad.addColorStop(0.4, 'rgba(168,85,247,.4)');
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      g.fillStyle = grad;
-      g.fillRect(0, 0, 256, 256);
-      return new THREE.CanvasTexture(c);
-    }
+  /* ==================== 中心黑洞（暗核 + 吸积环 + 外发光） ==================== */
+  (function buildBlackHole() {
+    var bh = new THREE.Group();
+    var dark = new THREE.Mesh(
+      new THREE.SphereGeometry(2.4, 32, 32),
+      new THREE.MeshBasicMaterial({ color: 0x000000 })
+    );
+    bh.add(dark);
+    // 吸积环（两条旋转亮环）
+    bhRing = new THREE.Mesh(
+      new THREE.TorusGeometry(4.2, 0.35, 16, 64),
+      new THREE.MeshBasicMaterial({
+        color: 0x22d3ee, transparent: true, opacity: 0.4,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+      })
+    );
+    bhRing.rotation.x = Math.PI / 2;
+    bh.add(bhRing);
+    var bhRing2 = new THREE.Mesh(
+      new THREE.TorusGeometry(4.2, 0.2, 16, 64),
+      new THREE.MeshBasicMaterial({
+        color: 0xa855f7, transparent: true, opacity: 0.35,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
+      })
+    );
+    bhRing2.rotation.x = Math.PI / 2;
+    bhRing2.rotation.z = Math.PI * 0.5;
+    bh.add(bhRing2);
+    var glowS = new THREE.Sprite(
+      new THREE.SpriteMaterial({ map: makeGlow(), transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    glowS.scale.set(20, 20, 1);
+    bh.add(glowS);
+    bh.position.set(12, 4, -120);
+    scene.add(bh);
+  })();
 
+  /* ==================== 巨型球体（自转 + 光环 + 大气层边缘光） ==================== */
+  (function buildSphere() {
     sphereGroup = new THREE.Group();
     sphere = new THREE.Mesh(
       new THREE.SphereGeometry(9, 64, 64),
-      new THREE.MeshStandardMaterial({ map: makeTexture(), roughness: 0.82, metalness: 0.06 })
+      new THREE.MeshStandardMaterial({ map: makeSphereTexture(), roughness: 0.82, metalness: 0.06 })
     );
     sphereGroup.add(sphere);
+
+    // 大气层：背向 Fresnel 发光（反向法线 + 加色混合，模拟边缘大气）
+    atm = new THREE.Mesh(
+      new THREE.SphereGeometry(9.55, 64, 64),
+      new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        uniforms: {
+          uColor: { value: new THREE.Color(0x22d3ee) },
+          uColor2: { value: new THREE.Color(0xa855f7) }
+        },
+        vertexShader: [
+          'varying vec3 vNormal;',
+          'varying vec3 vView;',
+          'void main(){',
+          '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
+          '  vNormal = normalize(normalMatrix * normal);',
+          '  vView = normalize(-mv.xyz);',
+          '  gl_Position = projectionMatrix * mv;',
+          '}'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform vec3 uColor;',
+          'uniform vec3 uColor2;',
+          'varying vec3 vNormal;',
+          'varying vec3 vView;',
+          'void main(){',
+          '  float f = dot(vNormal, vView);',
+          '  float intensity = pow(1.0 - abs(f), 2.6);',
+          '  gl_FragColor = vec4(mix(uColor, uColor2, intensity), intensity * 0.85);',
+          '}'
+        ].join('\n')
+      })
+    );
+    sphereGroup.add(atm);
 
     ring = new THREE.Mesh(
       new THREE.TorusGeometry(13.2, 0.18, 16, 120),
@@ -153,12 +273,11 @@
     glowSprite.scale.set(34, 34, 1);
     sphereGroup.add(glowSprite);
 
-    // 右侧偏大半个出画，营造“巨型”感
     sphereGroup.position.set(38, 1, -8);
     scene.add(sphereGroup);
   })();
 
-  /* ============ 灯光 ============ */
+  /* ==================== 灯光 ==================== */
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   var dl = new THREE.DirectionalLight(0x9fd8ff, 1.2);
   dl.position.set(6, 4, 8);
@@ -167,7 +286,7 @@
   pl.position.set(-6, -2, 4);
   scene.add(pl);
 
-  /* ============ 鼠标视差 ============ */
+  /* ==================== 鼠标视差 ==================== */
   var tx = 0, ty = 0, mx = 0, my = 0;
   document.addEventListener('mousemove', function (e) {
     tx = e.clientX / innerWidth - 0.5;
@@ -175,16 +294,21 @@
   }, { passive: true });
 
   function tick() {
+    time += 0.016;
     mx += (tx - mx) * 0.05;
     my += (ty - my) * 0.05;
 
-    // 星系缓慢自转 + 鼠标微视差
+    galaxyMat.uniforms.uTime.value = time;
     galaxy.rotation.y += 0.0012 + mx * 0.02;
     galaxy.rotation.x = Math.PI * 0.38 + my * 0.02;
 
-    // 巨型球体自转 + 光环旋转
+    bhRing.rotation.z += 0.01;
+    bhRing.rotation.y += 0.004;
+
     sphere.rotation.y += 0.004;
     sphere.rotation.x += 0.0006;
+    atm.rotation.y = sphere.rotation.y;
+    atm.rotation.x = sphere.rotation.x;
     ring.rotation.z += 0.001;
     sphereGroup.rotation.y = mx * 0.5;
     sphereGroup.rotation.x = -my * 0.35;
