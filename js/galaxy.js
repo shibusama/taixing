@@ -81,48 +81,38 @@
 
   /* ==================== 螺旋星系（Shader 柔光点 + 闪烁） ==================== */
   (function buildGalaxy() {
-    var count = 14000;
-    var arms = 3;
+    var count = 16000;
+    var arms = 5;            // 5 条旋臂，更密更戏剧
     var radius = 130;
-    var spin = 1.9;
-    var randomness = 0.42;
-    var insideCount = Math.floor(count * 0.45);
+    var spin = 2.2;          // 转数更多，旋臂更紧
+    var randomness = 0.3;
+    var minR = 0.34;         // 中心留黑洞空洞
 
     var pos = new Float32Array(count * 3);
     var col = new Float32Array(count * 3);
     var scl = new Float32Array(count);
     var pha = new Float32Array(count);
-    var cIn = new THREE.Color(0x22d3ee);
-    var cMid = new THREE.Color(0xa855f7);
-    var cPink = new THREE.Color(0xec4899);
+    var cIn = new THREE.Color(0xffffff);   // 内圈 白
+    var cMid = new THREE.Color(0x6f9bff);  // 中圈 蓝
+    var cOut = new THREE.Color(0xa855f7);  // 外圈 紫
     var tmp = new THREE.Color();
 
     for (var i = 0; i < count; i++) {
       // 星星大小：幂律分布 = 绝大多数细小微粒 + 少数大亮星（更细致）
       scl[i] = Math.pow(Math.random(), 2.4) * 1.6 + 0.18;
       pha[i] = Math.random() * Math.PI * 2;
-      if (i < insideCount) {
-        // 中心星团：青→紫随机
-        var r = Math.random() * radius * 0.45;
-        var a = Math.random() * Math.PI * 2;
-        pos[i * 3] = Math.cos(a) * r;
-        pos[i * 3 + 1] = Math.sin(a) * r;
-        pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
-        tmp.copy(cIn).lerp(cMid, Math.random());
-      } else {
-        // 螺旋臂：青→紫→粉 三段渐变
-        var ra = Math.random() * radius;
-        var arm = (i - insideCount) % arms;
-        var rot = (ra / radius) * spin;
-        var angle = rot + arm * ((Math.PI * 2) / arms);
-        var radial = 1 + Math.random() * randomness;
-        pos[i * 3] = Math.cos(angle) * ra * radial;
-        pos[i * 3 + 1] = (Math.random() - 0.5) * 2.6;
-        pos[i * 3 + 2] = Math.sin(angle) * ra * radial;
-        var t = ra / radius;
-        if (t < 0.6) tmp.copy(cIn).lerp(cMid, t / 0.6);
-        else tmp.copy(cMid).lerp(cPink, (t - 0.6) / 0.4);
-      }
+      // 全部在旋臂上（从空洞外缘开始），中心留黑
+      var ra = (minR + Math.random() * (1 - minR)) * radius;
+      var arm = i % arms;
+      var rot = (ra / radius) * spin;
+      var angle = rot + arm * ((Math.PI * 2) / arms);
+      var radial = 1 + Math.random() * randomness;
+      pos[i * 3] = Math.cos(angle) * ra * radial;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 2.2;
+      pos[i * 3 + 2] = Math.sin(angle) * ra * radial;
+      var t = ra / radius;
+      if (t < 0.5) tmp.copy(cIn).lerp(cMid, t / 0.5);
+      else tmp.copy(cMid).lerp(cOut, (t - 0.5) / 0.5);
       col[i * 3] = tmp.r; col[i * 3 + 1] = tmp.g; col[i * 3 + 2] = tmp.b;
     }
 
@@ -183,24 +173,24 @@
   (function buildBlackHole() {
     var bh = new THREE.Group();
     var dark = new THREE.Mesh(
-      new THREE.SphereGeometry(2.4, 32, 32),
+      new THREE.SphereGeometry(13, 32, 32),
       new THREE.MeshBasicMaterial({ color: 0x000000 })
     );
     bh.add(dark);
-    // 吸积环（两条旋转亮环）
+    // 吸积亮环（黑洞边缘，两圈旋转）
     bhRing = new THREE.Mesh(
-      new THREE.TorusGeometry(4.2, 0.18, 16, 64),
+      new THREE.TorusGeometry(40, 0.9, 16, 128),
       new THREE.MeshBasicMaterial({
-        color: 0x22d3ee, transparent: true, opacity: 0.4,
+        color: 0x9db8ff, transparent: true, opacity: 0.6,
         side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
       })
     );
     bhRing.rotation.x = Math.PI / 2;
     bh.add(bhRing);
     var bhRing2 = new THREE.Mesh(
-      new THREE.TorusGeometry(4.2, 0.1, 16, 64),
+      new THREE.TorusGeometry(42, 0.32, 16, 128),
       new THREE.MeshBasicMaterial({
-        color: 0xa855f7, transparent: true, opacity: 0.35,
+        color: 0xa855f7, transparent: true, opacity: 0.42,
         side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false
       })
     );
@@ -208,9 +198,9 @@
     bhRing2.rotation.z = Math.PI * 0.5;
     bh.add(bhRing2);
     var glowS = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: makeGlow(), transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
+      new THREE.SpriteMaterial({ map: makeGlow(), transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false })
     );
-    glowS.scale.set(20, 20, 1);
+    glowS.scale.set(88, 88, 1);
     bh.add(glowS);
     bh.position.set(12, 4, -120);
     scene.add(bh);
