@@ -62,7 +62,7 @@
       document.body.classList.add('cursor-idle');
     });
 
-    var HOVER = 'a,button,input,select,textarea,[role="button"],.card,.section-card,.company-card,.route,.hl-card,.tab-nav button,.back-to-top,.quick-nav a,.tk-item a,.kv';
+    var HOVER = 'a,button,input,select,textarea,[role="button"],.card,.section-card,.company-card,.route,.hl-card,.breakdown-card,.pt-group,.fusion-tl-col,.company,.debt-card,.rate-card,.bond-card,.fx-card,.member-card,.com-card,.kpi-card,.tlv-card,.tab-nav button,.back-to-top,.quick-nav a,.tk-item a,.kv';
     document.addEventListener('mouseover', function (e) {
       var t = e.target;
       if (t && t.closest && t.closest(HOVER)) ring.classList.add('hover');
@@ -108,7 +108,7 @@
   /* ============================================================
    * 3. 卡片 3D tilt（轻量自写，无依赖）
    * ============================================================ */
-  var TILT_SEL = '.section-card,.news-grid .card,.company-card,.route';
+  var TILT_SEL = '.section-card,.news-grid .card,.company-card,.route,.hl-card,.breakdown-card,.pt-group,.fusion-tl-col,.company,.debt-card,.rate-card,.bond-card,.fx-card,.member-card,.com-card,.tlv-card';
   function initTilt() {
     if (!finePointer || reduced) return function () {};
     function bindTilt(c) {
@@ -146,7 +146,7 @@
   /* ============================================================
    * 4. 滚动入场（stagger 延迟，复用 .anim-in / fadeInUp）
    * ============================================================ */
-  var REVEAL_SEL = '.hero .wrap,.bd-hero,.bd-sec-head,.sec-head,.section-card,.card,.company-card,.company,.route,.tl-item,.hl-card,.tlv-row,.fusion-tl-col,.pt-group,.cmp-wrap,.news-list,.tab-nav,.data-table-wrap,.quick-nav,.highlight-row';
+  var REVEAL_SEL = '.hero .wrap,.bd-hero,.bd-sec-head,.sec-head,.section-card,.card,.company-card,.company,.route,.tl-item,.hl-card,.tlv-row,.tlv-card,.fusion-tl-col,.pt-group,.cmp-wrap,.news-list,.data-table-wrap,.quick-nav,.highlight-row,.breakdown-card';
   function initReveal() {
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {

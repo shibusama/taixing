@@ -45,13 +45,23 @@ body.cursor-idle .cursor-dot,body.cursor-idle .cursor-ring{opacity:0}
 
 /* ---------- 流光边框 & hover 辉光 ---------- */
 /* 扫光：新闻卡 / 版块卡 hover 时一道高光划过 */
-.section-card::before,.card::before{
+.section-card::before,.card::before,
+.bd-page .company-card::before,.bd-page .company::before,.bd-page .route::before,
+.bd-page .hl-card::before,.bd-page .breakdown-card::before,.bd-page .fusion-tl-col::before,
+.bd-page .pt-group::before,.bd-page .tlv-card::before,
+.bd-page .debt-card::before,.bd-page .rate-card::before,.bd-page .bond-card::before,
+.bd-page .fx-card::before,.bd-page .member-card::before,.bd-page .com-card::before{
   content:"";position:absolute;top:-20%;left:-90%;width:55%;height:140%;
   background:linear-gradient(105deg,transparent,rgba(255,255,255,.07),rgba(0,224,255,.06),transparent);
   transform:skewX(-20deg);z-index:1;pointer-events:none;
   transition:left .85s ease;
 }
-.section-card:hover::before,.card:hover::before{left:135%}
+.section-card:hover::before,.card:hover::before,
+.bd-page .company-card:hover::before,.bd-page .company:hover::before,.bd-page .route:hover::before,
+.bd-page .hl-card:hover::before,.bd-page .breakdown-card:hover::before,.bd-page .fusion-tl-col:hover::before,
+.bd-page .pt-group:hover::before,.bd-page .tlv-card:hover::before,
+.bd-page .debt-card:hover::before,.bd-page .rate-card:hover::before,.bd-page .bond-card:hover::before,
+.bd-page .fx-card:hover::before,.bd-page .member-card:hover::before,.bd-page .com-card:hover::before{left:135%}
 
 /* hover 辉光：跟随各卡 accent 色（--accent 未定义时回落主青） */
 .section-card:hover,
@@ -59,7 +69,17 @@ body.cursor-idle .cursor-dot,body.cursor-idle .cursor-ring{opacity:0}
 .company-card:hover,
 .route:hover,
 .pt-group:hover,
-.hl-card:hover{
+.hl-card:hover,
+.breakdown-card:hover,
+.fusion-tl-col:hover,
+.company:hover,
+.debt-card:hover,
+.rate-card:hover,
+.bond-card:hover,
+.fx-card:hover,
+.member-card:hover,
+.com-card:hover,
+.tlv-card:hover{
   box-shadow:
     0 0 0 1px color-mix(in srgb,var(--accent,#00e0ff) 38%,transparent),
     0 12px 44px color-mix(in srgb,var(--accent,#00e0ff) 16%,transparent),

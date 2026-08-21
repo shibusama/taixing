@@ -26,13 +26,11 @@
 .bd-hero .meta span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
 .bd-hero .meta span:first-child::before{display:none}
 
-/* ---- 指标 Tab 胶囊导航（复刻参考图：选中=纯青填充+发光，未选中=暗底+细描边） ---- */
+/* ---- 指标 Tab 胶囊导航（选中=纯青填充+发光，未选中=暗底+细描边） ---- */
 #macroTabs{
   display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;border-bottom:none;overflow-x:auto;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
-  position:sticky;top:60px;z-index:90;padding:4px 0 14px;
-  background:linear-gradient(180deg,rgba(7,11,20,.96) 60%,rgba(7,11,20,.86));
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  padding:4px 0 14px;
 }
 #macroTabs::-webkit-scrollbar{display:none}
 #macroTabs button{
@@ -254,7 +252,6 @@
   .bd-hero .meta{gap:10px;font-size:11px}
   .bd-hero .sub{font-size:13.5px}
   .kpi-strip{grid-template-columns:repeat(2,1fr)}
-  #macroTabs{top:56px}
 }
 @media(max-width:480px){
   .com-grid{grid-template-columns:1fr}

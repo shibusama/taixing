@@ -95,7 +95,7 @@ body{
   backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
   background:transparent;
   border-bottom:none;
-  padding:12px 24px 0;
+  padding:12px 24px 6px;
 }
 .topbar.scrolled{
   background:transparent;
@@ -179,6 +179,7 @@ body{
 
 /* Kicker badge */
 .hero .kicker{
+  margin-top:-128px;
   padding:7px 16px;
   border-radius:999px;
   border:1px solid rgba(34,211,238,.2);
