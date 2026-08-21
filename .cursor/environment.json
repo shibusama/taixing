@@ -1,0 +1,11 @@
+{
+  "name": "taixing-news",
+  "install": "python3 -m pip install --no-cache-dir -r backend/requirements.txt && python3 scripts/seed_local_db.py",
+  "terminals": [
+    {
+      "name": "preview-server",
+      "command": "PORT=5000 SCHEDULER_ENABLED=false python3 scripts/preview_server.py"
+    }
+  ],
+  "ports": [5000]
+}
