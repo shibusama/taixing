@@ -35,15 +35,83 @@
 .bd-sec-head h2{flex:1;margin:0;padding:0;border-left:none;font-size:clamp(18px,2.6vw,22px);line-height:1.4}
 .bd-sec-head .bd-sec-desc{flex-basis:100%;font-size:12.5px;color:var(--txt-2);line-height:1.7;margin:0}
 
+/* ---- Tab 导航 ---- */
+.bd-tabs{gap:4px;margin:28px 0 4px;border-bottom:2px solid var(--line);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tabs button{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;font-size:14px;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.bd-tabs button .tb-ico{font-size:15px;line-height:1}
+.bd-tabs button:hover{color:var(--txt-1)}
+.bd-tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ---- Tab 引言 ---- */
+.bd-intro{font-size:14px;line-height:1.9;color:var(--txt-1);background:var(--bg-1);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:22px 0 4px}
+
+/* ---- 中美双列 ---- */
+.moon-cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:22px 0 8px}
+.moon-col-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg-1)}
+.moon-col-head .mh-flag{font-size:22px;line-height:1}
+.moon-col-head .mh-name{font-size:18px;font-weight:800;color:var(--txt-0)}
+.moon-col-head .mh-tag{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.moon-col-head.cn{border-bottom:2px solid var(--red)}
+.moon-col-head.us{border-bottom:2px solid var(--purple)}
+.moon-col-head.cn .mh-tag{background:rgba(255,84,112,.14);color:var(--red)}
+.moon-col-head.us .mh-tag{background:rgba(155,123,255,.14);color:var(--purple)}
+.moon-col-desc{font-size:13px;color:var(--txt-1);line-height:1.75;margin:0 0 14px}
+
+/* ---- 技术路线步骤 ---- */
+.moon-step{display:grid;grid-template-columns:52px 1fr;gap:4px 14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1);margin-bottom:10px}
+.moon-step .ph{font-size:11px;font-weight:700;letter-spacing:.4px;color:var(--accent);font-family:var(--mono);padding-top:3px}
+.moon-step .nm{font-size:15px;font-weight:800;color:var(--txt-0)}
+.moon-step .dt{font-size:12px;color:var(--txt-2);margin-top:2px;line-height:1.55}
+.moon-step.done{border-color:rgba(61,220,132,.28)}
+.moon-step.cur{border-color:rgba(0,224,255,.32)}
+.moon-step.next{border-color:rgba(255,138,61,.28)}
+
+/* ---- 南极水冰焦点 ---- */
+.moon-focus{margin:28px 0 8px;padding:16px 20px;border-radius:0 12px 12px 0;border:1px solid rgba(240,192,96,.22);border-left:3px solid var(--gold);background:rgba(240,192,96,.07)}
+.moon-focus h3{margin:0 0 8px;font-size:15px;font-weight:800;color:var(--gold)}
+.moon-focus p{margin:0;font-size:13.5px;line-height:1.8;color:var(--txt-1)}
+
+/* ---- 年份条 ---- */
+.moon-years{display:flex;gap:0;border-radius:12px;overflow:hidden;background:var(--bg-1);margin:22px 0 8px;border:1px solid var(--line)}
+.moon-year{flex:1;padding:14px 12px;text-align:center;position:relative;border-right:1px solid var(--line)}
+.moon-year:last-child{border-right:none}
+.moon-year::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:transparent}
+.moon-year.done::before{background:var(--green)}
+.moon-year.cur::before{background:var(--cyan)}
+.moon-year.next::before{background:var(--amber)}
+.moon-year .yr{font-size:13px;font-weight:800;font-family:var(--mono);color:var(--txt-0);margin-bottom:6px}
+.moon-year .cn,.moon-year .us{font-size:11px;color:var(--txt-1);line-height:1.45}
+.moon-year .cn{color:var(--red)}
+.moon-year .us{color:var(--purple);margin-top:2px}
+
+/* ---- 双列时间线 ---- */
+.moon-tl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin:20px 0}
+.tl-st{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;vertical-align:middle;letter-spacing:.3px}
+.tl-st.done{background:rgba(61,220,132,.16);color:var(--green)}
+.tl-st.prog{background:rgba(0,224,255,.16);color:var(--cyan)}
+.tl-st.plan{background:rgba(255,138,61,.16);color:var(--amber)}
+.tl-st.goal{background:rgba(240,192,96,.18);color:var(--gold)}
+.tl-item.cyan::before{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,224,255,.5)}
+.tl-item.cyan .tl-date{color:var(--cyan)}
+.tl-item.gold::before{border-color:var(--gold);box-shadow:0 0 8px rgba(240,192,96,.5)}
+.tl-item.gold .tl-date{color:var(--gold)}
+
 /* ---- 响应式 ---- */
 @media(max-width:768px){
   .bd-hero{padding:24px 20px 20px;margin:10px 0 20px}
   .bd-hero .meta{gap:10px;font-size:11px}
   .bd-hero .sub{font-size:13.5px}
   .bd-sec-head{flex-wrap:wrap;gap:8px}
+  .bd-tabs button{padding:10px 14px;font-size:13px}
+  .moon-cols,.moon-tl-grid{grid-template-columns:1fr}
+  .moon-years{flex-wrap:wrap}
+  .moon-year{flex:1 1 50%;border-bottom:1px solid var(--line)}
+  .moon-year:nth-child(2n){border-right:none}
 }
 @media(max-width:480px){
   .bd-hero h1{font-size:23px}
+  .moon-year{flex:1 1 100%;border-right:none}
 }
 </style>
 </head>
@@ -72,79 +140,28 @@
       </div>
     </div>
 
-    <div class="bd-sec-head" style="margin-top:4px"><span class="bd-sec-idx">01</span><h2>关键时间节点</h2><p class="bd-sec-desc">数据来源：中国载人航天工程办公室、NASA、虎嗅 · 更新于 2026-07-26</p></div>
     <div class="highlight-row" id="moon-highlights"></div>
 
-    <div class="bd-sec-head"><span class="bd-sec-idx">02</span><h2>中国 · 稳步推进，2030 年前载人登月</h2><p class="bd-sec-desc">载人登月工程与嫦娥探月双线并进，任务、资源、队伍三方面整合为统一的“月球探测工程”。</p></div>
-    <div class="article-body">
-      <div class="company">
-        <span class="company-flag flag-cn-g">国家队</span>
-        <h3>🌙 载人登月工程系统</h3>
-        <div class="en">China Manned Lunar Exploration Program</div>
-        <p>截至2026年中，载人月球探测工程各项研制建设进展顺利。长征十号、梦舟飞船、揽月着陆器等核心产品已完成初样阶段主要工作。</p>
-        <div class="company-grid">
-          <div class="kv"><div class="k">长征十号运力</div><div class="v">70t LEO / 27t TLI</div></div>
-          <div class="kv"><div class="k">登月方案</div><div class="v">两发对接</div></div>
-          <div class="kv"><div class="k">梦舟飞船</div><div class="v">4-6人</div></div>
-          <div class="kv"><div class="k">首飞目标</div><div class="v">2026年底梦舟无人首飞</div></div>
-        </div>
-        <p><strong>任务流程：</strong>同一窗口发射两枚长征十号——第一枚送揽月着陆器入环月轨道，第二枚送梦舟飞船载航天员入轨。两器对接后，两名航天员进入着陆器降月。</p>
+    <nav class="tab-nav bd-tabs" id="moon-tabs">
+      <button class="active" data-tab="tab-roadmap"><span class="tb-ico">🗺️</span>技术路线图</button>
+      <button data-tab="tab-timeline"><span class="tb-ico">📅</span>登月时间表</button>
+    </nav>
+
+    <section class="tab-panel active" id="tab-roadmap">
+      <p class="bd-intro" id="moon-roadmap-intro"></p>
+      <div class="moon-cols" id="moon-roadmaps"></div>
+      <div class="moon-focus" id="moon-focus" hidden></div>
+      <div class="bd-sec-head"><span class="bd-sec-idx">对照</span><h2>中美登月路线对比</h2><p class="bd-sec-desc">维度、节奏与组织模式的全景对照。</p></div>
+      <div class="cmp-wrap" id="moon-compare">
+        <table class="cmp"><thead><tr><th>维度</th><th>中国</th><th>美国</th></tr></thead><tbody></tbody></table>
       </div>
+    </section>
 
-      <div class="company">
-        <span class="company-flag flag-cn-g">国家队</span>
-        <h3>🛰️ 嫦娥七号 · 2026年8月出征南极</h3>
-        <p>嫦娥七号探测器已运抵文昌发射场。将采用绕、落、巡、飞跃综合探测方式进行月球南极环境与资源勘察。飞跃器将尝试进入永久阴影区洞穴，寻找水冰存在的直接证据。</p>
-        <div class="company-grid">
-          <div class="kv"><div class="k">发射时间</div><div class="v">2026年8月</div></div>
-          <div class="kv"><div class="k">探测方式</div><div class="v">绕落巡飞跃综合</div></div>
-          <div class="kv"><div class="k">核心目标</div><div class="v">南极水冰原位验证</div></div>
-          <div class="kv"><div class="k">后续任务</div><div class="v">嫦娥八号 2028</div></div>
-        </div>
-      </div>
-
-      <p><strong>战略整合：</strong>2026年，中国对载人登月和无人探月从任务、资源、队伍三方面进行整合，统称为“月球探测工程”。</p>
-    </div>
-
-    <div class="bd-sec-head"><span class="bd-sec-idx">03</span><h2>美国 · Artemis 加速，但不确定性犹存</h2><p class="bd-sec-desc">Artemis II 载人绕月已落地，Artemis III / IV 接力推进——SLS、猎户座与商业着陆器并行。</p></div>
-    <div class="article-body">
-      <div class="company">
-        <span class="company-flag flag-us">NASA</span>
-        <h3>Artemis II — 历史性载人绕月（已完成）</h3>
-        <div class="en">April 2026 · SLS + Orion</div>
-        <p>2026年4月1日，4名宇航员完成约10天绕月飞行后成功溅落太平洋。这是自1972年阿波罗17号以来人类首次飞抵月球附近。</p>
-      </div>
-
-      <div class="company">
-        <span class="company-flag flag-us">NASA</span>
-        <h3>Artemis III — 2027年地球轨道对接测试</h3>
-        <div class="en">New Mission Added · Feb 2026 Announcement</div>
-        <p>NASA于2026年2月宣布新增Artemis III任务。SLS发射猎户座载4名宇航员进入近地轨道，与SpaceX星舰HLS和/或蓝色起源蓝月Mark 2着陆器进行交会对接测试。</p>
-        <div class="company-grid">
-          <div class="kv"><div class="k">计划时间</div><div class="v">2027年中</div></div>
-          <div class="kv"><div class="k">核心目标</div><div class="v">HLS对接+EVA服测试</div></div>
-          <div class="kv"><div class="k">参与方</div><div class="v">SpaceX + Blue Origin</div></div>
-          <div class="kv"><div class="k">轨道</div><div class="v">近地轨道</div></div>
-        </div>
-      </div>
-
-      <div class="company">
-        <span class="company-flag flag-us">NASA</span>
-        <h3>Artemis IV — 2028年重返月面</h3>
-        <div class="en">First Lunar Landing Target</div>
-        <p>NASA持续瞄准2028年初实现载人登月。NASA同时评估SpaceX星舰HLS和蓝色起源蓝月Mark 2两个着陆方案，哪个先准备好就用哪个。关键不确定性：猎户座飞船隔热瓶颈、星舰在轨推进剂转移技术。</p>
-      </div>
-    </div>
-
-    <div class="bd-sec-head"><span class="bd-sec-idx">04</span><h2>🔬 南极水冰：为何成为战略焦点？</h2><p class="bd-sec-desc">谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</p></div>
-    <div class="article-body">
-      <blockquote style="border-left-color:var(--gold);background:rgba(240,192,96,.07)">月球南极部分陨石坑深处终年不见阳光，温度极低。水冰既是宇航员的生命保障资源（饮用水、氧气），也可分解为氢氧用作火箭燃料——谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。</blockquote>
-    </div>
-
-    <div class="bd-sec-head"><span class="bd-sec-idx">05</span><h2>⚖️ 中美登月路线对比</h2><p class="bd-sec-desc">维度、节奏与组织模式的全景对照，数据由 API（/api/boards/moon/full）动态加载。</p></div>
-    <div class="cmp-wrap" id="moon-compare">
-      <table class="cmp"><thead><tr><th>维度</th><th>中国</th><th>美国</th></tr></thead><tbody></tbody></table>
-    </div>
+    <section class="tab-panel" id="tab-timeline">
+      <p class="bd-intro" id="moon-tl-intro"></p>
+      <div class="moon-years" id="moon-years"></div>
+      <div class="moon-tl-grid" id="moon-timelines"></div>
+    </section>
 
   </div>
 </article>
@@ -156,21 +173,129 @@
 <script src="js/data-loader.js?v=20260820"></script>
 <script>
 (async function(){
+  const ST_LABEL = { done: '已完成', prog: '进行中', plan: '计划', goal: '目标' };
+  const ST_COLOR = { done: 'green', prog: 'cyan', plan: 'amber', goal: 'gold' };
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderCard(item) {
+    const grid = (item.grid || []).map(kv =>
+      `<div class="kv"><div class="k">${esc(kv.k)}</div><div class="v">${esc(kv.v)}</div></div>`
+    ).join('');
+    return `<div class="company">
+      <span class="company-flag ${esc(item.flag_cls || '')}">${esc(item.flag || '')}</span>
+      <h3>${esc(item.title || '')}</h3>
+      ${item.en ? `<div class="en">${esc(item.en)}</div>` : ''}
+      ${item.desc ? `<p>${esc(item.desc)}</p>` : ''}
+      ${grid ? `<div class="company-grid">${grid}</div>` : ''}
+      ${item.note ? `<p><strong>任务流程：</strong>${esc(item.note.replace(/^任务流程：/, ''))}</p>` : ''}
+    </div>`;
+  }
+
+  function renderSideHead(side) {
+    return `<div class="moon-col-head ${esc(side.head_cls || '')}">
+      <span class="mh-flag">${side.flag || ''}</span>
+      <span class="mh-name">${esc(side.name || '')}</span>
+      <span class="mh-tag">${esc(side.tag || '')}</span>
+    </div>
+    ${side.desc ? `<p class="moon-col-desc">${esc(side.desc)}</p>` : ''}`;
+  }
+
   try {
-    // 优先从 API（/api/boards/moon/full，taixingData）加载，接口不可用时回退 data/moon.json
-    let d = await taixingData.loadData('moon');
-    if (!d || !Array.isArray(d.highlights) || !Array.isArray(d.comparison) || !d.highlights.length) {
-      d = await fetch('data/moon.json').then(r => r.json());
-    }
+    let file = await fetch('data/moon.json').then(r => r.json());
+    let d = file;
+    try {
+      const api = await taixingData.loadData('moon');
+      if (api && Array.isArray(api.highlights) && api.highlights.length) {
+        d = Object.assign({}, file, {
+          highlights: api.highlights,
+          comparison: (api.comparison && api.comparison.length) ? api.comparison : file.comparison
+        });
+      }
+    } catch (e) { /* 使用本地 JSON */ }
+
     const hls = d.highlights || [];
     document.getElementById('moon-highlights').innerHTML = hls.map(h =>
-      `<div class="hl-card ${h.color || 'cyan'}"><div class="hl-num">${h.num || ''}</div><div class="hl-lbl">${h.lbl || h.label || ''}</div></div>`
+      `<div class="hl-card ${esc(h.color || 'cyan')}"><div class="hl-num">${esc(h.num || '')}</div><div class="hl-lbl">${esc(h.lbl || h.label || '')}</div></div>`
     ).join('');
+
+    const rm = d.roadmaps || {};
+    const introEl = document.getElementById('moon-roadmap-intro');
+    if (rm.intro) introEl.textContent = rm.intro;
+    else introEl.hidden = true;
+
+    document.getElementById('moon-roadmaps').innerHTML = (rm.sides || []).map(side => {
+      const steps = (side.steps || []).map(st =>
+        `<div class="moon-step ${esc(st.status || '')}">
+          <div class="ph">${esc(st.phase || '')}</div>
+          <div><div class="nm">${esc(st.name || '')}</div><div class="dt">${esc(st.detail || '')}</div></div>
+        </div>`
+      ).join('');
+      const cards = (side.items || []).map(renderCard).join('');
+      return `<div class="moon-col">${renderSideHead(side)}${steps}${cards}</div>`;
+    }).join('');
+
+    const focus = rm.focus;
+    const focusEl = document.getElementById('moon-focus');
+    if (focus && (focus.title || focus.text)) {
+      focusEl.hidden = false;
+      focusEl.innerHTML = `${focus.title ? `<h3>🔬 ${esc(focus.title)}</h3>` : ''}${focus.text ? `<p>${esc(focus.text)}</p>` : ''}`;
+    }
+
     const cmp = d.comparison || [];
     document.querySelector('#moon-compare tbody').innerHTML = cmp.map(r =>
-      `<tr><td>${r.dim || r.aspect || ''}</td><td${r.highlight === 'china' ? ' class="hi"' : ''}>${r.china || r.china_value || ''}</td><td>${r.us || r.usa_value || ''}</td></tr>`
+      `<tr><td>${esc(r.dim || r.aspect || '')}</td><td${r.highlight === 'china' ? ' class="hi"' : ''}>${esc(r.china || r.china_value || '')}</td><td>${esc(r.us || r.usa_value || '')}</td></tr>`
     ).join('');
+
+    const tl = d.timelines || {};
+    const tlIntro = document.getElementById('moon-tl-intro');
+    if (tl.intro) tlIntro.textContent = tl.intro;
+    else tlIntro.hidden = true;
+
+    document.getElementById('moon-years').innerHTML = (tl.milestones || []).map(m =>
+      `<div class="moon-year ${esc(m.status || '')}">
+        <div class="yr">${esc(m.year || '')}</div>
+        <div class="cn">中 · ${esc(m.cn || '')}</div>
+        <div class="us">美 · ${esc(m.us || '')}</div>
+      </div>`
+    ).join('');
+
+    document.getElementById('moon-timelines').innerHTML = (tl.sides || []).map(side => {
+      const items = (side.items || []).map(it => {
+        const st = it.status || 'plan';
+        const color = it.color || ST_COLOR[st] || '';
+        const badge = ST_LABEL[st] ? `<span class="tl-st ${esc(st)}">${ST_LABEL[st]}</span>` : '';
+        return `<div class="tl-item ${esc(color)}">
+          <div class="tl-date">${esc(it.date || '')}${badge}</div>
+          <h4>${esc(it.title || '')}</h4>
+          <p>${esc(it.desc || '')}</p>
+        </div>`;
+      }).join('');
+      return `<div class="fusion-tl-col">
+        <div class="fusion-tl-head ${esc(side.head_cls || '')}">
+          <span class="ft-flag">${side.flag || ''}</span>
+          <span class="ft-name">${esc(side.name || '')}</span>
+          <span class="ft-tag">${esc(side.tag || '')}</span>
+        </div>
+        <div class="tl">${items}</div>
+      </div>`;
+    }).join('');
   } catch(e) { console.error('Moon data load failed:', e); }
+
+  var tabs = document.querySelectorAll('#moon-tabs button');
+  var panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-tab');
+      tabs.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      panels.forEach(function (p) { p.classList.toggle('active', p.id === target); });
+    });
+  });
 })();
 </script>
 <script src="js/components.js?v=20260821"></script>

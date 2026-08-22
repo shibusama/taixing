@@ -30,6 +30,112 @@ def _rocket_core(mission_name: str) -> Optional[str]:
     return m.group(1) if m else None
 
 
+def _normalize_launch_field(value: object) -> str:
+    return str(value or "").strip()
+
+
+def _launch_dedup_key(launch_time: str, mission_name: str, launch_site: str) -> str:
+    """同一天 + 同一任务名 + 同一发射场 → 视为同一发射（用于国际源重复写入去重）"""
+    return "|".join([
+        _normalize_launch_field(launch_time),
+        _normalize_launch_field(mission_name),
+        _normalize_launch_field(launch_site),
+    ])
+
+
+def _find_duplicate_launch_timeline_id(sb, item: Dict) -> Optional[str]:
+    """查找与 item 语义重复的时间线条目，返回应更新的 timeline_id。"""
+    launch_time = _normalize_launch_field(item.get("launch_time"))
+    mission_name = _normalize_launch_field(item.get("mission_name"))
+    if not launch_time or not mission_name:
+        return None
+
+    same_day = sb.table("rocket_launch_timeline").select("*").eq("launch_time", launch_time).execute()
+    rows = same_day.data or []
+    if not rows:
+        return None
+
+    incoming_key = _launch_dedup_key(launch_time, mission_name, item.get("launch_site", ""))
+    incoming_core = _rocket_core(mission_name)
+
+    for row in rows:
+        row_id = row.get("timeline_id")
+        if row_id == item.get("timeline_id"):
+            continue
+
+        row_name = _normalize_launch_field(row.get("mission_name"))
+        row_key = _launch_dedup_key(
+            launch_time,
+            row_name,
+            row.get("launch_site", ""),
+        )
+        if row_key == incoming_key:
+            return row_id
+
+        if incoming_core:
+            row_core = _rocket_core(row_name)
+            if row_core and (incoming_core in row_core or row_core in incoming_core):
+                return row_id
+
+    return None
+
+
+def _dedupe_launch_timeline_rows(rows: List[Dict]) -> List[Dict]:
+    """读取侧去重：同一发射只保留最近更新的一条（兼容历史重复数据）。"""
+    best: Dict[str, Dict] = {}
+    for row in rows:
+        key = _launch_dedup_key(
+            row.get("launch_time", ""),
+            row.get("mission_name", ""),
+            row.get("launch_site", ""),
+        )
+        prev = best.get(key)
+        if not prev:
+            best[key] = row
+            continue
+        prev_ts = prev.get("update_time") or prev.get("create_time") or ""
+        row_ts = row.get("update_time") or row.get("create_time") or ""
+        if row_ts >= prev_ts:
+            best[key] = row
+    deduped = list(best.values())
+    deduped.sort(key=lambda r: r.get("launch_time") or "")
+    return deduped
+
+
+def _is_starlink_group_mission(item: Dict) -> bool:
+    """猎鹰9 星链 Group 批量组网任务（信息量低，前端不展示）。"""
+    parts = [
+        item.get("mission_name", ""),
+        item.get("payload", ""),
+        item.get("title", ""),
+    ]
+    blob = " ".join(str(p) for p in parts).lower()
+    if "starlink group" in blob:
+        return True
+    return "星链组网" in " ".join(str(p) for p in parts)
+
+
+def _display_brief_desc(item: Dict) -> str:
+    """返回前端展示用描述；旧数据若与标题重复，改为「发射场 · 结果」。"""
+    title = _normalize_launch_field(item.get("mission_name"))
+    desc = _normalize_launch_field(item.get("brief_desc"))
+    site = _normalize_launch_field(item.get("launch_site"))
+    outcome = _normalize_launch_field(item.get("outcome"))
+
+    if desc and title:
+        compact_title = title.replace(" · ", "").replace(" ", "")
+        compact_desc = desc.replace(" · ", "").replace(" 执行 ", "").replace(" ", "")
+        if compact_desc == compact_title or compact_desc in compact_title or compact_title in compact_desc:
+            parts = [p for p in (site, outcome) if p]
+            if parts:
+                return " · ".join(parts)
+
+    if desc:
+        return desc
+    parts = [p for p in (site, outcome) if p]
+    return " · ".join(parts) if parts else title
+
+
 def get_rocket_companies() -> List[Dict]:
     sb = get_supabase()
     result = sb.table("rocket_companies").select("*").execute()
@@ -104,9 +210,15 @@ def set_rocket_ai_last_done_key(key: str):
 def get_launch_timeline(limit: int = 50) -> List[Dict]:
     """获取发射时间线（动态计算 color/badge/done）"""
     sb = get_supabase()
-    result = sb.table("rocket_launch_timeline").select("*").order("launch_time", desc=False).limit(limit).execute()
+    # 星链组网任务占比高，多拉取一些再过滤
+    fetch_limit = max(limit * 8, 200)
+    result = sb.table("rocket_launch_timeline").select("*").order("launch_time", desc=False).limit(fetch_limit).execute()
+    rows = [
+        row for row in _dedupe_launch_timeline_rows(result.data or [])
+        if not _is_starlink_group_mission(row)
+    ][:limit]
 
-    for item in result.data:
+    for item in rows:
         # color: 根据 outcome 计算
         outcome = item.get("outcome", "")
         if outcome in ("成功", "部分成功"):
@@ -133,9 +245,9 @@ def get_launch_timeline(limit: int = 50) -> List[Dict]:
         # 兼容前端字段名
         item["date"] = item.get("launch_time", "")
         item["title"] = item.get("mission_name", "")
-        item["desc"] = item.get("brief_desc", "")
+        item["desc"] = _display_brief_desc(item)
 
-    return result.data
+    return rows
 
 
 def upsert_launch_timeline(item: Dict) -> bool:
@@ -143,7 +255,7 @@ def upsert_launch_timeline(item: Dict) -> bool:
 
     去重顺序：
     1. 按 timeline_id（同源唯一键）— 存在则更新
-    2. 跨源查重（中文型号）：同一天 + 火箭型号核心词互相包含 → 视为同一发射，更新该行（保留原 timeline_id）
+    2. 跨源查重：同一天 +（任务名+发射场完全一致，或中文型号核心词互相包含）→ 更新该行
     3. 均未命中 → 插入新行
     """
     sb = get_supabase()
@@ -158,19 +270,12 @@ def upsert_launch_timeline(item: Dict) -> bool:
         sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", timeline_id).execute()
         return True
 
-    # 跨源查重：仅对中文型号启用（LL2 与航天官网对同一国家队/民营发射的 timeline_id 不同）
-    launch_time = item.get("launch_time", "")
-    mission_name = item.get("mission_name", "")
-    core = _rocket_core(mission_name) if launch_time and mission_name else None
-    if core:
-        same_day = sb.table("rocket_launch_timeline").select("*").eq("launch_time", launch_time).execute()
-        for row in same_day.data:
-            row_core = _rocket_core(row.get("mission_name", ""))
-            if row_core and (core in row_core or row_core in core):
-                update_data = {k: v for k, v in item.items() if k != "timeline_id"}
-                update_data["update_time"] = datetime.now().isoformat()
-                sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", row["timeline_id"]).execute()
-                return True
+    duplicate_id = _find_duplicate_launch_timeline_id(sb, item)
+    if duplicate_id:
+        update_data = {k: v for k, v in item.items() if k != "timeline_id"}
+        update_data["update_time"] = datetime.now().isoformat()
+        sb.table("rocket_launch_timeline").update(update_data).eq("timeline_id", duplicate_id).execute()
+        return True
 
     sb.table("rocket_launch_timeline").insert(item).execute()
     return True

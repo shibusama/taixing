@@ -14,5 +14,144 @@
     { "dim": "组织模式", "china": "国家队主导", "us": "NASA资助+商业自主研发", "highlight": "" },
     { "dim": "长期愿景", "china": "国际月球科研站(ILRS)", "us": "月球基地→火星", "highlight": "" },
     { "dim": "节奏特点", "china": "稳步推进、调整小", "us": "多轮延期、调整大", "highlight": "" }
-  ]
+  ],
+  "roadmaps": {
+    "intro": "中国走国家队闭环：长征十号 + 梦舟 + 揽月，同一窗口两发对接降月。美国走 NASA 主导 + 商业着陆：SLS / 猎户座负责地月往返，星舰 HLS 与蓝月 Mark 2 竞速月面。",
+    "focus": {
+      "title": "南极水冰：为何成为战略焦点？",
+      "text": "月球南极部分陨石坑深处终年不见阳光，温度极低。水冰既是宇航员的生命保障资源（饮用水、氧气），也可分解为氢氧用作火箭燃料——谁先找到并利用水冰，谁就掌握了月球长期驻留的关键。"
+    },
+    "sides": [
+      {
+        "id": "china",
+        "flag": "🇨🇳",
+        "name": "中国",
+        "tag": "国家队闭环",
+        "head_cls": "cn",
+        "desc": "载人登月工程与嫦娥探月双线并进。2026 年从任务、资源、队伍三方面整合为统一的“月球探测工程”。",
+        "steps": [
+          { "phase": "运载", "name": "长征十号", "detail": "70t LEO / 27t TLI · 液氧甲烷 · 可复用", "status": "cur" },
+          { "phase": "飞船", "name": "梦舟", "detail": "4–6 人 · 2026 年底无人首飞", "status": "cur" },
+          { "phase": "着陆", "name": "揽月着陆器", "detail": "自研 · 环月对接后两名航天员降月", "status": "cur" },
+          { "phase": "方案", "name": "两发对接", "detail": "同一窗口两枚长征十号，着陆器与飞船交会", "status": "cur" },
+          { "phase": "探测", "name": "嫦娥七 / 八号", "detail": "2026 南极探水冰 · 2028 资源验证", "status": "cur" },
+          { "phase": "愿景", "name": "国际月球科研站", "detail": "ILRS · 南极长期驻留与科研", "status": "next" }
+        ],
+        "items": [
+          {
+            "flag": "国家队",
+            "flag_cls": "flag-cn-g",
+            "title": "🌙 载人登月工程系统",
+            "en": "China Manned Lunar Exploration Program",
+            "desc": "截至 2026 年中，载人月球探测工程各项研制建设进展顺利。长征十号、梦舟飞船、揽月着陆器等核心产品已完成初样阶段主要工作。",
+            "grid": [
+              { "k": "长征十号运力", "v": "70t LEO / 27t TLI" },
+              { "k": "登月方案", "v": "两发对接" },
+              { "k": "梦舟飞船", "v": "4-6人" },
+              { "k": "首飞目标", "v": "2026年底梦舟无人首飞" }
+            ],
+            "note": "任务流程：同一窗口发射两枚长征十号——第一枚送揽月着陆器入环月轨道，第二枚送梦舟飞船载航天员入轨。两器对接后，两名航天员进入着陆器降月。"
+          },
+          {
+            "flag": "国家队",
+            "flag_cls": "flag-cn-g",
+            "title": "🛰️ 嫦娥七号 · 南极探水冰",
+            "en": "Chang'e-7 · August 2026",
+            "desc": "嫦娥七号探测器已运抵文昌发射场。将采用绕、落、巡、飞跃综合探测方式进行月球南极环境与资源勘察。飞跃器将尝试进入永久阴影区洞穴，寻找水冰存在的直接证据。",
+            "grid": [
+              { "k": "发射时间", "v": "2026年8月" },
+              { "k": "探测方式", "v": "绕落巡飞跃综合" },
+              { "k": "核心目标", "v": "南极水冰原位验证" },
+              { "k": "后续任务", "v": "嫦娥八号 2028" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "us",
+        "flag": "🇺🇸",
+        "name": "美国",
+        "tag": "NASA + 商业着陆",
+        "head_cls": "us",
+        "desc": "Artemis II 载人绕月已落地。Artemis III / IV 接力推进——SLS、猎户座与商业着陆器并行，时间表仍有较大不确定性。",
+        "steps": [
+          { "phase": "运载", "name": "SLS Block 1", "detail": "一次性重型火箭 · 送猎户座入轨", "status": "done" },
+          { "phase": "飞船", "name": "猎户座 Orion", "detail": "4 人 · 隔热层仍是当前瓶颈", "status": "done" },
+          { "phase": "着陆", "name": "星舰 HLS / 蓝月 Mark 2", "detail": "商业双轨 · 谁先准备好用谁", "status": "cur" },
+          { "phase": "验证", "name": "Artemis III", "detail": "2027 近地轨道对接 + EVA 服测试", "status": "next" },
+          { "phase": "登月", "name": "Artemis IV", "detail": "瞄准 2028 年初重返月面", "status": "next" },
+          { "phase": "愿景", "name": "月球基地 → 火星", "detail": "南极长期驻留，再向深空延伸", "status": "next" }
+        ],
+        "items": [
+          {
+            "flag": "NASA",
+            "flag_cls": "flag-us",
+            "title": "Artemis II — 历史性载人绕月",
+            "en": "April 2026 · SLS + Orion · 已完成",
+            "desc": "2026 年 4 月 1 日，4 名宇航员完成约 10 天绕月飞行后成功溅落太平洋。这是自 1972 年阿波罗 17 号以来人类首次飞抵月球附近。"
+          },
+          {
+            "flag": "NASA",
+            "flag_cls": "flag-us",
+            "title": "Artemis III — 地球轨道对接测试",
+            "en": "New Mission Added · Feb 2026 Announcement",
+            "desc": "NASA 于 2026 年 2 月宣布新增 Artemis III 任务。SLS 发射猎户座载 4 名宇航员进入近地轨道，与 SpaceX 星舰 HLS 和/或蓝色起源蓝月 Mark 2 着陆器进行交会对接测试。",
+            "grid": [
+              { "k": "计划时间", "v": "2027年中" },
+              { "k": "核心目标", "v": "HLS对接+EVA服测试" },
+              { "k": "参与方", "v": "SpaceX + Blue Origin" },
+              { "k": "轨道", "v": "近地轨道" }
+            ]
+          },
+          {
+            "flag": "NASA",
+            "flag_cls": "flag-us",
+            "title": "Artemis IV — 2028 年重返月面",
+            "en": "First Lunar Landing Target",
+            "desc": "NASA 持续瞄准 2028 年初实现载人登月，同时评估 SpaceX 星舰 HLS 和蓝色起源蓝月 Mark 2 两个着陆方案。关键不确定性：猎户座飞船隔热瓶颈、星舰在轨推进剂转移技术。"
+          }
+        ]
+      }
+    ]
+  },
+  "timelines": {
+    "intro": "对照两国已公布的任务节奏。节点按公开计划标注状态；美国时间表历史上调整较多，以下为目标年份而非锁定日期。",
+    "milestones": [
+      { "year": "2026", "cn": "嫦娥七号 / 梦舟无人首飞", "us": "Artemis II 绕月", "status": "cur" },
+      { "year": "2027", "cn": "工程验证继续推进", "us": "Artemis III 对接测试", "status": "next" },
+      { "year": "2028", "cn": "嫦娥八号", "us": "Artemis IV 登月", "status": "next" },
+      { "year": "2030", "cn": "载人登月", "us": "月球基地铺垫", "status": "next" }
+    ],
+    "sides": [
+      {
+        "id": "china",
+        "flag": "🇨🇳",
+        "name": "中国",
+        "tag": "2030年前载人登月",
+        "head_cls": "cn",
+        "items": [
+          { "date": "2026中", "title": "核心产品完成初样", "desc": "长征十号、梦舟飞船、揽月着陆器完成初样阶段主要工作。", "status": "done" },
+          { "date": "2026.08", "title": "嫦娥七号出征南极", "desc": "绕落巡飞跃综合探测，飞跃器进入永久阴影区寻找水冰。", "status": "prog" },
+          { "date": "2026底", "title": "梦舟无人首飞", "desc": "载人飞船无人验证，为后续载人任务铺路。", "status": "plan" },
+          { "date": "2028", "title": "嫦娥八号", "desc": "南极资源利用与科研站技术验证，衔接载人登月。", "status": "plan" },
+          { "date": "2030前", "title": "载人登月", "desc": "两发对接方案：揽月先入环月轨道，梦舟载航天员交会对接后降月。", "status": "goal" },
+          { "date": "2030s", "title": "国际月球科研站 ILRS", "desc": "以南极为基地推进长期驻留与国际合作科研。", "status": "plan" }
+        ]
+      },
+      {
+        "id": "us",
+        "flag": "🇺🇸",
+        "name": "美国",
+        "tag": "2028年 Artemis IV 登月",
+        "head_cls": "us",
+        "items": [
+          { "date": "2026.04", "title": "Artemis II 载人绕月", "desc": "4 名宇航员约 10 天绕月后溅落太平洋，阿波罗后首次近月载人飞行。", "status": "done" },
+          { "date": "2026", "title": "商业着陆器南极任务", "desc": "蓝月 MK1 / 格里芬一号等商业任务冲击南极，服务后续载人着陆。", "status": "prog" },
+          { "date": "2027中", "title": "Artemis III 轨道对接测试", "desc": "猎户座与星舰 HLS 和/或蓝月 Mark 2 在近地轨道交会，并测试 EVA 服。", "status": "plan" },
+          { "date": "2028初", "title": "Artemis IV 重返月面", "desc": "载人登月目标窗口。着陆器在星舰 HLS 与蓝月 Mark 2 中择先就绪者。", "status": "goal" },
+          { "date": "2030s", "title": "月球基地 → 火星", "desc": "以南极长期驻留为跳板，向深空载人任务延伸。", "status": "plan" }
+        ]
+      }
+    ]
+  }
 }

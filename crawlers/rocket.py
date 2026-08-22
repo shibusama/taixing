@@ -231,6 +231,11 @@ def _build_launch_item(l):
     if not mission_name:
         mission_name = l.get("mission_name", "")
 
+    # 星链 Group 批量组网任务不写入时间线（前端不展示）
+    mission_low = str(mission_name).lower()
+    if "starlink group" in mission_low:
+        return None
+
     # 发射场兼容：pad.location.name / pad.name / location
     pad_obj = l.get("pad")
     zh_site = ""
@@ -261,7 +266,10 @@ def _build_launch_item(l):
     zh_rocket = zh_rocket_name(rocket_name)
     zh_mission = zh_mission_name(mission_name)
     title_zh = f"{zh_agency} {zh_rocket}" + (f" · {zh_mission}" if zh_mission else "")
-    brief_desc = f"{zh_agency} {zh_rocket} 执行 {zh_mission}" if zh_mission else f"{zh_agency} {zh_rocket}"
+    if zh_mission:
+        brief_desc = f"{zh_site} · {outcome}" if zh_site else outcome
+    else:
+        brief_desc = f"{zh_site} · {outcome}" if zh_site else f"{zh_agency} {zh_rocket}"
 
     return {
         "timeline_id": timeline_id,

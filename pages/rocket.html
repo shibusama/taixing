@@ -52,7 +52,8 @@
 #rocket-timeline-done::-webkit-scrollbar-thumb,#rocket-timeline-upcoming::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
 #rocket-timeline-done::-webkit-scrollbar-track,#rocket-timeline-upcoming::-webkit-scrollbar-track{background:transparent}
 /* 中间竖线改为跟随内容滚动：禁用容器固定竖线，改用内层容器竖线 */
-#rocket-timeline-done::before,#rocket-timeline-upcoming::before{display:none}
+#rocket-timeline-done::before,#rocket-timeline-upcoming::before,
+#rocket-timeline-done::after,#rocket-timeline-upcoming::after{display:none}
 #rocket-timeline-done .tlv-inner,#rocket-timeline-upcoming .tlv-inner{position:relative}
 #rocket-timeline-done .tlv-inner::before,#rocket-timeline-upcoming .tlv-inner::before{
   content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;
@@ -69,6 +70,9 @@
 /* 右侧国旗组强制水平排列 */
 .tlv-head > span:last-child{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px}
 .tlv-head .flag-sep{font-size:13px;color:var(--txt-2);margin:0 2px;align-self:center}
+/* 时间线卡片：国际标签改为国旗 */
+.tl-date .tl-flag-badge{display:inline-flex;align-items:center;margin-left:6px;vertical-align:middle;line-height:0}
+.tl-date .tl-flag-badge .flag-svg{border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
 
 /* ---- 响应式 ---- */
 @media(max-width:768px){
@@ -579,10 +583,85 @@
       `<tr><td data-rocket="${r.key}">${r.rocket}</td><td>${r.company}</td><td>${r.country}</td><td>${r.fuel}</td><td>${r.diameter}</td><td>${r.thrust}</td><td class="${clsMap[r.rocket]||''}">${r.leo}</td><td class="${r.key==='cz10b'?'hi':''}">${r.recovery}</td><td>${r.status}</td></tr>`
     ).join('');
 
+    // 国旗 SVG（与表头 tlv-head 一致，用于时间线「国际」标签）
+    const FLAG_SVG = {
+      cn: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#DE2910"/><path d="M5 1.7 L5.52 3.29 L7.19 3.29 L5.84 4.27 L6.35 5.86 L5 4.88 L3.65 5.86 L4.16 4.27 L2.81 3.29 L4.48 3.29 Z" fill="#FFDE00"/></svg>',
+      us: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><g fill="#B22234"><rect width="24" height="1.23"/><rect y="2.46" width="24" height="1.23"/><rect y="4.92" width="24" height="1.23"/><rect y="7.38" width="24" height="1.23"/><rect y="9.84" width="24" height="1.23"/><rect y="12.3" width="24" height="1.23"/><rect y="14.76" width="24" height="1.23"/></g><rect width="9.5" height="8.6" fill="#3C3B6E"/></svg>',
+      jp: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><circle cx="12" cy="8" r="4.5" fill="#BC002D"/></svg>',
+      eu: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#003399"/><g fill="#FFCC00"><circle cx="17" cy="8" r="0.9"/><circle cx="16.3" cy="10.5" r="0.9"/><circle cx="14.5" cy="12.3" r="0.9"/><circle cx="12" cy="13" r="0.9"/><circle cx="9.5" cy="12.3" r="0.9"/><circle cx="7.7" cy="10.5" r="0.9"/><circle cx="7" cy="8" r="0.9"/><circle cx="7.7" cy="5.5" r="0.9"/><circle cx="9.5" cy="3.7" r="0.9"/><circle cx="12" cy="3" r="0.9"/><circle cx="14.5" cy="3.7" r="0.9"/><circle cx="16.3" cy="5.5" r="0.9"/></g></svg>',
+      kr: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><g transform="translate(12 8)"><circle r="5" fill="#CD2E3A"/><path d="M0 0 A5 5 0 0 0 0 -5 A2.5 2.5 0 0 1 0 0 Z" fill="#0047A0"/><path d="M0 0 A5 5 0 0 1 0 5 A2.5 2.5 0 0 1 0 0 Z" fill="#0047A0"/></g></svg>',
+      in: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="5.33" fill="#FF9933"/><rect y="5.33" width="24" height="5.33" fill="#fff"/><rect y="10.66" width="24" height="5.34" fill="#138808"/><circle cx="12" cy="8" r="2" fill="none" stroke="#000080" stroke-width="0.7"/></svg>',
+      de: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="5.33" fill="#000"/><rect y="5.33" width="24" height="5.33" fill="#DD0000"/><rect y="10.66" width="24" height="5.34" fill="#FFCE00"/></svg>',
+      ru: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="5.33" fill="#fff"/><rect y="5.33" width="24" height="5.33" fill="#0039A6"/><rect y="10.66" width="24" height="5.34" fill="#D52B1E"/></svg>',
+      nz: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><rect width="12" height="8" fill="#012169"/><path d="M0 0 L12 8 M12 0 L0 8" stroke="#fff" stroke-width="1.2"/><path d="M0 0 L12 8 M12 0 L0 8" stroke="#C8102E" stroke-width="0.6"/><path d="M6 0 V8 M0 4 H12" stroke="#fff" stroke-width="2"/><path d="M6 0 V8 M0 4 H12" stroke="#C8102E" stroke-width="1"/><circle cx="18" cy="4" r="1.1" fill="#fff"/><circle cx="16.5" cy="11" r="1.1" fill="#fff"/><circle cx="20" cy="11.5" r="1.1" fill="#fff"/><circle cx="19" cy="7.5" r="1.1" fill="#C8102E"/><circle cx="17" cy="9" r="1.1" fill="#C8102E"/></svg>',
+      no: '<svg class="flag-svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#BA0C2F"/><rect x="6" y="0" width="4" height="16" fill="#fff"/><rect x="0" y="6" width="24" height="4" fill="#fff"/><rect x="7" y="0" width="2" height="16" fill="#00205B"/><rect x="0" y="7" width="24" height="2" fill="#00205B"/></svg>'
+    };
+    const FLAG_LABEL = { cn:'中国', us:'美国', jp:'日本', eu:'欧洲', kr:'韩国', in:'印度', de:'德国', ru:'俄罗斯', nz:'新西兰', no:'挪威' };
+    // 公司/机构 → 国家（优先于发射场与泛关键词，避免误判）
+    const COMPANY_COUNTRY = [
+      { re: /isar\s*aerospace|spectrum\s*rocket/i, code: 'de' },
+      { re: /rocket\s*factory/i, code: 'de' },
+      { re: /spacex|falcon\s*(?:9|heavy)|starship|dragon\s*(?:crs|crew)?/i, code: 'us' },
+      { re: /blue\s*origin|new\s*glenn/i, code: 'us' },
+      { re: /firefly\s*aerospace|firefly\s*alpha/i, code: 'us' },
+      { re: /united\s*launch\s*alliance|\bula\b/i, code: 'us' },
+      { re: /rocket\s*lab|\belectron\b/i, code: 'nz' },
+      { re: /arianespace|ariane\s*\d|vega\s*c/i, code: 'eu' },
+      { re: /\bjaxa\b|h-?ii\b|h3\b/i, code: 'jp' },
+      { re: /isro|pslv|gslv/i, code: 'in' },
+      { re: /roscosmos|proton|soyuz|联盟号/i, code: 'ru' },
+      { re: /航天科技|蓝箭|星河|星际荣耀|天兵|航天科工|中科宇航|箭元|东方空间|deep\s*blue/i, code: 'cn' }
+    ];
+    // 发射场 → 国家（公司未命中时使用）
+    const SITE_COUNTRY = [
+      { re: /andøya|andoya|norway/i, code: 'no' },
+      { re: /kennedy|canaveral|vandenberg|wallops|virginia|starbase|boca\s*chica|usa|美国/i, code: 'us' },
+      { re: /mahia|new\s*zealand/i, code: 'nz' },
+      { re: /kourou|guiana|法属圭亚那|圭亚那航天/i, code: 'eu' },
+      { re: /tanegashima|种子岛|日本/i, code: 'jp' },
+      { re: /sriharikota|印度/i, code: 'in' },
+      { re: /baikonur|vostochny|拜科努尔|俄罗斯/i, code: 'ru' },
+      { re: /酒泉|西昌|太原|文昌|海南商业|中国/i, code: 'cn' },
+      { re: /德国|oberpfaffenhofen|trauen/i, code: 'de' }
+    ];
+    const KEYWORD_COUNTRY = [
+      { code: 'cn', keys: ['长征','朱雀','智神','引力','双曲线','谷神','天龙','快舟','力箭','元行者','嫦娥','神舟','天舟','梦舟','星网'] },
+      { code: 'kr', keys: ['韩国','naro','kslv','罗老'] },
+      { code: 'de', keys: ['德国'] }
+    ];
+    function detectMissionCountry(item) {
+      const titleBlob = [item.title, item.mission_name].filter(Boolean).join(' ');
+      const siteBlob = [item.launch_site, item.desc, item.brief_desc].filter(Boolean).join(' ');
+      const fullBlob = (titleBlob + ' ' + siteBlob).toLowerCase();
+
+      for (const rule of COMPANY_COUNTRY) {
+        if (rule.re.test(titleBlob)) return rule.code;
+      }
+      for (const rule of SITE_COUNTRY) {
+        if (rule.re.test(siteBlob)) return rule.code;
+      }
+      for (const rule of KEYWORD_COUNTRY) {
+        if (rule.keys.some(k => fullBlob.includes(k.toLowerCase()))) return rule.code;
+      }
+      return null;
+    }
+    function renderTimelineBadge(it) {
+      if (!it.badge) return '';
+      if (it.badge === '国际') {
+        const code = detectMissionCountry(it);
+        if (!code || !FLAG_SVG[code]) return '';
+        const flag = FLAG_SVG[code];
+        const label = FLAG_LABEL[code] || code.toUpperCase();
+        return ` <span class="tl-flag-badge" title="${label}">${flag}</span>`;
+      }
+      const cls = it.badge === '国家队' ? 'badge-cn' : 'badge-private';
+      return ` <span class="tl-badge ${cls}">${it.badge}</span>`;
+    }
+
     // 时间线渲染（单列，用于"未来展望"Tab）
     function renderTL(items) {
       return items.map(it => {
-        const badge = it.badge ? ` <span class="tl-badge ${it.badge==='国家队'?'badge-cn':'badge-private'}">${it.badge}</span>` : '';
+        const badge = renderTimelineBadge(it);
         const done = it.done ? ' ✓ 已完成' : '';
         return `<div class="tl-item ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
       }).join('');
@@ -592,7 +671,7 @@
     function renderVersusTL(items) {
       const rows = items.map(it => {
         const cn = isChina(it);
-        const badge = it.badge ? ` <span class="tl-badge ${it.badge==='国家队'?'badge-cn':'badge-private'}">${it.badge}</span>` : '';
+        const badge = renderTimelineBadge(it);
         const done = it.done ? ' ✓ 已完成' : '';
         const card = `<div class="tlv-card ${it.color||''}"><div class="tl-date">${it.date}${done}${badge}</div><h4>${it.title}</h4><p>${it.desc}</p></div>`;
         return `<div class="tlv-row ${cn?'cn-side':'us-side'}">
@@ -603,6 +682,15 @@
       }).join('');
       return `<div class="tlv-inner">${rows}</div>`;
     }
+    // 过滤猎鹰9星链 Group 批量组网任务（信息量低，不展示）
+    function isStarlinkGroup(item) {
+      const title = (item.title || item.mission_name || '').toLowerCase();
+      const payload = (item.payload || '').toLowerCase();
+      const blob = title + ' ' + payload;
+      return blob.includes('starlink group') || (item.title || item.mission_name || '').includes('星链组网');
+    }
+    timelineData = timelineData.filter(it => !isStarlinkGroup(it));
+
     // 判断是否中国发射任务（火箭型号/机构关键词命中即算中国；未命中归入"除中国外"）
     function isChina(item) {
       const cnKeys = ['长征','朱雀','智神','引力','双曲线','谷神','天龙','快舟','力箭','元行者',
